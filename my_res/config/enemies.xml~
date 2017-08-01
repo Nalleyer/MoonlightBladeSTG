@@ -7,7 +7,7 @@
         <collir>50</collir>
         <x>540</x>
         <y>100</y>
-        <as>2</as>
+        <as>100</as>
         <ns>0</ns>
         <rs>0</rs>
         <dir>-1.57</dir>
@@ -19,7 +19,7 @@
                 <condition>
                     <left>age</left>
                     <op>gt</op>
-                    <right>1500</right>
+                    <right>1.5</right>
                 </condition>
                 <action>
                     <left>as</left>
@@ -36,7 +36,7 @@
                 <condition>
                     <left>age</left>
                     <op>gt</op>
-                    <right>1500</right>
+                    <right>1.5</right>
                 </condition>
                 <action>
                     <left>as</left>
@@ -50,7 +50,7 @@
                 <!--noname-->
                 <texture>my_res/img/bullet_ellipse.png</texture>
                 <empty>false</empty>
-                <as>5</as>
+                <as>200</as>
                 <acc>-0.001</acc>
                 <autor>true</autor>
                 <colli>
@@ -84,9 +84,9 @@
         <score>300</score>
         <texture>my_res/img/enemy_1.png</texture>
         <collir>60</collir>
-        <x>500</x>
+        <x>300</x>
         <y>100</y>
-        <as>4</as>
+        <as>200</as>
         <ns>0</ns>
         <rs>0</rs>
         <dir>-1.57</dir>
@@ -255,7 +255,7 @@
                         <name>simple</name>
                         <texture>my_res/img/bullet_circle.png</texture>
                         <dir>-1.57</dir>
-                        <as>5</as>
+                        <as>250</as>
                         <acc>0</acc>
                         <colli>
                             <circle>auto</circle>
