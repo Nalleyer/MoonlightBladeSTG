@@ -4,8 +4,6 @@
 	<res>my_res/img/bg_0.png</res>
 	<res>my_res/img/bg_1.png</res>
 	<res>my_res/img/bg_2.png</res>
-	<res>my_res/img/btn_2st.png</res>
-	<res>my_res/img/btn_3st.png</res>
 	<res>my_res/img/btn_3_new.png</res>
 	<res>my_res/img/btn_bomb.png</res>
 	<res>my_res/img/btn_choice.png</res>
@@ -58,13 +56,5 @@
 	<res>my_res/img/sub_bullet_4.png</res>
 	<res>my_res/img/sub_title.png</res>
 	<res>my_res/img/title.png</res>
-	<res>my_res/img/ui_player_choise_0.png</res>
-	<res>my_res/img/ui_player_choise_1.png</res>
-	<res>my_res/img/ui_player_choise_2.png</res>
-	<res>my_res/img/ui_player_choise_3.png</res>
-	<res>my_res/img/ui_player_choise_4.png</res>
-	<res>my_res/img/ui_player_choise_5.png</res>
-	<res>my_res/img/ui_player_choise_6.png</res>
-	<res>my_res/img/ui_player_choise_7.png</res>
 </files>
 
