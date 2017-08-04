@@ -238,7 +238,7 @@
                 <action>
                     <left>as</left>
                     <op>set</op>
-                    <right>4</right>
+                    <right>400</right>
                 </action>
             </task>
 
@@ -275,7 +275,7 @@
                                 <action>
                                     <left>as</left>
                                     <op>set</op>
-                                    <right>2</right>
+                                    <right>200</right>
                                 </action>
                             </task>
 
