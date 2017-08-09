@@ -267,6 +267,96 @@
         </bullets>
     </enemy>
     <enemy>
+        <name>enemy_4</name>
+        <score>500</score>
+        <hp>500</hp>
+        <texture>my_res/img/enemy_4.png</texture>
+        <collir>34</collir>
+        <x>-40</x>
+        <y>100</y>
+        <as>400</as>
+        <acc>-3</acc>
+        <dir>-1.57</dir>
+        <autor>false</autor>
+        <empty>false</empty>
+        <tasks>
+            <task>
+                <condition>
+                    <left>as</left>
+                    <op>lt</op>
+                    <right>5</right>
+                </condition>
+                <action>
+                    <op>shoot</op>
+                </action>
+            </task>
+            <task>
+                <condition>
+                    <left>age</left>
+                    <op>gt</op>
+                    <right>4</right>
+                </condition>
+                <action>
+                    <left>as</left>
+                    <op>set</op>
+                    <right>400</right>
+                </action>
+            </task>
+            <task>
+                <action>
+                    <left>acc</left>
+                    <op>set</op>
+                    <right>3</right>
+                </action>
+            </task>
+
+        </tasks>
+        <bullets>
+            <bullet>
+                <name>half_circle</name>
+                <empty>true</empty>
+                <children>
+                    <bullet>
+                        <name>normal_circle</name>
+                        <texture>my_res/img/bullet_circle.png</texture>
+                        <dir>-3.14</dir>
+                        <as>250</as>
+                        <acc>0</acc>
+                        <colli>
+                            <circle>auto</circle>
+                        </colli>
+                        <tasks></tasks>
+                    </bullet>
+                    <bullet>
+                        <ref>normal_circle</ref>
+                        <dir>-2.618</dir>
+                    </bullet>
+                    <bullet>
+                        <ref>normal_circle</ref>
+                        <dir>-2.094</dir>
+                    </bullet>
+                    <bullet>
+                        <ref>normal_circle</ref>
+                        <dir>-1.57</dir>
+                    </bullet>
+                    <bullet>
+                        <ref>normal_circle</ref>
+                        <dir>-1.047</dir>
+                    </bullet>
+                    <bullet>
+                        <ref>normal_circle</ref>
+                        <dir>-0.524</dir>
+                    </bullet>
+                    <bullet>
+                        <ref>normal_circle</ref>
+                        <dir>0</dir>
+                    </bullet>
+                </children>
+            </bullet>
+        </bullets>
+    </enemy>
+    <enemy>
+        <!--for test, too powerful -->
         <name>enemy_20</name>
         <hp>1000</hp>
         <score>500</score>
@@ -437,6 +527,7 @@
                 <!--20 bullet in a circle-->
                 <name>circle</name>
                 <empty>true</empty>
+                <as>250</as>
                 <children>
                     <!--a bullet in circle-->
                     <bullet>

@@ -3,6 +3,7 @@
 	<res>my_res/img/bg_0.png</res>
 	<res>my_res/img/bg_1.png</res>
 	<res>my_res/img/bg_2.png</res>
+	<res>my_res/img/bg_die_dialog.png</res>
 	<res>my_res/img/btn_3_new.png</res>
 	<res>my_res/img/btn_bomb.png</res>
 	<res>my_res/img/btn_choice.png</res>
@@ -47,12 +48,15 @@
 	<res>my_res/img/enemy_2.png</res>
 	<res>my_res/img/enemy_20.png</res>
 	<res>my_res/img/enemy_3.png</res>
+	<res>my_res/img/enemy_4.png</res>
 	<res>my_res/img/generator.png</res>
 	<res>my_res/img/joy_stick.png</res>
 	<res>my_res/img/loading.png</res>
 	<res>my_res/img/main_bg.png</res>
-	<res>my_res/img/player.png</res>
+	<res>my_res/img/player_4.png</res>
+	<res>my_res/img/player_5.png</res>
 	<res>my_res/img/player_bullet_4.png</res>
+	<res>my_res/img/player_bullet_5.png</res>
 	<res>my_res/img/player_colli.png</res>
 	<res>my_res/img/sub_4.png</res>
 	<res>my_res/img/sub_bullet_4.png</res>
