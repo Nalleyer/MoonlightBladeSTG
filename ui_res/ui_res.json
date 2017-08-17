@@ -441,27 +441,6 @@
             },
             "trimmed": false
         },
-        "texture.png": {
-            "frame": {
-                "h": 64,
-                "idx": 1,
-                "w": 64,
-                "x": 769,
-                "y": 646
-            },
-            "rotated": false,
-            "sourceSize": {
-                "h": 64,
-                "w": 64
-            },
-            "spriteSourceSize": {
-                "h": 64,
-                "w": 64,
-                "x": 0,
-                "y": 0
-            },
-            "trimmed": false
-        },
         "title.png": {
             "frame": {
                 "h": 271,
