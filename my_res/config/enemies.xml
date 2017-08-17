@@ -47,7 +47,7 @@
         </tasks>
         <bullets>
             <bullet>
-                <!--noname-->
+                <name>bullet_0</name>
                 <texture>my_res/img/bullet_ellipse.png</texture>
                 <empty>false</empty>
                 <as>200</as>
@@ -124,6 +124,7 @@
           </tasks>
         <bullets>
             <bullet>
+                <name>bullet_1</name>
                 <texture>my_res/img/bullet_circle.png</texture>
                 <empty>false</empty>
                 <as>300</as>
@@ -184,8 +185,10 @@
         </tasks>
         <bullets>
             <bullet>
+                <name>bullet_2</name>
                 <texture>my_res/img/bullet_ellipse.png</texture>
                 <empty>false</empty>
+                <rebound>false</rebound>
                 <as>500</as>
                 <dir>-1.57</dir>
                 <autor>true</autor>
@@ -248,6 +251,7 @@
         </tasks>
         <bullets>
             <bullet>
+                <name>bullet_3</name>
                 <texture>my_res/img/bullet_circle.png</texture>
                 <empty>false</empty>
                 <as>120</as>
@@ -329,32 +333,159 @@
                     </bullet>
                     <bullet>
                         <ref>normal_circle</ref>
+                        <name>normal_circle_1</name>
                         <dir>-2.618</dir>
                     </bullet>
                     <bullet>
                         <ref>normal_circle</ref>
+                        <name>normal_circle_2</name>
                         <dir>-2.094</dir>
                     </bullet>
                     <bullet>
                         <ref>normal_circle</ref>
+                        <name>normal_circle_3</name>
                         <dir>-1.57</dir>
                     </bullet>
                     <bullet>
                         <ref>normal_circle</ref>
+                        <name>normal_circle_4</name>
                         <dir>-1.047</dir>
                     </bullet>
                     <bullet>
                         <ref>normal_circle</ref>
+                        <name>normal_circle_5</name>
                         <dir>-0.524</dir>
                     </bullet>
                     <bullet>
                         <ref>normal_circle</ref>
+                        <name>normal_circle_6</name>
                         <dir>0</dir>
                     </bullet>
                 </children>
             </bullet>
         </bullets>
     </enemy>
+    <enemy>
+        <name>enemy_19</name>
+        <hp>1000</hp>
+        <score>500</score>
+        <texture>my_res/img/enemy_20.png</texture>
+        <collir>40</collir>
+        <x>300</x>
+        <y>100</y>
+        <as>200</as>
+        <ns>0</ns>
+        <rs>0</rs>
+        <dir>-1.57</dir>
+        <acc>0</acc>
+        <autor>false</autor>
+        <empty>false</empty>
+        <tasks>
+            <task>
+                <condition>
+                    <left>age</left>
+                    <op>gt</op>
+                    <right>2</right>
+                </condition>
+                <action>
+                    <left>as</left>
+                    <op>set</op>
+                    <right>0</right>
+                </action>
+            </task>
+            <task>
+                <action>
+                    <left>dir</left>
+                    <op>set</op>
+                    <right>3.14</right>
+                </action>
+            </task>
+            <!--shoot 1 times-->
+            <task>
+                <condition>
+                    <left>age</left>
+                    <op>gt</op>
+                    <right>2.2</right>
+                </condition>
+                <action>
+                    <op>shoot</op>
+                </action>
+            </task>
+            <task>
+                <condition>
+                    <left>age</left>
+                    <op>gt</op>
+                    <right>4</right>
+                </condition>
+                <action>
+                    <left>as</left>
+                    <op>set</op>
+                    <right>100</right>
+                </action>
+            </task>
+        </tasks>
+        <bullets>
+            <!-- 1 circle -->
+            <bullet>
+                <!--20 bullet in a circle-->
+                <name>cc</name>
+                <empty>true</empty>
+                <as>10</as>
+                <children>
+                    <!--a bullet in circle-->
+                    <bullet>
+                        <name>ss</name>
+                        <texture>my_res/img/bullet_circle.png</texture>
+                        <dir>-1.57</dir>
+                        <as>250</as>
+                        <colli>
+                            <circle>auto</circle>
+                        </colli>
+                        <tasks>
+                            <task>
+                                <condition>
+                                    <left>age</left>
+                                    <op>gt</op>
+                                    <right>1.0</right>
+                                </condition>
+                                <action>
+                                    <op>aim</op>
+                                </action>
+                            </task>
+                            <task>
+                                <action>
+                                    <left>as</left>
+                                    <op>set</op>
+                                    <right>350</right>
+                                </action>
+                            </task>
+                        </tasks>
+                    </bullet>
+                    <bullet>
+                        <ref>ss</ref>
+                        <name>ss_1</name>
+                        <dir>-1.2566</dir>
+                    </bullet>
+                    <bullet>
+                        <ref>ss</ref>
+                        <name>ss_2</name>
+                        <dir>-0.9425</dir>
+                    </bullet>
+                    <bullet>
+                        <ref>ss</ref>
+                        <name>ss_3</name>
+                        <dir>-0.6283</dir>
+                    </bullet>
+                    <bullet>
+                        <ref>ss</ref>
+                        <name>ss_4</name>
+                        <dir>-0.3142</dir>
+                    </bullet>
+                </children>
+            </bullet>
+        </bullets>
+    </enemy>
+
     <enemy>
         <!--for test, too powerful -->
         <name>enemy_20</name>
@@ -527,7 +658,7 @@
                 <!--20 bullet in a circle-->
                 <name>circle</name>
                 <empty>true</empty>
-                <as>250</as>
+                <as>500</as>
                 <children>
                     <!--a bullet in circle-->
                     <bullet>
@@ -535,7 +666,6 @@
                         <texture>my_res/img/bullet_circle.png</texture>
                         <dir>-1.57</dir>
                         <as>250</as>
-                        <acc>0</acc>
                         <colli>
                             <circle>auto</circle>
                         </colli>
@@ -554,7 +684,7 @@
                                 <action>
                                     <left>as</left>
                                     <op>set</op>
-                                    <right>200</right>
+                                    <right>50</right>
                                 </action>
                             </task>
 
@@ -562,100 +692,124 @@
                     </bullet>
                     <bullet>
                         <ref>simple</ref>
+                        <name>simple_1</name>
                         <dir>-1.2566</dir>
                     </bullet>
                     <bullet>
                         <ref>simple</ref>
+                        <name>simple_2</name>
                         <dir>-0.9425</dir>
                     </bullet>
                     <bullet>
                         <ref>simple</ref>
+                        <name>simple_3</name>
                         <dir>-0.6283</dir>
                     </bullet>
                     <bullet>
                         <ref>simple</ref>
+                        <name>simple_4</name>
                         <dir>-0.3142</dir>
                     </bullet>
                     <bullet>
                         <ref>simple</ref>
+                        <name>simple_5</name>
                         <dir>0</dir>
                     </bullet>
                     <bullet>
                         <ref>simple</ref>
+                        <name>simple_6</name>
                         <dir>0.3142</dir>
                     </bullet>
                     <bullet>
                         <ref>simple</ref>
+                        <name>simple_7</name>
                         <dir>0.6283</dir>
                     </bullet>
                     <bullet>
                         <ref>simple</ref>
+                        <name>simple_8</name>
                         <dir>0.9425</dir>
                     </bullet>
                     <bullet>
                         <ref>simple</ref>
+                        <name>simple_9</name>
                         <dir>1.2566</dir>
                     </bullet>
                     <bullet>
                         <ref>simple</ref>
+                        <name>simple_10</name>
                         <dir>1.5708</dir>
                     </bullet>
                     <bullet>
                         <ref>simple</ref>
+                        <name>simple_11</name>
                         <dir>1.8850</dir>
                     </bullet>
                     <bullet>
                         <ref>simple</ref>
+                        <name>simple_12</name>
                         <dir>2.1991</dir>
                     </bullet>
                     <bullet>
                         <ref>simple</ref>
+                        <name>simple_13</name>
                         <dir>2.5133</dir>
                     </bullet>
                     <bullet>
                         <ref>simple</ref>
+                        <name>simple_14</name>
                         <dir>2.8274</dir>
                     </bullet>
                     <bullet>
                         <ref>simple</ref>
+                        <name>simple_15</name>
                         <dir>3.1416</dir>
                     </bullet>
                     <bullet>
                         <ref>simple</ref>
+                        <name>simple_16</name>
                         <dir>3.4558</dir>
                     </bullet>
                     <bullet>
                         <ref>simple</ref>
+                        <name>simple_17</name>
                         <dir>3.7699</dir>
                     </bullet>
                     <bullet>
                         <ref>simple</ref>
+                        <name>simple_18</name>
                         <dir>4.0841</dir>
                     </bullet>
                     <bullet>
                         <ref>simple</ref>
+                        <name>simple_19</name>
                         <dir>4.3982</dir>
                     </bullet>
                 </children>
             </bullet>
             <bullet>
                 <ref>circle</ref>
+                <name>circle_1</name>
                 <dir>-0.524</dir>
             </bullet>
             <bullet>
                 <ref>circle</ref>
+                <name>circle_2</name>
                 <dir>0.524</dir>
             </bullet>
             <bullet>
                 <ref>circle</ref>
+                <name>circle_3</name>
                 <dir>1.57</dir>
             </bullet>
             <bullet>
                 <ref>circle</ref>
+                <name>circle_4</name>
                 <dir>2.618</dir>
             </bullet>
             <bullet>
                 <ref>circle</ref>
+                <name>circle_5</name>
                 <dir>3.66</dir>
             </bullet>
         </bullets>
