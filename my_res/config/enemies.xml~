@@ -91,6 +91,27 @@
                 <condition>
                     <left>age</left>
                     <op>gt</op>
+                    <right>2.6</right>
+                </condition>
+                <action>
+                    <op>shoot</op>
+                </action>
+            </task>
+            <task>
+                <condition>
+                    <left>age</left>
+                    <op>gt</op>
+                    <right>2.7</right>
+                </condition>
+                <action>
+                    <op>shoot</op>
+                </action>
+            </task>
+
+            <task>
+                <condition>
+                    <left>age</left>
+                    <op>gt</op>
                     <right>3</right>
                 </condition>
                 <action>
@@ -106,7 +127,7 @@
                 <!--250 bullet in a circle-->
                 <name>circle</name>
                 <empty>true</empty>
-                <as>50</as>
+                <as>100</as>
                 <children>
                     <!--a bullet in circle-->
                     <bullet>
