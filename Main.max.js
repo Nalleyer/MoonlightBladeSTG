@@ -27768,7 +27768,6 @@ var Laya=window.Laya=(function(window,document){
 			GameObject.__super.call(this);
 			this.mIdxTask=0;
 			this.mBound=new Rectangle();
-			this.setPivotToCenter();
 		}
 
 		__class(GameObject,'STG.GameObject.GameObject',_super);
@@ -27779,19 +27778,18 @@ var Laya=window.Laya=(function(window,document){
 			(width===void 0)&& (width=0);
 			(height===void 0)&& (height=0);
 			(alpha===void 0)&& (alpha=1);
+			this.setPivotToCenter(tex);
 			this.texture=tex;
-			if (!this.destroyed){
-				this.setPivotToCenter();
-			}
 		}
 
 		__proto.isEmpty=function(){
 			return this.mIsEmpty;
 		}
 
-		__proto.setPivotToCenter=function(){
-			this.mBound=this.getGraphicBounds();
-			this.pivot(this.mBound.width / 2,this.mBound.height / 2);
+		__proto.setPivotToCenter=function(tx){
+			this.pivot(tx.width / 2,tx.height / 2);
+			this.mBound.width=tx.width;
+			this.mBound.height=tx.height;
 		}
 
 		__proto.addTask=function(t){
@@ -38676,7 +38674,7 @@ var Laya=window.Laya=(function(window,document){
 		}
 
 		__static(MainMenuUI,
-		['uiView',function(){return this.uiView={"type":"View","props":{"width":1080,"height":1920},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"imgBG","skin":"ui_res/main_bg.png"},"child":[{"type":"Image","props":{"skin":"ui_res/main_bg.png"}}]},{"type":"Image","props":{"y":142,"x":176,"var":"imgTitle","skin":"ui_res/title.png"}},{"type":"Button","props":{"y":882,"x":540,"width":498,"var":"btnStart","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"开始","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Button","props":{"y":1140,"x":540,"width":498,"var":"btnAbout","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"关于","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Sprite","props":{"y":10,"x":10,"visible":false,"var":"subBtns","alpha":0},"child":[{"type":"Button","props":{"y":978.25,"x":961,"visible":true,"var":"btnRightChoice","skin":"ui_res/btn_choice.png","scaleY":0.7,"scaleX":0.7,"anchorY":0.5,"anchorX":0.5,"alpha":1}},{"type":"Button","props":{"y":974.25,"x":94,"visible":true,"var":"btnLeftChoice","skin":"ui_res/btn_choice.png","scaleY":0.7,"scaleX":-0.7,"anchorY":0.5,"anchorX":0.5,"alpha":1}},{"type":"Sprite","props":{"y":0,"x":0,"var":"parentChoices"},"child":[{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice0","skin":"ui_res/choice_new_0_black.png","scaleY":1,"scaleX":1,"anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice1","skin":"ui_res/choice_new_1_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice2","skin":"ui_res/choice_new_2_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice3","skin":"ui_res/choice_new_3_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice4","skin":"ui_res/choice_new_4.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice5","skin":"ui_res/choice_new_5.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice6","skin":"ui_res/choice_new_6_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice7","skin":"ui_res/choice_new_7_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":1540,"x":540,"var":"imgChoiceName","skin":"ui_res/choice_name_0.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":213,"x":540,"var":"imgSubTitle","skin":"ui_res/sub_title.png","anchorY":0.5,"anchorX":0.5}}]},{"type":"Button","props":{"y":1800,"x":255,"width":498,"var":"btnBack","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"返回","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Button","props":{"y":1800,"x":801,"width":498,"var":"btnSubStart","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"开始","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]}]},{"type":"Text","props":{"y":1833,"x":30,"text":"ver  2000测试+","fontSize":70}}]};}
+		['uiView',function(){return this.uiView={"type":"View","props":{"width":1080,"height":1920},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"imgBG","skin":"ui_res/main_bg.png"},"child":[{"type":"Image","props":{"skin":"ui_res/main_bg.png"}}]},{"type":"Image","props":{"y":142,"x":176,"var":"imgTitle","skin":"ui_res/title.png"}},{"type":"Button","props":{"y":882,"x":540,"width":498,"var":"btnStart","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"开始","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Button","props":{"y":1140,"x":540,"width":498,"var":"btnAbout","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"关于","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Sprite","props":{"y":10,"x":10,"visible":false,"var":"subBtns","alpha":0},"child":[{"type":"Button","props":{"y":978.25,"x":961,"visible":true,"var":"btnRightChoice","skin":"ui_res/btn_choice.png","scaleY":0.7,"scaleX":0.7,"anchorY":0.5,"anchorX":0.5,"alpha":1}},{"type":"Button","props":{"y":974.25,"x":94,"visible":true,"var":"btnLeftChoice","skin":"ui_res/btn_choice.png","scaleY":0.7,"scaleX":-0.7,"anchorY":0.5,"anchorX":0.5,"alpha":1}},{"type":"Sprite","props":{"y":0,"x":0,"var":"parentChoices"},"child":[{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice0","skin":"ui_res/choice_new_0_black.png","scaleY":1,"scaleX":1,"anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice1","skin":"ui_res/choice_new_1_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice2","skin":"ui_res/choice_new_2_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice3","skin":"ui_res/choice_new_3_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice4","skin":"ui_res/choice_new_4.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice5","skin":"ui_res/choice_new_5.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice6","skin":"ui_res/choice_new_6_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice7","skin":"ui_res/choice_new_7_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":1540,"x":540,"var":"imgChoiceName","skin":"ui_res/choice_name_0.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":213,"x":540,"var":"imgSubTitle","skin":"ui_res/sub_title.png","anchorY":0.5,"anchorX":0.5}}]},{"type":"Button","props":{"y":1800,"x":255,"width":498,"var":"btnBack","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"返回","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Button","props":{"y":1800,"x":801,"width":498,"var":"btnSubStart","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"开始","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]}]},{"type":"Text","props":{"y":1833,"x":30,"text":"ver  2000_bound","fontSize":70}}]};}
 		]);
 		return MainMenuUI;
 	})(View)
