@@ -107,7 +107,6 @@
                     <op>shoot</op>
                 </action>
             </task>
-
             <task>
                 <condition>
                     <left>age</left>

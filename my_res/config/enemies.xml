@@ -67,7 +67,7 @@
                     <op>shoot</op>
                 </action>
             </task>
-            <task>
+            <!--task>
                 <condition>
                     <left>age</left>
                     <op>gt</op>
@@ -106,7 +106,7 @@
                 <action>
                     <op>shoot</op>
                 </action>
-            </task>
+            </task-->
             <task>
                 <condition>
                     <left>age</left>
