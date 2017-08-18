@@ -1732,9 +1732,7 @@ var Laya=window.Laya=(function(window,document){
 				obc.mIsEmpty=prop.mIsEmpty;
 				if (! obc.mIsEmpty){
 					obc.drawTexture(Laya.loader.getRes(prop.mTextureStr));
-					if (!obc.mCollisionBody){
-						obc.mCollisionBody=this.cloneColliBody(prop.mColliProto);
-					}
+					obc.mCollisionBody=this.cloneColliBody(prop.mColliProto);
 				}
 				obc.mAutoSize=prop.mColliAutoSize;
 				obc.mRebound=prop.mRebound;
@@ -1793,10 +1791,10 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	//class STG.OutSpriteDeletor
-	var OutSpriteDeletor=(function(){
-		function OutSpriteDeletor(){
-			this.mSprites=[];
+	//class STG.OutMyNodeDeletor
+	var OutMyNodeDeletor=(function(){
+		function OutMyNodeDeletor(){
+			this.mMyNodes=[];
 			this.mMinX=0;
 			this.mMinY=0;
 			this.mMaxX=0;
@@ -1804,8 +1802,8 @@ var Laya=window.Laya=(function(window,document){
 			this.mDeletingFrameCounter=0;
 		}
 
-		__class(OutSpriteDeletor,'STG.OutSpriteDeletor');
-		var __proto=OutSpriteDeletor.prototype;
+		__class(OutMyNodeDeletor,'STG.OutMyNodeDeletor');
+		var __proto=OutMyNodeDeletor.prototype;
 		__proto.setRange=function(minX,minY,maxX,maxY){
 			this.mMinX=minX;
 			this.mMinY=minY;
@@ -1814,49 +1812,49 @@ var Laya=window.Laya=(function(window,document){
 		}
 
 		__proto.deleteAll=function(){
-			for (var i=this.mSprites.length-1;i >=0;i--){
-				if (! this.mSprites[i].destroyed){
-					this.mSprites[i].destroy();
+			for (var i=this.mMyNodes.length-1;i >=0;i--){
+				if (! this.mMyNodes[i].destroyed){
+					this.mMyNodes[i].destroy();
 				}
-				this.mSprites.splice(i,1);
+				this.mMyNodes.splice(i,1);
 			}
 		}
 
-		__proto.registerSprite=function(s){
-			this.mSprites.push(s);
+		__proto.registerMyNode=function(nd){
+			this.mMyNodes.push(nd);
 		}
 
 		__proto.update=function(delta){
 			this.mDeletingFrameCounter++;
 			if (this.mDeletingFrameCounter > 100){
 				this.mDeletingFrameCounter=0;
-				for (var i=this.mSprites.length-1;i >=0;i--){
-					var s=this.mSprites[i];
-					if (s.destroyed){
-						this.mSprites.splice(i,1);
+				for (var i=this.mMyNodes.length-1;i >=0;i--){
+					var nd=this.mMyNodes[i];
+					if (nd.destroyed){
+						this.mMyNodes.splice(i,1);
 						continue ;
 					}
-					if ((this.noChildAlive(s))&&
-						(this.isOut(s)|| s.isEmpty())){
-						if ((!s.name)|| s.name=="delete"){
-							s.destroy();
+					if ((this.noChildAlive(nd))&&
+						(this.isOut(nd)|| nd.isEmpty())){
+						if ((!nd.name)|| nd.name=="delete"){
+							nd.destroy();
 						}
 						else{
-							PoolWrapper.recover(s);
+							PoolWrapper.recover(nd);
 						}
-						this.mSprites.splice(i,1);
+						this.mMyNodes.splice(i,1);
 					}
 				}
 			}
 		}
 
-		__proto.noChildAlive=function(s){
-			if (s.numChildren==0){
+		__proto.noChildAlive=function(nd){
+			if (nd.numChildren==0){
 				return true;
 			}
 			else{
-				for (var i=0;i < s.numChildren;i++){
-					var ch=s.getChildAt(i);
+				for (var i=0;i < nd.numChildren;i++){
+					var ch=nd.getChildAt(i);
 					if (!ch.__InPool){
 						return false
 					}
@@ -1865,17 +1863,18 @@ var Laya=window.Laya=(function(window,document){
 			}
 		}
 
-		__proto.isOut=function(s){
-			var bound=s.getGraphicBounds();
-			var offsetX=bound.width *s.scaleX / 2+200;
-			var offsetY=bound.height *s.scaleY / 2+200;
-			var posGlobal=s.localToGlobal(new Point(0,0));
+		__proto.isOut=function(nd){
+			var bound=nd.getGraphicBounds();
+			var offsetX=bound.width *nd.scaleX / 2+200;
+			var offsetY=bound.height *nd.scaleY / 2+200;
+			var globalX=nd.getGlobalX(0);
+			var globalY=nd.getGlobalY(0);
 			return (
-			(posGlobal.x < this.mMinX-offsetX)|| (posGlobal.x > this.mMaxX+offsetX)||
-			(posGlobal.y < this.mMinY-offsetY)|| (posGlobal.y > this.mMaxY+offsetY));
+			(globalX < this.mMinX-offsetX)|| (globalX > this.mMaxX+offsetX)||
+			(globalY < this.mMinY-offsetY)|| (globalY > this.mMaxY+offsetY));
 		}
 
-		return OutSpriteDeletor;
+		return OutMyNodeDeletor;
 	})()
 
 
@@ -1908,13 +1907,14 @@ var Laya=window.Laya=(function(window,document){
 				};
 				var hw=obc.mBound.width / 2;
 				var hh=obc.mBound.height / 2;
-				var gPos=obc.localToGlobal(new Point(0,0));
-				if ((gPos.x <=this.LEFT+hw && MyMath.movingLeft(obc))
-					|| (gPos.x >=this.RIGHT-hw && MyMath.movingRight(obc))){
+				var globalX=obc.getGlobalX(0);
+				var globalY=obc.getGlobalY(0);
+				if ((globalX <=this.LEFT+hw && MyMath.movingLeft(obc))
+					|| (globalX >=this.RIGHT-hw && MyMath.movingRight(obc))){
 					MyMath.rebounceLR(obc);
 				}
-				if ((gPos.y <=this.UP+hh && MyMath.movingUp(obc))
-					|| (gPos.y >=this.DOWN-hh && MyMath.movingDown(obc))){
+				if ((globalY <=this.UP+hh && MyMath.movingUp(obc))
+					|| (globalY >=this.DOWN-hh && MyMath.movingDown(obc))){
 					MyMath.rebounceUD(obc);
 				}
 			}
@@ -2120,10 +2120,12 @@ var Laya=window.Laya=(function(window,document){
 		}
 
 		MyMath.getDirection=function(ob,tgt){
-			var obPos=ob.localToGlobal(new Point(ob.pivotX,ob.pivotY));
-			var tgtPos=tgt.localToGlobal(new Point(tgt.pivotX,tgt.pivotY));
-			return (Math.atan2(-(tgtPos.y-obPos.y),
-			(tgtPos.x-obPos.x)));
+			var obPosX=ob.getGlobalX(ob.pivotX);
+			var obPosY=ob.getGlobalY(ob.pivotY);
+			var tgtPosX=tgt.getGlobalX(tgt.pivotX);
+			var tgtPosY=tgt.getGlobalY(tgt.pivotY);
+			return (Math.atan2(-(tgtPosY-obPosY),
+			(tgtPosX-obPosX)));
 		}
 
 		MyMath.rebounceLR=function(obc){
@@ -23589,6 +23591,34 @@ var Laya=window.Laya=(function(window,document){
 			return this.mChildren.length;
 		}
 
+		__proto.getGlobalX=function(x){
+			var nd=this;
+			while (nd){
+				if (nd !=Laya.stage){
+					x=x+nd.x-nd.pivotX;
+					nd=nd.parent;
+				}
+				else{
+					break ;
+				}
+			}
+			return x;
+		}
+
+		__proto.getGlobalY=function(y){
+			var nd=this;
+			while (nd){
+				if (nd !=Laya.stage){
+					y=y+nd.y-nd.pivotY;
+					nd=nd.parent;
+				}
+				else{
+					break ;
+				}
+			}
+			return y;
+		}
+
 		__proto.update=function(delta){
 			if (!this.destroyed){
 				this.updateSelf(delta);
@@ -27801,9 +27831,9 @@ var Laya=window.Laya=(function(window,document){
 			var value=tsk.mCondition.mConditionRight;
 			switch(tsk.mCondition.mConditionLeft){
 				case "EConditionLeft_X" :
-					return conditionFuncion(this.localToGlobal(new Point(0,0)).x,value);
+					return conditionFuncion(this.getGlobalX(0),value);
 				case "EConditionLeft_Y" :
-					return conditionFuncion(this.localToGlobal(new Point(0,0)).y,value);
+					return conditionFuncion(this.getGlobalY(0),value);
 				case "EConditionLeft_ASpeed" :
 					return conditionFuncion(this.mASpeed,value);
 				case "EConditionLeft_NSpeed" :
@@ -32850,10 +32880,9 @@ var Laya=window.Laya=(function(window,document){
 				var bullet=this.mGeneratorFunction();
 				if (this.mBulletDir){
 					bullet.mDirection=MyMath.fluctuate(this.mBulletDir,this.mFluctuationBulletDir);
-				};
-				var pos=this.localToGlobal(new Point(0,0));
-				bullet.x=pos.x;
-				bullet.y=pos.y;
+				}
+				bullet.x=this.getGlobalX(0);
+				bullet.y=this.getGlobalY(0);
 				if (this.mType=="player"){
 					Manager.getManager().getGameScene().addPlayerBullet(bullet);
 				}
@@ -32900,10 +32929,11 @@ var Laya=window.Laya=(function(window,document){
 			if (this.mIsEmpty){
 				return;
 			};
-			var globalPos=this.localToGlobal(new Point(this.pivotX,this.pivotY));
+			var globalX=this.getGlobalX(this.pivotX);
+			var globalY=this.getGlobalY(this.pivotY);
 			var theta=-this.rotation / 180 *Math.PI;
-			this.mCollisionBody.x=globalPos.x;
-			this.mCollisionBody.y=-globalPos.y;
+			this.mCollisionBody.x=globalX;
+			this.mCollisionBody.y=-globalY;
 			if ((this.mCollisionBody instanceof STG.GameObject.Collision.ColliCircle )){
 				if (this.mAutoSize)
 				{this.mCollisionBody.r=this.mCollisionBody.r|| this.mBound.width / 2 *this.scaleX;
@@ -33314,7 +33344,7 @@ var Laya=window.Laya=(function(window,document){
 			this.mNumPlayer=9999999;
 			this.mColliChecker=new GameCollisionChecker();
 			this.mColliChecker.setPlayer(this.mPlayer);
-			this.mDeletor=new OutSpriteDeletor();
+			this.mDeletor=new OutMyNodeDeletor();
 			this.mDeletor.setRange(
 			0-50,
 			0,
@@ -33437,10 +33467,10 @@ var Laya=window.Laya=(function(window,document){
 			}
 		}
 
-		__proto.autoDelete=function(s){
-			this.mDeletor.registerSprite(s);
-			for (var i=0;i < s.numChildren;i++){
-				this.mDeletor.registerSprite(s.getChildAt(i));
+		__proto.autoDelete=function(nd){
+			this.mDeletor.registerMyNode(nd);
+			for (var i=0;i < nd.numChildren;i++){
+				this.mDeletor.registerMyNode(nd.getChildAt(i));
 			}
 		}
 
@@ -36841,6 +36871,103 @@ var Laya=window.Laya=(function(window,document){
 
 
 	/**
+	*使用 <code>VSlider</code> 控件，用户可以通过在滑块轨道的终点之间移动滑块来选择值。
+	*<p> <code>VSlider</code> 控件采用垂直方向。滑块轨道从下往上扩展，而标签位于轨道的左右两侧。</p>
+	*
+	*@example <caption>以下示例代码，创建了一个 <code>VSlider</code> 实例。</caption>
+	*package
+	*{
+		*import laya.ui.HSlider;
+		*import laya.ui.VSlider;
+		*import laya.utils.Handler;
+		*public class VSlider_Example
+		*{
+			*private var vSlider:VSlider;
+			*public function VSlider_Example()
+			*{
+				*Laya.init(640,800);//设置游戏画布宽高。
+				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
+				*Laya.loader.load(["resource/ui/vslider.png","resource/ui/vslider$bar.png"],Handler.create(this,onLoadComplete));//加载资源。
+				*}
+			*private function onLoadComplete():void
+			*{
+				*vSlider=new VSlider();//创建一个 VSlider 类的实例对象 vSlider 。
+				*vSlider.skin="resource/ui/vslider.png";//设置 vSlider 的皮肤。
+				*vSlider.min=0;//设置 vSlider 最低位置值。
+				*vSlider.max=10;//设置 vSlider 最高位置值。
+				*vSlider.value=2;//设置 vSlider 当前位置值。
+				*vSlider.tick=1;//设置 vSlider 刻度值。
+				*vSlider.x=100;//设置 vSlider 对象的属性 x 的值，用于控制 vSlider 对象的显示位置。
+				*vSlider.y=100;//设置 vSlider 对象的属性 y 的值，用于控制 vSlider 对象的显示位置。
+				*vSlider.changeHandler=new Handler(this,onChange);//设置 vSlider 位置变化处理器。
+				*Laya.stage.addChild(vSlider);//把 vSlider 添加到显示列表。
+				*}
+			*private function onChange(value:Number):void
+			*{
+				*trace("滑块的位置： value="+value);
+				*}
+			*}
+		*}
+	*@example
+	*Laya.init(640,800);//设置游戏画布宽高
+	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色
+	*var vSlider;
+	*Laya.loader.load(["resource/ui/vslider.png","resource/ui/vslider$bar.png"],laya.utils.Handler.create(this,onLoadComplete));//加载资源。
+	*function onLoadComplete(){
+		*vSlider=new laya.ui.VSlider();//创建一个 VSlider 类的实例对象 vSlider 。
+		*vSlider.skin="resource/ui/vslider.png";//设置 vSlider 的皮肤。
+		*vSlider.min=0;//设置 vSlider 最低位置值。
+		*vSlider.max=10;//设置 vSlider 最高位置值。
+		*vSlider.value=2;//设置 vSlider 当前位置值。
+		*vSlider.tick=1;//设置 vSlider 刻度值。
+		*vSlider.x=100;//设置 vSlider 对象的属性 x 的值，用于控制 vSlider 对象的显示位置。
+		*vSlider.y=100;//设置 vSlider 对象的属性 y 的值，用于控制 vSlider 对象的显示位置。
+		*vSlider.changeHandler=new laya.utils.Handler(this,onChange);//设置 vSlider 位置变化处理器。
+		*Laya.stage.addChild(vSlider);//把 vSlider 添加到显示列表。
+		*}
+	*function onChange(value){
+		*console.log("滑块的位置： value="+value);
+		*}
+	*@example
+	*import HSlider=laya.ui.HSlider;
+	*import VSlider=laya.ui.VSlider;
+	*import Handler=laya.utils.Handler;
+	*class VSlider_Example {
+		*private vSlider:VSlider;
+		*constructor(){
+			*Laya.init(640,800);//设置游戏画布宽高。
+			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
+			*Laya.loader.load(["resource/ui/vslider.png","resource/ui/vslider$bar.png"],Handler.create(this,this.onLoadComplete));//加载资源。
+			*}
+		*private onLoadComplete():void {
+			*this.vSlider=new VSlider();//创建一个 VSlider 类的实例对象 vSlider 。
+			*this.vSlider.skin="resource/ui/vslider.png";//设置 vSlider 的皮肤。
+			*this.vSlider.min=0;//设置 vSlider 最低位置值。
+			*this.vSlider.max=10;//设置 vSlider 最高位置值。
+			*this.vSlider.value=2;//设置 vSlider 当前位置值。
+			*this.vSlider.tick=1;//设置 vSlider 刻度值。
+			*this.vSlider.x=100;//设置 vSlider 对象的属性 x 的值，用于控制 vSlider 对象的显示位置。
+			*this.vSlider.y=100;//设置 vSlider 对象的属性 y 的值，用于控制 vSlider 对象的显示位置。
+			*this.vSlider.changeHandler=new Handler(this,this.onChange);//设置 vSlider 位置变化处理器。
+			*Laya.stage.addChild(this.vSlider);//把 vSlider 添加到显示列表。
+			*}
+		*private onChange(value:number):void {
+			*console.log("滑块的位置： value="+value);
+			*}
+		*}
+	*@see laya.ui.Slider
+	*/
+	//class laya.ui.VSlider extends laya.ui.Slider
+	var VSlider=(function(_super){
+		function VSlider(){VSlider.__super.call(this);;
+		};
+
+		__class(VSlider,'laya.ui.VSlider',_super);
+		return VSlider;
+	})(Slider)
+
+
+	/**
 	*<code>TextInput</code> 类用于创建显示对象以显示和输入文本。
 	*
 	*@example <caption>以下示例代码，创建了一个 <code>TextInput</code> 实例。</caption>
@@ -37161,103 +37288,6 @@ var Laya=window.Laya=(function(window,document){
 
 		return TextInput;
 	})(Label)
-
-
-	/**
-	*使用 <code>VSlider</code> 控件，用户可以通过在滑块轨道的终点之间移动滑块来选择值。
-	*<p> <code>VSlider</code> 控件采用垂直方向。滑块轨道从下往上扩展，而标签位于轨道的左右两侧。</p>
-	*
-	*@example <caption>以下示例代码，创建了一个 <code>VSlider</code> 实例。</caption>
-	*package
-	*{
-		*import laya.ui.HSlider;
-		*import laya.ui.VSlider;
-		*import laya.utils.Handler;
-		*public class VSlider_Example
-		*{
-			*private var vSlider:VSlider;
-			*public function VSlider_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*Laya.loader.load(["resource/ui/vslider.png","resource/ui/vslider$bar.png"],Handler.create(this,onLoadComplete));//加载资源。
-				*}
-			*private function onLoadComplete():void
-			*{
-				*vSlider=new VSlider();//创建一个 VSlider 类的实例对象 vSlider 。
-				*vSlider.skin="resource/ui/vslider.png";//设置 vSlider 的皮肤。
-				*vSlider.min=0;//设置 vSlider 最低位置值。
-				*vSlider.max=10;//设置 vSlider 最高位置值。
-				*vSlider.value=2;//设置 vSlider 当前位置值。
-				*vSlider.tick=1;//设置 vSlider 刻度值。
-				*vSlider.x=100;//设置 vSlider 对象的属性 x 的值，用于控制 vSlider 对象的显示位置。
-				*vSlider.y=100;//设置 vSlider 对象的属性 y 的值，用于控制 vSlider 对象的显示位置。
-				*vSlider.changeHandler=new Handler(this,onChange);//设置 vSlider 位置变化处理器。
-				*Laya.stage.addChild(vSlider);//把 vSlider 添加到显示列表。
-				*}
-			*private function onChange(value:Number):void
-			*{
-				*trace("滑块的位置： value="+value);
-				*}
-			*}
-		*}
-	*@example
-	*Laya.init(640,800);//设置游戏画布宽高
-	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色
-	*var vSlider;
-	*Laya.loader.load(["resource/ui/vslider.png","resource/ui/vslider$bar.png"],laya.utils.Handler.create(this,onLoadComplete));//加载资源。
-	*function onLoadComplete(){
-		*vSlider=new laya.ui.VSlider();//创建一个 VSlider 类的实例对象 vSlider 。
-		*vSlider.skin="resource/ui/vslider.png";//设置 vSlider 的皮肤。
-		*vSlider.min=0;//设置 vSlider 最低位置值。
-		*vSlider.max=10;//设置 vSlider 最高位置值。
-		*vSlider.value=2;//设置 vSlider 当前位置值。
-		*vSlider.tick=1;//设置 vSlider 刻度值。
-		*vSlider.x=100;//设置 vSlider 对象的属性 x 的值，用于控制 vSlider 对象的显示位置。
-		*vSlider.y=100;//设置 vSlider 对象的属性 y 的值，用于控制 vSlider 对象的显示位置。
-		*vSlider.changeHandler=new laya.utils.Handler(this,onChange);//设置 vSlider 位置变化处理器。
-		*Laya.stage.addChild(vSlider);//把 vSlider 添加到显示列表。
-		*}
-	*function onChange(value){
-		*console.log("滑块的位置： value="+value);
-		*}
-	*@example
-	*import HSlider=laya.ui.HSlider;
-	*import VSlider=laya.ui.VSlider;
-	*import Handler=laya.utils.Handler;
-	*class VSlider_Example {
-		*private vSlider:VSlider;
-		*constructor(){
-			*Laya.init(640,800);//设置游戏画布宽高。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*Laya.loader.load(["resource/ui/vslider.png","resource/ui/vslider$bar.png"],Handler.create(this,this.onLoadComplete));//加载资源。
-			*}
-		*private onLoadComplete():void {
-			*this.vSlider=new VSlider();//创建一个 VSlider 类的实例对象 vSlider 。
-			*this.vSlider.skin="resource/ui/vslider.png";//设置 vSlider 的皮肤。
-			*this.vSlider.min=0;//设置 vSlider 最低位置值。
-			*this.vSlider.max=10;//设置 vSlider 最高位置值。
-			*this.vSlider.value=2;//设置 vSlider 当前位置值。
-			*this.vSlider.tick=1;//设置 vSlider 刻度值。
-			*this.vSlider.x=100;//设置 vSlider 对象的属性 x 的值，用于控制 vSlider 对象的显示位置。
-			*this.vSlider.y=100;//设置 vSlider 对象的属性 y 的值，用于控制 vSlider 对象的显示位置。
-			*this.vSlider.changeHandler=new Handler(this,this.onChange);//设置 vSlider 位置变化处理器。
-			*Laya.stage.addChild(this.vSlider);//把 vSlider 添加到显示列表。
-			*}
-		*private onChange(value:number):void {
-			*console.log("滑块的位置： value="+value);
-			*}
-		*}
-	*@see laya.ui.Slider
-	*/
-	//class laya.ui.VSlider extends laya.ui.Slider
-	var VSlider=(function(_super){
-		function VSlider(){VSlider.__super.call(this);;
-		};
-
-		__class(VSlider,'laya.ui.VSlider',_super);
-		return VSlider;
-	})(Slider)
 
 
 	/**
@@ -38009,9 +38039,8 @@ var Laya=window.Laya=(function(window,document){
 			};
 			var newBullet=Manager.getManager().getGameScene().shootBullet(
 			this.mBullets[this.mNowIndexBullet]);
-			var pos=this.localToGlobal(new Point(0,0));
-			newBullet.x=pos.x+this.mBound.width / 2;
-			newBullet.y=pos.y+this.mBound.height / 2;
+			newBullet.x=this.getGlobalX(0)+this.mBound.width / 2;
+			newBullet.y=this.getGlobalY(0)+this.mBound.height / 2;
 			Manager.getManager().getGameScene().addEnemyBullet(newBullet);
 			this.mNowIndexBullet=(this.mNowIndexBullet+1)% this.mBullets.length;
 		}
@@ -38671,7 +38700,7 @@ var Laya=window.Laya=(function(window,document){
 		}
 
 		__static(MainMenuUI,
-		['uiView',function(){return this.uiView={"type":"View","props":{"width":1080,"height":1920},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"imgBG","skin":"ui_res/main_bg.png"},"child":[{"type":"Image","props":{"skin":"ui_res/main_bg.png"}}]},{"type":"Image","props":{"y":142,"x":176,"var":"imgTitle","skin":"ui_res/title.png"}},{"type":"Button","props":{"y":882,"x":540,"width":498,"var":"btnStart","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"开始","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Button","props":{"y":1140,"x":540,"width":498,"var":"btnAbout","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"关于","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Sprite","props":{"y":10,"x":10,"visible":false,"var":"subBtns","alpha":0},"child":[{"type":"Button","props":{"y":978.25,"x":961,"visible":true,"var":"btnRightChoice","skin":"ui_res/btn_choice.png","scaleY":0.7,"scaleX":0.7,"anchorY":0.5,"anchorX":0.5,"alpha":1}},{"type":"Button","props":{"y":974.25,"x":94,"visible":true,"var":"btnLeftChoice","skin":"ui_res/btn_choice.png","scaleY":0.7,"scaleX":-0.7,"anchorY":0.5,"anchorX":0.5,"alpha":1}},{"type":"Sprite","props":{"y":0,"x":0,"var":"parentChoices"},"child":[{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice0","skin":"ui_res/choice_new_0_black.png","scaleY":1,"scaleX":1,"anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice1","skin":"ui_res/choice_new_1_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice2","skin":"ui_res/choice_new_2_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice3","skin":"ui_res/choice_new_3_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice4","skin":"ui_res/choice_new_4.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice5","skin":"ui_res/choice_new_5.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice6","skin":"ui_res/choice_new_6_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice7","skin":"ui_res/choice_new_7_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":1540,"x":540,"var":"imgChoiceName","skin":"ui_res/choice_name_0.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":213,"x":540,"var":"imgSubTitle","skin":"ui_res/sub_title.png","anchorY":0.5,"anchorX":0.5}}]},{"type":"Button","props":{"y":1800,"x":255,"width":498,"var":"btnBack","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"返回","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Button","props":{"y":1800,"x":801,"width":498,"var":"btnSubStart","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"开始","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]}]},{"type":"Text","props":{"y":1833,"x":30,"text":"ver  2000_bound2","fontSize":70}}]};}
+		['uiView',function(){return this.uiView={"type":"View","props":{"width":1080,"height":1920},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"imgBG","skin":"ui_res/main_bg.png"},"child":[{"type":"Image","props":{"skin":"ui_res/main_bg.png"}}]},{"type":"Image","props":{"y":142,"x":176,"var":"imgTitle","skin":"ui_res/title.png"}},{"type":"Button","props":{"y":882,"x":540,"width":498,"var":"btnStart","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"开始","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Button","props":{"y":1140,"x":540,"width":498,"var":"btnAbout","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"关于","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Sprite","props":{"y":10,"x":10,"visible":false,"var":"subBtns","alpha":0},"child":[{"type":"Button","props":{"y":978.25,"x":961,"visible":true,"var":"btnRightChoice","skin":"ui_res/btn_choice.png","scaleY":0.7,"scaleX":0.7,"anchorY":0.5,"anchorX":0.5,"alpha":1}},{"type":"Button","props":{"y":974.25,"x":94,"visible":true,"var":"btnLeftChoice","skin":"ui_res/btn_choice.png","scaleY":0.7,"scaleX":-0.7,"anchorY":0.5,"anchorX":0.5,"alpha":1}},{"type":"Sprite","props":{"y":0,"x":0,"var":"parentChoices"},"child":[{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice0","skin":"ui_res/choice_new_0_black.png","scaleY":1,"scaleX":1,"anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice1","skin":"ui_res/choice_new_1_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice2","skin":"ui_res/choice_new_2_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice3","skin":"ui_res/choice_new_3_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice4","skin":"ui_res/choice_new_4.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice5","skin":"ui_res/choice_new_5.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice6","skin":"ui_res/choice_new_6_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice7","skin":"ui_res/choice_new_7_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":1540,"x":540,"var":"imgChoiceName","skin":"ui_res/choice_name_0.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":213,"x":540,"var":"imgSubTitle","skin":"ui_res/sub_title.png","anchorY":0.5,"anchorX":0.5}}]},{"type":"Button","props":{"y":1800,"x":255,"width":498,"var":"btnBack","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"返回","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Button","props":{"y":1800,"x":801,"width":498,"var":"btnSubStart","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"开始","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]}]},{"type":"Text","props":{"y":1833,"x":30,"text":"ver  2000_l2g_2","fontSize":70}}]};}
 		]);
 		return MainMenuUI;
 	})(View)
@@ -39597,7 +39626,7 @@ var Laya=window.Laya=(function(window,document){
 	})(PlayerBullet)
 
 
-	Laya.__init([LoaderManager,EventDispatcher,Timer,View,Render,Browser,WebGLContext2D,ShaderCompile,GraphicAnimation,LocalStorage,WebGLFilter,AtlasGrid,DrawText]);
+	Laya.__init([EventDispatcher,LoaderManager,Timer,View,Render,Browser,WebGLContext2D,ShaderCompile,GraphicAnimation,LocalStorage,WebGLFilter,AtlasGrid,DrawText]);
 	new Main();
 
 })(window,document,Laya);
