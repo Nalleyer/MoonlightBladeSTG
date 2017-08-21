@@ -67,7 +67,7 @@
                     <op>shoot</op>
                 </action>
             </task>
-            <task>
+            <!--task>
                 <condition>
                     <left>age</left>
                     <op>gt</op>
@@ -118,7 +118,7 @@
                     <op>set</op>
                     <right>500</right>
                 </action>
-            </task>
+            </task-->
         </tasks>
         <bullets>
             <!-- 6 circle -->

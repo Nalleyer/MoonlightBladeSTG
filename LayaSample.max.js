@@ -1,7 +1,7 @@
 var window = window || global;
 var document = document || (window.document = {});
 /***********************************/
-/*http://www.layabox.com 2016/11/25*/
+/*http://www.layabox.com  2017/3/23*/
 /***********************************/
 var Laya=window.Laya=(function(window,document){
 	var Laya={
@@ -84,13 +84,14 @@ var Laya=window.Laya=(function(window,document){
 				var supers=_super.split(',');
 				a.extend=[];
 				for(var i=0;i<supers.length;i++){
-					var name=supers[i];
-					ins[name]=ins[name] || {self:name};
-					a.extend.push(ins[name]);
+					var nm=supers[i];
+					ins[nm]=ins[nm] || {self:nm};
+					a.extend.push(ins[nm]);
 				}
 			}
 			var o=window,words=name.split('.');
-			for(var i=0;i<words.length-1;i++) o=o[words[i]];o[words[words.length-1]]={__interface__:name};
+			for(var i=0;i<words.length-1;i++) o=o[words[i]];
+			o[words[words.length-1]]={__interface__:name};
 		},
 		class:function(o,fullName,_super,miniName){
 			_super && Laya.__extend(o,_super);
@@ -186,7 +187,7 @@ var Laya=window.Laya=(function(window,document){
 	window.console=window.console || ({log:function(){}});
 	window.trace=window.console.log;
 	Error.prototype.throwError=function(){throw arguments;};
-	String.prototype.substr=Laya.__substr;
+	//String.prototype.substr=Laya.__substr;
 	Object.defineProperty(Array.prototype,'fixed',{enumerable: false});
 
 	return Laya;
@@ -201,132 +202,12 @@ var Laya=window.Laya=(function(window,document){
 	Laya.interface('laya.display.ILayout');
 	Laya.interface('laya.resource.IDispose');
 	Laya.interface('laya.runtime.IConchNode');
-	Laya.interface('laya.webgl.shapes.IShape');
 	Laya.interface('laya.webgl.submit.ISubmit');
 	Laya.interface('laya.filters.IFilterAction');
-	Laya.interface('laya.webgl.text.ICharSegment');
 	Laya.interface('laya.runtime.ICPlatformClass');
-	Laya.interface('laya.resource.ICreateResource');
 	Laya.interface('laya.webgl.canvas.save.ISaveData');
 	Laya.interface('laya.webgl.resource.IMergeAtlasBitmap');
 	Laya.interface('laya.filters.IFilterActionGL','laya.filters.IFilterAction');
-	/**
-	*@private
-	*/
-	//class laya.utils.RunDriver
-	var RunDriver=(function(){
-		function RunDriver(){};
-		__class(RunDriver,'laya.utils.RunDriver');
-		RunDriver.FILTER_ACTIONS=[];
-		RunDriver.pixelRatio=-1;
-		RunDriver._charSizeTestDiv=null
-		RunDriver.now=function(){
-			return Date.now();
-		}
-
-		RunDriver.getWindow=function(){
-			return window;
-		}
-
-		RunDriver.getPixelRatio=function(){
-			if (RunDriver.pixelRatio < 0){
-				var ctx=Browser.context;
-				var backingStore=ctx.backingStorePixelRatio || ctx.webkitBackingStorePixelRatio || ctx.mozBackingStorePixelRatio || ctx.msBackingStorePixelRatio || ctx.oBackingStorePixelRatio || ctx.backingStorePixelRatio || 1;
-				RunDriver.pixelRatio=(Browser.window.devicePixelRatio || 1)/ backingStore;
-				if(RunDriver.pixelRatio<1)RunDriver.pixelRatio=1;
-			}
-			return RunDriver.pixelRatio;
-		}
-
-		RunDriver.getIncludeStr=function(name){
-			return null;
-		}
-
-		RunDriver.createShaderCondition=function(conditionScript){
-			var fn="(function() {return "+conditionScript+";})";
-			return Browser.window.eval(fn);
-		}
-
-		RunDriver.fontMap=[];
-		RunDriver.measureText=function(txt,font){
-			var isChinese=RunDriver.hanzi.test(txt);
-			if (isChinese && RunDriver.fontMap[font]){
-				return RunDriver.fontMap[font];
-			};
-			var ctx=Browser.context;
-			ctx.font=font;
-			var r=ctx.measureText(txt);
-			if (isChinese)RunDriver.fontMap[font]=r;
-			return r;
-		}
-
-		RunDriver.getWebGLContext=function(canvas){
-		};
-
-		RunDriver.beginFlush=function(){
-		};
-
-		RunDriver.endFinish=function(){
-		};
-
-		RunDriver.addToAtlas=null
-		RunDriver.flashFlushImage=function(atlasWebGLCanvas){
-		};
-
-		RunDriver.drawToCanvas=function(sprite,_renderType,canvasWidth,canvasHeight,offsetX,offsetY){
-			var canvas=HTMLCanvas.create("2D");
-			var context=new RenderContext(canvasWidth,canvasHeight,canvas);
-			RenderSprite.renders[_renderType]._fun(sprite,context,offsetX,offsetY);
-			return canvas;
-		}
-
-		RunDriver.createParticleTemplate2D=null
-		RunDriver.createGLTextur=null;
-		RunDriver.createWebGLContext2D=null;
-		RunDriver.changeWebGLSize=function(w,h){
-		};
-
-		RunDriver.createRenderSprite=function(type,next){
-			return new RenderSprite(type,next);
-		}
-
-		RunDriver.createFilterAction=function(type){
-			return new ColorFilterAction();
-		}
-
-		RunDriver.createGraphics=function(){
-			return new Graphics();
-		}
-
-		RunDriver.clear=function(value){
-			Render._context.ctx.clear();
-		}
-
-		RunDriver.clearAtlas=function(value){
-		};
-
-		RunDriver.addTextureToAtlas=function(value){
-		};
-
-		RunDriver.getTexturePixels=function(value,x,y,width,height){
-			return null;
-		}
-
-		RunDriver.skinAniSprite=function(){
-			return null;
-		}
-
-		__static(RunDriver,
-		['hanzi',function(){return this.hanzi=new RegExp("^[\u4E00-\u9FA5]$");}
-		]);
-		return RunDriver;
-	})()
-
-
-	/**
-	*<code>Laya</code> 是全局对象的引用入口集。
-	*Laya类引用了一些常用的全局对象，比如Laya.stage：舞台，Laya.timer：时间管理器，Laya.loader：加载管理器，使用时注意大小写。
-	*/
 	//class Laya
 	var ___Laya=(function(){
 		//function Laya(){};
@@ -402,9 +283,9 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	//class Main
-	var Main=(function(){
-		function Main(){
+	//class LayaSample
+	var LayaSample=(function(){
+		function LayaSample(){
 			this.mTouchText=null;
 			this.mDebugText=null;
 			this.mTouches=[];
@@ -416,8 +297,8 @@ var Laya=window.Laya=(function(window,document){
 			this.mDebugText=new Text();
 		}
 
-		__class(Main,'Main');
-		var __proto=Main.prototype;
+		__class(LayaSample,'LayaSample');
+		var __proto=LayaSample.prototype;
 		__proto.loadResList=function(){
 			this.mLoadingImg=new Sprite();
 			this.mLoadingImg.loadImage("my_res/img/loading.png");
@@ -444,91 +325,61 @@ var Laya=window.Laya=(function(window,document){
 
 		__proto.onLoadComplete=function(){
 			console.log("load completed");
-			this.mLoadingImg.destroy();
 			var manager=Manager.getManager();
 			manager.initGame();
-			this.mTouchText.x=0;
-			this.mTouchText.y=0;
-			this.mTouchText.color="#66ccff";
-			this.mTouchText.fontSize=100;
-			this.mTouchText.zOrder=9;
-			Laya.stage.addChild(this.mTouchText);
+			this.mDebugText=new Text();
 			this.mDebugText.x=0;
-			this.mDebugText.y=200;
+			this.mDebugText.y=0;
 			this.mDebugText.color="#66ccff";
 			this.mDebugText.fontSize=100;
 			this.mDebugText.zOrder=9;
 			Laya.stage.addChild(this.mDebugText);
-			Laya.timer.frameLoop(1,this,this.mainLoop);
+			Laya.timer.loop(1,this,this.mainLoop);
 		}
 
 		__proto.mainLoop=function(){
-			var deltaInt=Laya.timer.delta;
+			var delta=Laya.timer.delta;
+			Manager.getManager().update(delta);
 		}
 
-		//Manager.getManager().update(deltaInt / 1000);
-		__proto.refreshText=function(){
-			var str="[";
-			for (var i=0;i < this.mTouches.length;i++){
-				str+=" "
-				str+=this.mTouches[i].toString();
-			}
-			str+=" ]";
-			this.printToText(str);
-		}
-
-		__proto.debug=function(str){
-			return;
+		__proto.printToText=function(str){
 			if (str){
 				this.mDebugText.text=str;
 			}
 		}
 
-		__proto.printToText=function(str){
-			return;
-			if (str){
-				this.mTouchText.text=str;
-			}
-		}
-
 		__proto.initStage=function(){
-			Laya.init(1080,1920);
-			Laya.stage.bgColor="#b0dcfe";
+			Laya.init(1080,1920,WebGL);
+			Laya.stage.bgColor="#9645a7";
 			Laya.stage.scaleMode="showall";
 			Laya.stage.alignH="center";
 			Laya.stage.alignV="middle";
 			Stat.show(0,30);
+			Laya.stage.on("mousemove",this,this.onMouseMove);
+			Laya.stage.on("mouseup",this,this.onMouseUp);
 			console.log("hello");
 		}
 
-		__proto.onMouseDown=function(e){
-			this.mTouches.push(e.touchId);
-			this.refreshText();
+		/*
+		var t0=Math.PI *4 / 3;
+		var t1=-Math.PI *2 / 3;
+		trace(Math.sin(t0));
+		trace(Math.sin(t1));
+		throw new Error("d");
+		*/
+		__proto.onMouseUp=function(e){
+			Manager.getManager().dbg();
 		}
 
 		__proto.onMouseMove=function(e){
-			this.refreshText();
-			var str="moving events : ";
-			this.debug(str+e.touchId);
+			var mousePos=new Point(e.stageX,-e.stageY);
+			this.printToText("("+e.stageX+", "+e.stageY+")");
 		}
 
-		__proto.onMouseUp=function(e){
-			for (var i=0;i < this.mTouches.length;i++){
-				if (e.touchId==this.mTouches[i]){
-					this.mTouches.splice(i,1);
-					i--;
-				}
-			}
-			this.refreshText();
-		}
-
-		return Main;
+		return LayaSample;
 	})()
 
 
-	/**
-	*<code>EventDispatcher</code> 类是可调度事件的所有类的基类。
-	*/
 	//class laya.events.EventDispatcher
 	var EventDispatcher=(function(){
 		var EventHandler;
@@ -724,136 +575,53 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<p><code>Handler</code> 是事件处理器类。</p>
-	*<p>推荐使用 Handler.create()方法从对象池创建，减少对象创建消耗。</p>
-	*<p><b>注意：</b>由于鼠标事件也用本对象池，不正确的回收及调用，可能会影响鼠标事件的执行。</p>
-	*/
-	//class laya.utils.Handler
-	var Handler=(function(){
-		function Handler(caller,method,args,once){
-			//this.caller=null;
-			//this.method=null;
-			//this.args=null;
-			this.once=false;
-			this._id=0;
-			(once===void 0)&& (once=false);
-			this.setTo(caller,method,args,once);
-		}
-
-		__class(Handler,'laya.utils.Handler');
-		var __proto=Handler.prototype;
-		/**
-		*设置此对象的指定属性值。
-		*@param caller 执行域(this)。
-		*@param method 回调方法。
-		*@param args 携带的参数。
-		*@param once 是否只执行一次，如果为true，执行后执行recover()进行回收。
-		*@return 返回 handler 本身。
-		*/
-		__proto.setTo=function(caller,method,args,once){
-			this._id=Handler._gid++;
-			this.caller=caller;
-			this.method=method;
-			this.args=args;
-			this.once=once;
-			return this;
-		}
-
-		/**
-		*执行处理器。
-		*/
-		__proto.run=function(){
-			if (this.method==null)return null;
-			var id=this._id;
-			var result=this.method.apply(this.caller,this.args);
-			this._id===id && this.once && this.recover();
-			return result;
-		}
-
-		/**
-		*执行处理器，携带额外数据。
-		*@param data 附加的回调数据，可以是单数据或者Array(作为多参)。
-		*/
-		__proto.runWith=function(data){
-			if (this.method==null)return null;
-			var id=this._id;
-			if (data==null)
-				var result=this.method.apply(this.caller,this.args);
-			else if (!this.args && !data.unshift)result=this.method.call(this.caller,data);
-			else if (this.args)result=this.method.apply(this.caller,this.args.concat(data));
-			else result=this.method.apply(this.caller,data);
-			this._id===id && this.once && this.recover();
-			return result;
-		}
-
-		/**
-		*清理对象引用。
-		*/
-		__proto.clear=function(){
-			this.caller=null;
-			this.method=null;
-			this.args=null;
-			return this;
-		}
-
-		/**
-		*清理并回收到 Handler 对象池内。
-		*/
-		__proto.recover=function(){
-			if (this._id > 0){
-				this._id=0;
-				Handler._pool.push(this.clear());
-			}
-		}
-
-		Handler.create=function(caller,method,args,once){
-			(once===void 0)&& (once=true);
-			if (Handler._pool.length)return Handler._pool.pop().setTo(caller,method,args,once);
-			return new Handler(caller,method,args,once);
-		}
-
-		Handler._pool=[];
-		Handler._gid=1;
-		return Handler;
-	})()
-
-
 	//class STG.ConfigParser.ConfigParser
 	var ConfigParser=(function(){
-		function ConfigParser(fcty){
-			this.mTargetFactory=null;
-			this.mTargetFactory=fcty;
+		function ConfigParser(){
+			this.mBulletDict=null;
+			this.mBulletDict=new Dictionary();
 		}
 
 		__class(ConfigParser,'STG.ConfigParser.ConfigParser');
 		var __proto=ConfigParser.prototype;
 		__proto.parseEnemy=function(xml){
-			var propEnemy=new PropertyOfEnemy();
-			propEnemy.mX=Number(this.getContentWithDefault(xml,"x","0"));
-			propEnemy.mY=Number(this.getContentWithDefault(xml,"y","0"));
-			propEnemy.mAcc=Number(this.getContentWithDefault(xml,"acc","0"));
-			propEnemy.mDir=Number(this.getContentWithDefault(xml,"dir",(-Math.PI / 2).toString()));
-			propEnemy.mAS=Number(this.getContentWithDefault(xml,"as","0"));
-			propEnemy.mNS=Number(this.getContentWithDefault(xml,"ns","0"));
-			propEnemy.mRS=Number(this.getContentWithDefault(xml,"rs","0"));
-			propEnemy.mAutoR=this.str2Bool(this.getContentWithDefault(xml,"autor","false"));
-			propEnemy.mTexture=Laya.loader.getRes(this.getContent(xml,"texture"));
-			propEnemy.mColliProto=new ColliCircle(0,0,
-			Number(this.getContent(xml,"collir")));
-			propEnemy.mColliAutoSize=false;
-			propEnemy.mRebound=false;
-			propEnemy.mTasks=this.parseChildrenTasks(xml);
-			propEnemy.mBullets=this.parseChildrenBullets(xml);
-			propEnemy.mScore=Math.floor(
-			Number(this.getContentWithDefault(xml,"score","0")));
-			propEnemy.mHealth=parseInt(this.getContentWithDefault(xml,"hp","1"));
-			var enemyName=this.getContent(xml,"name");
-			this.mTargetFactory.addProperty(enemyName,propEnemy);
-			return enemyName;
+			var _$this=this;
+			var textureStr=this.getContent(xml,"texture");
+			var colliR=Number(this.getContent(xml,"collir"));
+			var x=Number(this.getContentWithDefault(xml,"x","0"));
+			var y=Number(this.getContentWithDefault(xml,"y","0"));
+			var score=Math.floor(Number(this.getContentWithDefault(xml,"score","0")));
+			var ass=Number(this.getContentWithDefault(xml,"as","0"));
+			var ns=Number(this.getContentWithDefault(xml,"ns","0"));
+			var rs=Number(this.getContentWithDefault(xml,"rs","0"));
+			var dir=Number(this.getContentWithDefault(xml,"dir",(-Math.PI / 2).toString()));
+			var acc=Number(this.getContentWithDefault(xml,"acc","0"));
+			var autor=this.str2Bool(this.getContentWithDefault(xml,"autor","false"));
+			var hp=parseInt(this.getContentWithDefault(xml,"hp","1"));
+			var tasks=this.parseChildrenTasks(xml);
+			return function (){
+				var bullets=_$this.parseChildrenBullets(xml);
+				var e=new Enemy();
+				e.drawTexture(Laya.loader.getRes(textureStr));
+				e.x=x;
+				e.y=y;
+				e.mScore=score;
+				e.mASpeed=ass;
+				e.mNSpeed=ns;
+				e.mRSpeed=rs;
+				e.mDirection=dir;
+				e.mAcceleration=acc;
+				e.mIsRotbyDir=autor;
+				e.mHealth=hp;
+				e.mTasks=tasks;
+				e.mCollisionBody=new ColliCircle(0,0,colliR);
+				e.mBullets=bullets;
+				return e;
+			};
 		}
 
-		__proto.parseBulletRef=function(xml,refName){
+		__proto.parseBulletRef=function(xml,name){
+			var _$this=this;
 			var xXml=this.getChildXml(xml,"x");
 			var yXml=this.getChildXml(xml,"y");
 			var asXml=this.getChildXml(xml,"as");
@@ -862,87 +630,106 @@ var Laya=window.Laya=(function(window,document){
 			var accXml=this.getChildXml(xml,"acc");
 			var dirXml=this.getChildXml(xml,"dir");
 			var autorXml=this.getChildXml(xml,"autor");
-			var propBulletRef=this.mTargetFactory.getProperty(refName);
-			if (!propBulletRef){
-				throw new Error("undefined reference to "+refName);
+			return function (){
+				var newBullet=_$this.mBulletDict.get(name)();
+				if (xXml){
+					newBullet.x=Number(xXml.textContent);
+				}
+				if (yXml){
+					newBullet.y=Number(yXml.textContent);
+				}
+				if (asXml){
+					newBullet.mASpeed=Number(asXml.textContent);
+				}
+				if (nsXml){
+					newBullet.mNSpeed=Number(nsXml.textContent);
+				}
+				if (rsXml){
+					newBullet.mRSpeed=Number(rsXml.textContent);
+				}
+				if (accXml){
+					newBullet.mAcceleration=Number(accXml.textContent);
+				}
+				if (autorXml){
+					newBullet.mIsRotbyDir=Number(autorXml.textContent);
+				}
+				if (dirXml){
+					newBullet.mDirection=Number(dirXml.textContent);
+				}
+				return newBullet;
 			};
-			var propBulletThis=new PropertyOfGameObjColli();
-			propBulletThis.mX=xXml ?
-			Number(xXml.textContent):propBulletRef.mX;
-			propBulletThis.mY=yXml ?
-			Number(yXml.textContent):propBulletRef.mY;
-			propBulletThis.mAcc=accXml ?
-			Number(accXml.textContent):propBulletRef.mAcc;
-			propBulletThis.mDir=dirXml ?
-			Number(dirXml.textContent):propBulletRef.mDir;
-			propBulletThis.mAS=asXml ?
-			Number(asXml.textContent):propBulletRef.mAS;
-			propBulletThis.mNS=nsXml ?
-			Number(nsXml.textContent):propBulletRef.mNS;
-			propBulletThis.mRS=rsXml ?
-			Number(nsXml.textContent):propBulletRef.mRS;
-			propBulletThis.mAutoR=autorXml ?
-			Number(autorXml.textContent):propBulletRef.mAutoR;
-			propBulletThis.mTexture=propBulletRef.mTexture;
-			propBulletThis.mIsEmpty=propBulletRef.mIsEmpty;
-			if (!propBulletThis.mIsEmpty){
-				propBulletThis.mColliProto=this.mTargetFactory.cloneColliBody(
-				propBulletRef.mColliProto);
-			}
-			propBulletThis.mColliAutoSize=propBulletRef.mColliAutoSize;
-			propBulletThis.mRebound=propBulletRef.mRebound;
-			propBulletThis.mChildrenNames=propBulletRef.mChildrenNames;
-			propBulletThis.mTasks=propBulletRef.mTasks;
-			var name=this.getContent(xml,"name");
-			this.mTargetFactory.addProperty(name,propBulletThis);
-			return name;
 		}
 
-		/*return bullet name. for convinience. And used by parseEnemy */
 		__proto.parseBullet=function(xml){
-			var refXml=this.getChildXml(xml,"ref");
+			var _$this=this;
+			var refXml=xml.getElementsByTagName("ref")[0];
 			var ref;
 			if (refXml){
 				ref=refXml.textContent;
 			}
-			if (ref){
+			if (ref && this.mBulletDict.get(ref)){
 				return this.parseBulletRef(xml,ref);
 			};
-			var propBullet=new PropertyOfGameObjColli();
-			propBullet.mX=Number(this.getContentWithDefault(xml,"x","0"));
-			propBullet.mY=Number(this.getContentWithDefault(xml,"y","0"));
-			propBullet.mAcc=Number(this.getContentWithDefault(xml,"acc","0"));
-			propBullet.mDir=Number(
+			var name=this.getContentWithDefault(xml,"name","");
+			var dir=Number(
 			this.getContentWithDefault(xml,"dir",(-Math.PI / 2).toString()));
-			propBullet.mAS=Number(this.getContentWithDefault(xml,"as","0"));
-			propBullet.mNS=Number(this.getContentWithDefault(xml,"ns","0"));
-			propBullet.mRS=Number(this.getContentWithDefault(xml,"rs","0"));
-			propBullet.mAutoR=this.str2Bool(this.getContentWithDefault(xml,"autor","false"));
-			propBullet.mIsEmpty=this.str2Bool(this.getContentWithDefault(xml,"empty","false"));
-			if (!propBullet.mIsEmpty){
-				propBullet.mTexture=Laya.loader.getRes(this.getContent(xml,"texture"));
-				var colliXml=this.getChildXml(xml,"colli");
-				propBullet.mColliAutoSize=this.parseColliIsAuto(colliXml);
-				if (! colliXml){
-					throw new Error("collision body is not defined");
+			var x=Number(this.getContentWithDefault(xml,"x","0"));
+			var y=Number(this.getContentWithDefault(xml,"y","0"));
+			var ass=Number(this.getContentWithDefault(xml,"as","0"));
+			var ns=Number(this.getContentWithDefault(xml,"ns","0"));
+			var rs=Number(this.getContentWithDefault(xml,"rs","0"));
+			var acc=Number(this.getContentWithDefault(xml,"acc","0"));
+			var autor=this.str2Bool(this.getContentWithDefault(xml,"autor","false"));
+			var empty=this.str2Bool(this.getContentWithDefault(xml,"empty","false"));
+			var textureStr="";
+			if (! empty){
+				textureStr=this.getContent(xml,"texture");
+			};
+			var tasks=this.parseChildrenTasks(xml);
+			var gen=function (){
+				var colli;
+				var isColliAuto=false;
+				if (! empty){
+					var colliXml=_$this.getChildXml(xml,"colli");
+					isColliAuto=_$this.parseColliIsAuto(colliXml);
+					if (! colliXml){
+						throw new Error("collision body is not defined");
+					}
+					colli=_$this.parseColli(colliXml);
+				};
+				var childrenXml=_$this.getChildXml(xml,"children");
+				var childrenGen=[];
+				if (childrenXml){
+					var childrenBulletXml=_$this.getAllChildrenXml(childrenXml,"bullet");
+					for (var i=0;i < childrenBulletXml.length;i++){
+						childrenGen.push(_$this.parseBullet(childrenBulletXml[i]));
+					}
+				};
+				var b=new GameObjectCollision();
+				b.x=x;
+				b.y=y;
+				b.mASpeed=ass;
+				b.mNSpeed=ns;
+				b.mRSpeed=rs;
+				b.mDirection=dir;
+				b.mAcceleration=acc;
+				b.mIsRotbyDir=autor;
+				b.mIsEmpty=empty;
+				b.mTasks=tasks;
+				if (textureStr !=""){
+					b.drawTexture(Laya.loader.getRes(textureStr));
 				}
-				propBullet.mColliProto=this.parseColli(colliXml);
-			}
-			propBullet.mRebound=this.str2Bool(
-			this.getContentWithDefault(xml,"rebound","false"));
-			propBullet.mTasks=this.parseChildrenTasks(xml);
-			var childrenXml=this.getChildXml(xml,"children");
-			var childrenName=[];
-			if (childrenXml){
-				var childrenBulletXml=this.getAllChildrenXml(childrenXml,"bullet");
-				for (var i=0;i < childrenBulletXml.length;i++){
-					childrenName.push(this.parseBullet(childrenBulletXml[i]));
+				b.mCollisionBody=colli;
+				b.mAutoSize=isColliAuto;
+				for (var i=0;i < childrenGen.length;i++){
+					b.addChild(childrenGen[i]());
 				}
+				return b;
+			};
+			if (name){
+				this.mBulletDict.set(name,gen);
 			}
-			propBullet.mChildrenNames=childrenName;
-			var name=this.getContent(xml,"name");
-			this.mTargetFactory.addProperty(name,propBullet);
-			return name;
+			return gen;
 		}
 
 		__proto.parseTasks=function(xml){
@@ -1012,7 +799,7 @@ var Laya=window.Laya=(function(window,document){
 			throw new Error("unkown colli type");
 		}
 
-		// TODO:xml-> [String]
+		/*xml-> [Funcion ::GameObjectCollision] */
 		__proto.parseChildrenBullets=function(xml){
 			var bulletsXml=this.getChildXml(xml,"bullets");
 			var bulletXmls=this.getAllChildrenXml(bulletsXml,"bullet");
@@ -1046,11 +833,11 @@ var Laya=window.Laya=(function(window,document){
 		}
 
 		__proto.getChildXml=function(xml,key){
-			return this.getAllChildrenXml(xml,key)[0];
+			return xml.getElementsByTagName(key)[0];
 		}
 
 		__proto.getContent=function(xml,key){
-			var targetXML=this.getAllChildrenXml(xml,key)[0];
+			var targetXML=xml.getElementsByTagName(key)[0];
 			if (! targetXML){
 				throw new Error(key+" is not defined");
 			}
@@ -1058,7 +845,7 @@ var Laya=window.Laya=(function(window,document){
 		}
 
 		__proto.getContentWithDefault=function(xml,key,df){
-			var nodes=this.getAllChildrenXml(xml,key);
+			var nodes=xml.getElementsByTagName(key);
 			if (nodes.length !=0){
 				return nodes[0].textContent;
 			}
@@ -1126,358 +913,76 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	//class STG.GameObject.Collision.ColliBody
-	var ColliBody=(function(){
-		function ColliBody(xx,yy){
-			this.x=0;
-			this.y=0;
-			this.x=xx;
-			this.y=yy;
-		}
-
-		__class(ColliBody,'STG.GameObject.Collision.ColliBody');
-		return ColliBody;
+	//class STG.Const
+	var Const=(function(){
+		function Const(){};
+		__class(Const,'STG.Const');
+		Const.WIN_WIDTH=1080;
+		Const.WIN_HEIGHT=1920;
+		Const.PLAY_FILED_LEFT=0;
+		Const.PLAY_FILED_RIGHT=1080;
+		Const.PLAY_FILED_OFFSET=50;
+		Const.INIT_NUM_PLAYER=3;
+		Const.MAX_NUM_PLAYER=5;
+		Const.INIT_NUM_BOMB=3;
+		Const.MAX_NUM_BOMB=5;
+		Const.MAX_LEVEL=5;
+		Const.DEFALT_SPEED=0.5;
+		Const.SHIFT_SPEED=0.2;
+		Const.RESPAWN_TIME=500;
+		Const.INVINCIBLILITY_TIME=1000;
+		Const.DROP_LIFE=15000;
+		Const.DROP_SPEED=7;
+		Const.DROP_COLLI_R=50;
+		Const.BORD_OFFSET=200;
+		Const.DELETING_INTERVAL=500;
+		return Const;
 	})()
 
 
-	//class STG.GameObject.Collision.ColliChecker
-	var ColliChecker=(function(){
-		function ColliChecker(){};
-		__class(ColliChecker,'STG.GameObject.Collision.ColliChecker');
-		ColliChecker.isCollision=function(a,b){
-			if (((a instanceof STG.GameObject.Collision.ColliCircle ))&& ((b instanceof STG.GameObject.Collision.ColliCircle ))){
-				return ColliChecker.collideCircle2Circle(a,b);
-			}
-			else if (((a instanceof STG.GameObject.Collision.ColliCircle ))&& ((b instanceof STG.GameObject.Collision.ColliEllipse ))){
-				return ColliChecker.collideCircle2Ellipse(a,b);
-			}
-			else if (((a instanceof STG.GameObject.Collision.ColliEllipse ))&& ((b instanceof STG.GameObject.Collision.ColliCircle ))){
-				return ColliChecker.collideCircle2Ellipse(b,a);
-			}
-			else{
-				return false;
-			}
+	//class STG.EGameState
+	var EGameState=(function(){
+		function EGameState(){
+			this.mEnum="EGameState_Main";
 		}
 
-		ColliChecker.collideCircle2Circle=function(a,b){
-			var distance=MyMath.distance(a.x,a.y,b.x,b.y);
-			return (distance < a.r+b.r);
-		}
-
-		ColliChecker.collideCircle2Ellipse=function(circle,ellipse){
-			var pO=ellipse.toEllipseCoordinate(circle.x,circle.y);
-			var pOX=pO.x;
-			var pOY=pO.y;
-			var disO=MyMath.distance(pOX,pOY,0,0);
-			if (disO > circle.r+ellipse.a){
-				return false;
-			}
-			if (disO < circle.r){
-				return true;
-			};
-			var c=ellipse.getC();
-			var pLeftX=-c;
-			var pLeftY=0;
-			var pRightX=c;
-			var pRightY=0;
-			if (ColliChecker.checkIntersectionInEllipse(pLeftX,pLeftY,pOX,pOY,circle.r,ellipse)){
-				return true;
-			}
-			if (ColliChecker.checkIntersectionInEllipse(pRightX,pRightY,pOX,pOY,circle.r,ellipse)){
-				return true;
-			}
-			for (var i=0;i < 5;i++){
-				var pMiddleX=(pLeftX+pRightX)/ 2;
-				var pMiddleY=(pLeftY+pRightY)/ 2;
-				if (pOX < pMiddleX){
-					pRightX=pMiddleX;
-					pRightY=pMiddleY;
-				}
-				else{
-					pLeftX=pMiddleX;
-					pLeftY=pMiddleY;
-				}
-				if (ColliChecker.checkIntersectionInEllipse(pMiddleX,pMiddleY,pOX,pOY,circle.r,ellipse)){
-					return true;
-				}
-			}
-			return false;
-		}
-
-		ColliChecker.checkIntersectionInEllipse=function(ex,ey,ox,oy,r,ellipse){
-			var pInter=ColliChecker.getIntersection(ex,ey,ox,oy,r);
-			return ellipse.pointInEllipse(pInter.x,pInter.y);
-		}
-
-		ColliChecker.getIntersection=function(px,py,ox,oy,r){
-			var vecPOX=ox-px;
-			var vecPOY=oy-py;
-			var dis=MyMath.distance(px,py,ox,oy);
-			if (dis===0){
-				return null;
-			};
-			var fct=(dis-r)/ dis;
-			var itX=px+vecPOX *fct;
-			var itY=py+vecPOY *fct;
-			return new Point(itX,itY);
-		}
-
-		ColliChecker.MAX_ITERATION=5;
-		return ColliChecker;
+		__class(EGameState,'STG.EGameState');
+		EGameState.MAIN="EGameState_Main";
+		EGameState.GAME="EGameState_GAME";
+		return EGameState;
 	})()
 
 
-	//class STG.GameObject.EDropType
-	var EDropType=(function(){
-		function EDropType(){
-			this.mEnum="EDropType_LevelUp";
-		}
-
-		__class(EDropType,'STG.GameObject.EDropType');
-		EDropType.LEVEL_UP="EDropType_LevelUp";
-		EDropType.BOMB_UP="EDropType_BombUp";
-		EDropType.PLAYER_UP="EDropType_PlayerUp";
-		return EDropType;
-	})()
-
-
-	;
-	//class STG.GameObject.Property.PropertyOfGameObjColli
-	var PropertyOfGameObjColli=(function(){
-		function PropertyOfGameObjColli(){
-			this.mX=NaN;
-			this.mY=NaN;
-			this.mAcc=NaN;
-			this.mDir=NaN;
-			this.mAS=NaN;
-			this.mNS=NaN;
-			this.mRS=NaN;
-			this.mAutoR=false;
-			this.mIsEmpty=false;
-			this.mTexture=null;
-			this.mColliProto=null;
-			this.mColliAutoSize=false;
-			this.mRebound=false;
-			this.mChildrenNames=[];
-			this.mTasks=[];
-		}
-
-		__class(PropertyOfGameObjColli,'STG.GameObject.Property.PropertyOfGameObjColli');
-		return PropertyOfGameObjColli;
-	})()
-
-
-	/*Manger. singleton */
-	//class STG.Manager
-	var Manager=(function(){
-		function Manager(){
-			this.mGameScene=null;
-			this.mMainScene=null;
-			this.VALID_TYPES=["EPlayerType_TangMen","EPlayerType_TianXiang"];
-		}
-
-		__class(Manager,'STG.Manager');
-		var __proto=Manager.prototype;
-		__proto.initGame=function(){
-			console.log("init game");
-			this.mMainScene=new MainScene();
-			Laya.stage.addChild(this.mMainScene);
-		}
-
-		__proto.enterGame=function(typeP){
-			this.mMainScene.destroy();
-			this.mGameScene=new GameScene(typeP);
-			Laya.stage.addChild(this.mGameScene);
-		}
-
-		__proto.enterGameWithIndex=function(idx){
-			var type=this.indexToType(idx);
-			for (var i=0;i < this.VALID_TYPES.length;i++){
-				if (type==this.VALID_TYPES[i]){
-					this.enterGame(type);
-				}
+	//class STG.EnemyRandomGen
+	var EnemyRandomGen=(function(){
+		function EnemyRandomGen(ei,vi){
+			this.mEnemyGens=[];
+			this.mEInterval=-1;
+			this.mVInterval=-1;
+			this.mTimeAfterLastGen=99999999;
+			(ei===void 0)&& (ei=1000);
+			(vi===void 0)&& (vi=300);
+			if (vi > ei){
+				throw new Error("invalid variance");
 			}
+			this.mEInterval=ei;
+			this.mVInterval=vi;
 		}
 
-		__proto.gameOver=function(){
-			this.mGameScene.pause();
-			this.mGameScene.showDieDialog();
+		__class(EnemyRandomGen,'STG.EnemyRandomGen');
+		var __proto=EnemyRandomGen.prototype;
+		__proto.addEnemyGen=function(gen){
+			this.mEnemyGens.push(gen);
 		}
 
-		__proto.backToMain=function(){
-			this.mGameScene.destroy();
-			PoolWrapper.clearPool();
-			this.initGame();
-		}
-
-		__proto.update=function(delta){
-			if (this.mGameScene){
-				this.mGameScene.update(delta);
+		__proto.checkAndGen=function(){
+			var interval=this.mEInterval+Math.round(this.mVInterval *(2 *Math.random()-1));
+			if (this.mTimeAfterLastGen > interval){
+				var idx=0;
+				var newEnemy=this.mEnemyGens[idx]();
+				Manager.getManager().addEnemy(newEnemy);
+				this.mTimeAfterLastGen=0;
 			}
-		}
-
-		__proto.getGameScene=function(){
-			if (this.mGameScene){
-				return this.mGameScene;
-			}
-		}
-
-		/*private */
-		__proto.indexToType=function(idx){
-			switch(idx){
-				case 0:return "EPlayerType_ZhenWu";
-				case 1:return "EPlayerType_GaiBang";
-				case 2:return "EPlayerType_ShenWei";
-				case 3:return "EPlayerType_TaiBai";
-				case 4:return "EPlayerType_TangMen";
-				case 5:return "EPlayerType_TianXiang";
-				case 6:return "EPlayerType_WuDu";
-				case 7:return "EPlayerType_ShenDao";
-				default :return "EPlayerType_TangMen";
-				}
-		}
-
-		// debug
-		__proto.dbg=function(){
-			if (this.mGameScene){
-			}
-		}
-
-		Manager.getManager=function(){
-			if (! Manager.mInstance){
-				Manager.mAllowInstantiation=true;
-				Manager.mInstance=new Manager();
-				Manager.mAllowInstantiation=false;
-			}
-			return Manager.mInstance;
-		}
-
-		Manager.mInstance=null
-		Manager.mAllowInstantiation=false;
-		return Manager;
-	})()
-
-
-	//class STG.Player.Enum.EPlayerType
-	var EPlayerType=(function(){
-		function EPlayerType(){
-			this.mEnum="EPlayerType_ZhenWu";
-		}
-
-		__class(EPlayerType,'STG.Player.Enum.EPlayerType');
-		EPlayerType.ZHEN_WU="EPlayerType_ZhenWu";
-		EPlayerType.GAI_BANG="EPlayerType_GaiBang";
-		EPlayerType.SHEN_WEI="EPlayerType_ShenWei";
-		EPlayerType.TAI_BAI="EPlayerType_TaiBai";
-		EPlayerType.TANG_MEN="EPlayerType_TangMen";
-		EPlayerType.TIAN_XIANG="EPlayerType_TianXiang";
-		EPlayerType.WU_DU="EPlayerType_WuDu";
-		EPlayerType.SHEN_DAO="EPlayerType_ShenDao";
-		return EPlayerType;
-	})()
-
-
-	//class STG.Controller
-	var Controller=(function(){
-		function Controller(){
-			this.mDeltaX=NaN;
-			this.mDeltaY=NaN;
-			this.mLastX=NaN;
-			this.mLastY=NaN;
-			this.mTarget=null;
-			this.mValidField=null;
-			this.mFirstTouchId=null;
-			Laya.stage.on("mousedown",this,this.onMouseDown);
-			Laya.stage.on("mouseup",this,this.onMouseUp);
-			Laya.stage.on("mouseout",this,this.onMouseUp);
-			Laya.stage.on("keyup",this,this.cheat);
-		}
-
-		__class(Controller,'STG.Controller');
-		var __proto=Controller.prototype;
-		__proto.setTarget=function(plr){
-			this.mTarget=plr;
-		}
-
-		__proto.setTouchValidField=function(fd){
-			this.mValidField=fd;
-		}
-
-		__proto.stopMove=function(){
-			Laya.stage.off("mousemove",this,this.onMouseMove);
-			this.mFirstTouchId=null;
-		}
-
-		__proto.onMouseDown=function(e){
-			if (this.mFirstTouchId !=null
-				|| e.target !=this.mValidField){
-				return;
-			}
-			this.mFirstTouchId=e.touchId;
-			this.mDeltaX=this.mTarget.x-e.stageX;
-			this.mDeltaY=this.mTarget.y-e.stageY;
-			Laya.stage.on("mousemove",this,this.onMouseMove);
-		}
-
-		__proto.onMouseMove=function(e){
-			if (e.touchId !=this.mFirstTouchId){
-				return;
-			}this.mTargetHalfWidth=this.mTargetHalfWidth|| this.mTarget.mBound.width / 2;this.mTargetHalfHeight=this.mTargetHalfHeight|| this.mTarget.mBound.height / 2;
-			var newX=e.stageX+this.mDeltaX;
-			var newY=e.stageY+this.mDeltaY;
-			this.mTarget.x=Math.max(newX,0+this.mTargetHalfWidth);
-			this.mTarget.x=Math.min(this.mTarget.x,Const.PLAY_FILED_RIGHT-this.mTargetHalfHeight);
-			this.mTarget.y=Math.max(newY,0+this.mTargetHalfHeight);
-			this.mTarget.y=Math.min(this.mTarget.y,Const.PLAY_FILED_DOWN-this.mTargetHalfHeight);
-			this.mDeltaX=this.mTarget.x-e.stageX;
-			this.mDeltaY=this.mTarget.y-e.stageY;
-			var speed=MyMath.distance(this.mTarget.x,this.mTarget.y,this.mLastX,this.mLastY);
-			this.mTarget.mControlSpeed=speed;
-			this.mLastX=this.mTarget.x;
-			this.mLastY=this.mTarget.y;
-		}
-
-		__proto.onMouseUp=function(e){
-			if (e.touchId==this.mFirstTouchId){
-				this.stopMove();
-			}
-			this.mTarget.mShiftMode=false;
-			this.mTarget.changeToShiftMode(false);
-		}
-
-		__proto.cheat=function(e){
-			var key=e["keyCode"];
-			if (key==85){
-				this.mTarget.upgrade();
-			}
-		}
-
-		return Controller;
-	})()
-
-
-	//class STG.EnemyGen
-	var EnemyGen=(function(){
-		function EnemyGen(avgItv,fltItv,probBase){
-			this.mEnemies=[];
-			this.mAverageInterval=NaN;
-			this.mIntervalFluctuation=NaN;
-			this.mProbabilityIncIdxBase=1;
-			this.mIdxForGen=0;
-			this.mTimeAfterLastGen=999999;
-			this.mLastItv=0;
-			this.mProbabilityIncIdx=1;
-			(probBase===void 0)&& (probBase=1);
-			this.mAverageInterval=avgItv;
-			this.mIntervalFluctuation=fltItv;
-			this.mProbabilityIncIdxBase=probBase;
-			this.mProbabilityIncIdx=probBase;
-		}
-
-		__class(EnemyGen,'STG.EnemyGen');
-		var __proto=EnemyGen.prototype;
-		__proto.addEnemy=function(enemyName){
-			this.mEnemies.push(enemyName);
 		}
 
 		__proto.update=function(delta){
@@ -1485,89 +990,7 @@ var Laya=window.Laya=(function(window,document){
 			this.mTimeAfterLastGen+=delta;
 		}
 
-		__proto.checkAndGen=function(){
-			if (this.mTimeAfterLastGen > this.mLastItv){
-				this.generate();
-				this.updateTimeStates();
-				this.updateIndex();
-				this.updateInterval();
-			}
-		}
-
-		__proto.generate=function(){
-			var idx=this.randomIndex();
-			var name=this.mEnemies[idx];
-			var newEnemy=Manager.getManager().getGameScene().newEnemy(name);
-			this.randomXY(newEnemy);
-			Manager.getManager().getGameScene().addEnemy(newEnemy);
-		}
-
-		__proto.randomXY=function(enm){
-			if (MyMath.movingLeft(enm)){
-				enm.x=Const.PLAY_FILED_RIGHT+enm.mBound.width;
-				enm.y=Math.random()*1920;
-			}
-			else if (MyMath.movingRight(enm)){
-				enm.x=0-enm.mBound.width;
-				enm.y=Math.random()*1920;
-			}
-			else if (MyMath.movingUp(enm)){
-				enm.y=Const.PLAY_FILED_DOWN+enm.mBound.height;
-				enm.x=Math.random()*1080;
-			}
-			else if (MyMath.movingDown(enm)){
-				enm.y=0-enm.mBound.height;
-				enm.x=Math.random()*1080;
-			}
-			else{
-				enm.x=0;
-				enm.y=0;
-			}
-		}
-
-		__proto.randomIndex=function(){
-			var r=Math.random();
-			for (var i=0;i < EnemyGen.PROB_TABLE.length-1;i++){
-				if (r >=EnemyGen.PROB_TABLE[i] && r < EnemyGen.PROB_TABLE[i+1]){
-					var idx=this.mIdxForGen-i;
-					return idx <=0 ? 0 :idx;
-				}
-			}
-			return this.mIdxForGen;
-		}
-
-		__proto.updateTimeStates=function(){
-			this.mTimeAfterLastGen=0;
-			this.mLastItv=this.mAverageInterval+
-			this.mIntervalFluctuation *(2 *Math.random()-1);
-		}
-
-		__proto.updateProbability=function(){
-			this.mProbabilityIncIdx=this.mProbabilityIncIdxBase *
-			(this.mEnemies.length-this.mIdxForGen-1)/ this.mEnemies.length;
-		}
-
-		__proto.updateIndex=function(){
-			if (Math.random()< this.mProbabilityIncIdx){
-				if (this.mIdxForGen < this.mEnemies.length-1){
-					this.mIdxForGen++;
-				}
-				this.updateProbability();
-			}
-		}
-
-		__proto.updateInterval=function(){
-			if (this.mAverageInterval > 0.3){
-				this.mAverageInterval *=0.99;
-				this.mIntervalFluctuation *=0.99;
-			}
-		}
-
-		EnemyGen.MIN_INTERVAL=0.3;
-		__static(EnemyGen,
-		['PROB_TABLE',function(){return this.PROB_TABLE=[0,0.5,0.617,0.7257,0.8159,0.8849,0.9332,0.9554,0.9772,0.9893,0.9953,0.9981,1];}
-		]);
-		return EnemyGen;
+		return EnemyRandomGen;
 	})()
 
 
@@ -1619,21 +1042,16 @@ var Laya=window.Laya=(function(window,document){
 			*blt :GameObjectCollision,
 			*}
 		*/
-		__proto.checkEnemyCollision=function(){
+		__proto.checkEnmyCollision=function(){
 			for (var i=this.mEnemies.length-1;i >=0;i--){
-				if ((! this.mEnemies[i])|| this.mEnemies[i].destroyed || !this.mEnemies[i].visible){
+				if ((! this.mEnemies[i])|| this.mEnemies[i].destroyed){
 					this.mEnemies.splice(i,1);
 					continue ;
 				}
 				for (var j=0;j < this.mPlayerBullets.length;j++){
-					var pb=this.mPlayerBullets[j];
-					if (!pb || pb.destroyed || !pb.visible){
-						this.mPlayerBullets.splice(j,1);
-						j--;
-					}
-					else if (this.mEnemies[i].checkCollision(pb)){
+					if (this.mEnemies[i].checkCollision(this.mPlayerBullets[j])){
 						return {enm :this.mEnemies[i],
-							blt :pb };
+							blt :this.mPlayerBullets[j] };
 					}
 				}
 			}
@@ -1642,38 +1060,19 @@ var Laya=window.Laya=(function(window,document){
 
 		/*-> enemy's blt */
 		__proto.checkPlayerCollisionBullet=function(){
-			return this.checkPlayerDeffenseWithList(this.mEnemyBullets);
+			return this.checkPlayerWithList(this.mEnemyBullets);
 		}
 
 		__proto.checkPlayerCollisionDrop=function(){
-			return this.checkPlayerDeffenseWithList(this.mDrops);
-		}
-
-		__proto.checkPlayerCollisionEnemy=function(){
-			for (var i=this.mEnemies.length-1;i >=0;i--){
-				if ((! this.mEnemies[i])|| this.mEnemies[i].destroyed || !this.mEnemies[i].visible){
-					this.mEnemies.splice(i,1);
-					continue ;
-				}
-				if (this.mPlayer.checkAttackCollision(this.mEnemies[i])){
-					return this.mEnemies[i];
-				}
-			}
-			return null;
+			return this.checkPlayerWithList(this.mDrops);
 		}
 
 		/*helper */
-		__proto.checkPlayerDeffenseWithList=function(lst){
-			if (this.mPlayer && !this.mPlayer.destroyed && this.mPlayer.visible && this.mPlayer.mWorking){
+		__proto.checkPlayerWithList=function(lst){
+			if (this.mPlayer && this.mPlayer.mWorking){
 				for(var i=0;i < lst.length;i++){
-					if (lst[i] && (!lst[i].destroyed)&& (lst[i].visible)){
-						if (this.mPlayer.checkDefenseCollision(lst[i])){
-							return lst[i];
-						}
-					}
-					else{
-						lst.splice(i,1);
-						i--;
+					if (this.mPlayer.checkCollision(lst[i])){
+						return lst[i];
 					}
 				}
 			}
@@ -1684,115 +1083,317 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	//class STG.ObjectFactory
-	var ObjectFactory=(function(){
-		function ObjectFactory(){
-			this.mPropertyDict=null;
-			this.mPropertyDict=new Dictionary();
+	//class STG.GameObject.Collision.ColliBody
+	var ColliBody=(function(){
+		function ColliBody(xx,yy){
+			this.x=0;
+			this.y=0;
+			this.x=xx;
+			this.y=yy;
 		}
 
-		__class(ObjectFactory,'STG.ObjectFactory');
-		var __proto=ObjectFactory.prototype;
-		__proto.getBullet=function(bulletName){
-			var bullet=PoolWrapper.getGameObject(GameObjectCollision,bulletName);
-			bullet.name=bulletName;
-			this.setBulletProp(bullet,bulletName);
-			return bullet;
-		}
-
-		__proto.getEnemy=function(enemyName){
-			var enemy=PoolWrapper.getGameObject(Enemy,enemyName);
-			enemy.name=enemyName;
-			this.setEnemyProp(enemy,enemyName);
-			return enemy;
-		}
-
-		__proto.getProperty=function(name){
-			return this.mPropertyDict.get(name);
-		}
-
-		__proto.addProperty=function(name,prop){
-			this.mPropertyDict.set(name,prop);
-		}
-
-		__proto.setGameObjBasicProp=function(obc,name,prop){
-			obc.x=prop.mX;
-			obc.y=prop.mY;
-			obc.mAcceleration=prop.mAcc;
-			obc.mDirection=prop.mDir;
-			obc.mASpeed=prop.mAS;
-			obc.mNSpeed=prop.mNS;
-			obc.mRSpeed=prop.mRS;
-			obc.mAge=0;
-			obc.mIdxTask=0;
-			if (!obc.mHaveInPool){
-				obc.mIsRotbyDir=prop.mAutoR;
-				obc.mIsEmpty=prop.mIsEmpty;
-				if (! obc.mIsEmpty){
-					obc.drawTexture(prop.mTexture);
-					obc.mCollisionBody=this.cloneColliBody(prop.mColliProto);
-				}
-				obc.mAutoSize=prop.mColliAutoSize;
-				obc.mRebound=prop.mRebound;
-				obc.mTasks=prop.mTasks;
-			}
-		}
-
-		__proto.setBulletProp=function(bullet,bulletName){
-			var prop=this.mPropertyDict.get(bulletName);
-			this.setGameObjBasicProp(bullet,bulletName,prop);
-			if (bullet.numChildren==0){
-				this.setChildren(bullet,prop.mChildrenNames);
-			}
-			else{
-				this.repairChildren(bullet);
-			}
-		}
-
-		__proto.setEnemyProp=function(enemy,enemyName){
-			var prop=this.mPropertyDict.get(enemyName);
-			this.setGameObjBasicProp(enemy,enemyName,prop);
-			enemy.mScore=prop.mScore;
-			enemy.mHealth=prop.mHealth;
-			enemy.mBullets=prop.mBullets;
-		}
-
-		__proto.cloneColliBody=function(cb){
-			if ((cb instanceof STG.GameObject.Collision.ColliCircle )){
-				return new ColliCircle(cb.x,cb.y,cb.r);
-			}
-			else if ((cb instanceof STG.GameObject.Collision.ColliEllipse )){
-				return new ColliEllipse(cb.x,cb.y,cb.a,cb.b,cb.dir);
-			}
-			console.log("warning cloning colliBody, unkown type");
-			console.log(cb);
-			return undefined;
-		}
-
-		__proto.setChildren=function(bullet,childrenNames){
-			for (var i=0;i < childrenNames.length;i++){
-				bullet.addChild(this.getBullet(childrenNames[i]));
-			}
-		}
-
-		__proto.repairChildren=function(bullet){
-			for (var i=0;i < bullet.numChildren;i++){
-				var ch=bullet.getChildAt(i);
-				if (ch.__InPool){
-					ch=this.getBullet(ch.name);
-				}
-				this.repairChildren(ch);
-			}
-		}
-
-		return ObjectFactory;
+		__class(ColliBody,'STG.GameObject.Collision.ColliBody');
+		return ColliBody;
 	})()
 
 
-	//class STG.OutMyNodeDeletor
-	var OutMyNodeDeletor=(function(){
-		function OutMyNodeDeletor(){
-			this.mMyNodes=[];
+	//class STG.GameObject.Collision.ColliChecker
+	var ColliChecker=(function(){
+		function ColliChecker(){};
+		__class(ColliChecker,'STG.GameObject.Collision.ColliChecker');
+		ColliChecker.isCollision=function(a,b){
+			if (((a instanceof STG.GameObject.Collision.ColliCircle ))&& ((b instanceof STG.GameObject.Collision.ColliCircle ))){
+				return ColliChecker.collideCircle2Circle(a,b);
+			}
+			else if (((a instanceof STG.GameObject.Collision.ColliCircle ))&& ((b instanceof STG.GameObject.Collision.ColliEllipse ))){
+				return ColliChecker.collideCircle2Ellipse(a,b);
+			}
+			else if (((a instanceof STG.GameObject.Collision.ColliEllipse ))&& ((b instanceof STG.GameObject.Collision.ColliCircle ))){
+				return ColliChecker.collideCircle2Ellipse(b,a);
+			}
+			else{
+				return false;
+			}
+		}
+
+		ColliChecker.collideCircle2Circle=function(a,b){
+			var distance=new Point(a.x,a.y).distance(b.x,b.y);
+			return (distance < a.r+b.r);
+		}
+
+		ColliChecker.collideCircle2Ellipse=function(circle,ellipse){
+			var pO=ellipse.toEllipseCoordinate(new Point(circle.x,circle.y));
+			var disO=pO.distance(0,0);
+			if (disO > circle.r+ellipse.a){
+				return false;
+			}
+			if (disO < circle.r){
+				return true;
+			};
+			var c=ellipse.getC();
+			var pLeft=new Point(-c,0);
+			var pRight=new Point(c,0);
+			if (ColliChecker.checkIntersectionInEllipse(pLeft,pO,circle.r,ellipse)){
+				return true;
+			}
+			if (ColliChecker.checkIntersectionInEllipse(pRight,pO,circle.r,ellipse)){
+				return true;
+			}
+			for (var i=0;i < 5;i++){
+				var pMiddle=new Point((pLeft.x+pRight.x)/ 2,
+				(pLeft.y+pRight.y)/ 2);
+				if (pO.x < pMiddle.x){pRight=pMiddle;}
+					else {pLeft=pMiddle;}
+				if (ColliChecker.checkIntersectionInEllipse(pMiddle,pO,circle.r,ellipse)){
+					return true;
+				}
+			}
+			return false;
+		}
+
+		ColliChecker.checkIntersectionInEllipse=function(pE,pO,r,ellipse){
+			var pInter=ColliChecker.getIntersection(pE,pO,r);
+			return ellipse.pointInEllipse(pInter.x,pInter.y);
+		}
+
+		ColliChecker.getIntersection=function(p,o,r){
+			var vecPO=new Point(o.x-p.x,o.y-p.y);
+			var dis=p.distance(o.x,o.y);
+			if (dis===0){
+				return null;
+			};
+			var fct=(dis-r)/ dis;
+			var vecPI=new Point(vecPO.x *fct,vecPO.y *fct);
+			return new Point(p.x+vecPI.x,
+			p.y+vecPI.y);
+		}
+
+		ColliChecker.MAX_ITERATION=5;
+		return ColliChecker;
+	})()
+
+
+	//class STG.GameObject.EDropType
+	var EDropType=(function(){
+		function EDropType(){
+			this.mEnum="EDropType_LevelUp";
+		}
+
+		__class(EDropType,'STG.GameObject.EDropType');
+		EDropType.LEVEL_UP="EDropType_LevelUp";
+		EDropType.BOMB_UP="EDropType_BombUp";
+		EDropType.PLAYER_UP="EDropType_PlayerUp";
+		return EDropType;
+	})()
+
+
+	//class STG.Manager
+	var Manager=(function(){
+		function Manager(){
+			this.mGameScene=null;
+			this.mMainScene=null;
+		}
+
+		__class(Manager,'STG.Manager');
+		var __proto=Manager.prototype;
+		__proto.initGame=function(){
+			console.log("init game");
+			this.mMainScene=new MainScene();
+			Laya.stage.addChild(this.mMainScene);
+		}
+
+		__proto.enterGame=function(typeP){
+			this.mMainScene.destroy();
+			this.mGameScene=new GameScene(typeP);
+			Laya.stage.addChild(this.mGameScene);
+		}
+
+		//throw new Error(mGameScene);
+		__proto.enterGameWithIndex=function(idx){
+			this.enterGame(this.indexToType(idx));
+		}
+
+		__proto.gameOver=function(){
+			this.mGameScene.destroy();
+			this.initGame();
+		}
+
+		__proto.update=function(delta){
+			if (this.mGameScene){
+				this.mGameScene.update(delta);
+			}
+		}
+
+		/*protected */
+		__proto.update=function(delta){
+			if (this.mGameScene){
+				this.mGameScene.update(delta);
+			}
+		}
+
+		__proto.addEnemy=function(obc){
+			if (this.mGameScene){
+				this.mGameScene.addEnemy(obc);
+			}
+		}
+
+		__proto.addPlayerBullet=function(obc){
+			if (this.mGameScene){
+				this.mGameScene.addPlayerBullet(obc);
+			}
+		}
+
+		__proto.addEnemyBullet=function(obc){
+			if (this.mGameScene){
+				this.mGameScene.addEnemyBullet(obc);
+			}
+		}
+
+		__proto.addOther=function(ob){
+			if (this.mGameScene){
+				this.mGameScene.addOther(ob);
+			}
+		}
+
+		__proto.getTargetForGB=function(){
+			if (this.mGameScene){
+				return this.mGameScene.getTargetForGB();
+			}
+		}
+
+		__proto.inField=function(ob){
+			if (this.mGameScene){
+				return this.mGameScene.inField(ob);
+			}
+		}
+
+		__proto.refreshUINumBomb=function(){
+			if (this.mGameScene){
+				this.mGameScene.refreshUINumBomb();
+			}
+		}
+
+		__proto.destroyRange=function(range,dmg2Enm){
+			if (this.mGameScene){
+				this.mGameScene.destroyRange(range,dmg2Enm);
+			}
+		}
+
+		__proto.autoDelete=function(s){
+			if (this.mGameScene){
+				this.mGameScene.autoDelete(s);
+			}
+		}
+
+		__proto.aimToPlayer=function(ob){
+			if (this.mGameScene){
+				this.mGameScene.aimToPlayer(ob);
+			}
+		}
+
+		__proto.enemyDie=function(enm){
+			if (this.mGameScene){
+				this.mGameScene.enemyDie(enm);
+			}
+		}
+
+		/*private */
+		__proto.indexToType=function(idx){
+			switch(idx){
+				case 0:return "EPlayerType_ZhenWu";
+				case 1:return "EPlayerType_GaiBang";
+				case 2:return "EPlayerType_ShenWei";
+				case 3:return "EPlayerType_TaiBai";
+				case 4:return "EPlayerType_TangMen";
+				case 5:return "EPlayerType_TianXiang";
+				case 6:return "EPlayerType_WuDu";
+				case 7:return "EPlayerType_ShenDao";
+				default :return "EPlayerType_ShenWei";
+				}
+		}
+
+		// debug
+		__proto.dbg=function(){
+			if (this.mGameScene){
+			}
+		}
+
+		Manager.getManager=function(){
+			if (! Manager.mInstance){
+				Manager.mAllowInstantiation=true;
+				Manager.mInstance=new Manager();
+				Manager.mAllowInstantiation=false;
+			}
+			return Manager.mInstance;
+		}
+
+		Manager.mInstance=null
+		Manager.mAllowInstantiation=false;
+		return Manager;
+	})()
+
+
+	//class STG.MyMath
+	var MyMath=(function(){
+		function MyMath(){};
+		__class(MyMath,'STG.MyMath');
+		MyMath.aimA2B=function(ob,tgt){
+			var obPos=ob.localToGlobal(new Point(ob.pivotX,ob.pivotY));
+			var tgtPos=tgt.localToGlobal(new Point(tgt.pivotX,tgt.pivotY));
+			ob.mDirection=Math.atan2(
+			-(tgtPos.y-obPos.y),
+			(tgtPos.x-obPos.x));
+		}
+
+		MyMath.rebounceLR=function(obc){
+			var newDir=MyMath.normalizeAngle(Math.PI-obc.mDirection);
+			obc.mDirection=newDir;
+		}
+
+		MyMath.rebounceUD=function(obc){
+			var newDir=MyMath.normalizeAngle(-obc.mDirection);
+			obc.mDirection=newDir;
+		}
+
+		MyMath.normalizeAngle=function(theta){
+			if (theta >=MyMath.DOUBLE_PI){
+				return theta-MyMath.DOUBLE_PI;
+			}
+			else if (theta <=-MyMath.DOUBLE_PI){
+				return theta+MyMath.DOUBLE_PI;
+			}
+			else{
+				return theta;
+			}
+		}
+
+		MyMath.movingLeft=function(obc){
+			return Math.cos(obc.mDirection)< 0;
+		}
+
+		MyMath.movingRight=function(obc){
+			return Math.cos(obc.mDirection)> 0;
+		}
+
+		MyMath.movingUp=function(obc){
+			return Math.sin(obc.mDirection)> 0;
+		}
+
+		MyMath.movingDown=function(obc){
+			return Math.sin(obc.mDirection)< 0;
+		}
+
+		__static(MyMath,
+		['DOUBLE_PI',function(){return this.DOUBLE_PI=Math.PI *2;},'HALF_PI',function(){return this.HALF_PI=Math.PI / 2;}
+		]);
+		return MyMath;
+	})()
+
+
+	//class STG.OutSpriteDeletor
+	var OutSpriteDeletor=(function(){
+		function OutSpriteDeletor(){
+			this.mSprites=[];
 			this.mMinX=0;
 			this.mMinY=0;
 			this.mMaxX=0;
@@ -1800,8 +1401,8 @@ var Laya=window.Laya=(function(window,document){
 			this.mDeletingFrameCounter=0;
 		}
 
-		__class(OutMyNodeDeletor,'STG.OutMyNodeDeletor');
-		var __proto=OutMyNodeDeletor.prototype;
+		__class(OutSpriteDeletor,'STG.OutSpriteDeletor');
+		var __proto=OutSpriteDeletor.prototype;
 		__proto.setRange=function(minX,minY,maxX,maxY){
 			this.mMinX=minX;
 			this.mMinY=minY;
@@ -1810,68 +1411,159 @@ var Laya=window.Laya=(function(window,document){
 		}
 
 		__proto.deleteAll=function(){
-			for (var i=this.mMyNodes.length-1;i >=0;i--){
-				if (! this.mMyNodes[i].destroyed){
-					this.mMyNodes[i].destroy();
+			for (var i=this.mSprites.length-1;i >=0;i--){
+				if (! this.mSprites[i].destroyed){
+					this.mSprites[i].destroy();
 				}
-				this.mMyNodes.splice(i,1);
+				this.mSprites.splice(i,1);
 			}
 		}
 
-		__proto.registerMyNode=function(nd){
-			this.mMyNodes.push(nd);
+		__proto.registerSprite=function(s){
+			this.mSprites.push(s);
 		}
 
 		__proto.update=function(delta){
 			this.mDeletingFrameCounter++;
-			if (this.mDeletingFrameCounter > 100){
+			if (this.mDeletingFrameCounter > 500){
 				this.mDeletingFrameCounter=0;
-				for (var i=this.mMyNodes.length-1;i >=0;i--){
-					var nd=this.mMyNodes[i];
-					if (nd.destroyed){
-						this.mMyNodes.splice(i,1);
+				for (var i=this.mSprites.length-1;i >=0;i--){
+					var s=this.mSprites[i];
+					if (s.destroyed){
+						this.mSprites.splice(i,1);
 						continue ;
 					}
-					if ((this.noChildAlive(nd))&&
-						(this.isOut(nd)|| nd.isEmpty())){
-						if ((!nd.name)|| nd.name=="delete"){
-							nd.destroy();
-						}
-						else{
-							PoolWrapper.recover(nd);
-						}
-						this.mMyNodes.splice(i,1);
+					if ((s.numChildren==0)&&
+						(this.isOut(s)|| s.isEmpty())){
+						s.destroy();
+						this.mSprites.splice(i,1);
 					}
 				}
 			}
 		}
 
-		__proto.noChildAlive=function(nd){
-			if (nd.numChildren==0){
-				return true;
-			}
-			else{
-				for (var i=0;i < nd.numChildren;i++){
-					var ch=nd.getChildAt(i);
-					if (!ch.__InPool){
-						return false
-					}
-				}
-				return true;
-			}
-		}
-
-		__proto.isOut=function(nd){
-			var offsetX=nd.mBound.width *nd.scaleX / 2+200;
-			var offsetY=nd.mBound.height *nd.scaleY / 2+200;
-			var globalX=nd.getGlobalX(0);
-			var globalY=nd.getGlobalY(0);
+		__proto.isOut=function(s){
+			var bound=s.getGraphicBounds();
+			var offsetX=bound.width *s.scaleX / 2+200;
+			var offsetY=bound.height *s.scaleY / 2+200;
+			var posGlobal=s.localToGlobal(new Point(0,0));
 			return (
-			(globalX < this.mMinX-offsetX)|| (globalX > this.mMaxX+offsetX)||
-			(globalY < this.mMinY-offsetY)|| (globalY > this.mMaxY+offsetY));
+			(posGlobal.x < this.mMinX-offsetX)|| (posGlobal.x > this.mMaxX+offsetX)||
+			(posGlobal.y < this.mMinY-offsetY)|| (posGlobal.y > this.mMaxY+offsetY));
 		}
 
-		return OutMyNodeDeletor;
+		return OutSpriteDeletor;
+	})()
+
+
+	//class STG.Player.Controller
+	var Controller=(function(){
+		function Controller(t,s){
+			this.mTarget=null;
+			this.mSpeed=NaN;
+			this.up=false;
+			this.down=false;
+			this.left=false;
+			this.right=false;
+			this.mTarget=t;
+			this.mSpeed=s;
+			t.mASpeed=0;
+			t.mNSpeed=0;
+			Laya.stage.on("keydown",this,this.onKeyDown);
+			Laya.stage.on("keyup",this,this.onKeyUp);
+			Laya.stage.on("keypress",this,this.onKeyPress);
+		}
+
+		__class(Controller,'STG.Player.Controller');
+		var __proto=Controller.prototype;
+		__proto.setSpeed=function(s){
+			this.mSpeed=s;
+		}
+
+		__proto.setTarget=function(t){
+			this.mTarget=t;
+		}
+
+		__proto.onKeyDown=function(e){
+			var key=e["keyCode"];
+			if(key==38){this.up=true;}
+				else if(key==40){this.down=true;}
+			else if(key==37){this.left=true;}
+			else if(key==39){this.right=true;}
+			else if(key==90){this.mTarget.setFire(true);}
+			else if(key==16){this.mTarget.changeToShiftMode(true);}
+		}
+
+		__proto.onKeyUp=function(e){
+			var key=e["keyCode"];
+			if(key==38){this.up=false;}
+				else if(key==40){this.down=false;}
+			else if(key==37){this.left=false;}
+			else if(key==39){this.right=false;}
+			else if(key==90){this.mTarget.setFire(false);}
+			else if(key==88){this.mTarget.bomb();}
+			else if(key==16){this.mTarget.changeToShiftMode(false);}
+		}
+
+		__proto.onKeyPress=function(e){
+			var key=e["keyCode"];
+			if(key==117){}
+				else{
+			}
+		}
+
+		__proto.update=function(delta){
+			var dx=0;
+			var dy=0;
+			if (this.up){dy-=1;}
+				if (this.down){dy+=1;}
+			if (this.left){dx-=1;}
+				if (this.right){dx+=1;};
+			var fct=1;
+			var halfTargetWidth=this.mTarget.mBound.width / 2;
+			var halfTargetHeight=this.mTarget.mBound.height / 2;
+			if (dx==-1 && this.mTarget.x < 0+halfTargetWidth){
+				dx=0;
+			}
+			if (dx==1 && this.mTarget.x > 1080-halfTargetWidth){
+				dx=0;
+			}
+			if (dy==-1 && this.mTarget.y < 0+halfTargetHeight){
+				dy=0;
+			}
+			if (dy==1 && this.mTarget.y > 1920-halfTargetHeight){
+				dy=0;
+			}
+			if (dx *dy==1){
+				fct=Controller.NORMALIZATIONI_FACTOR;
+			}
+			this.mTarget.x+=dx *this.mSpeed *delta *fct;
+			this.mTarget.y+=dy *this.mSpeed *delta *fct;
+		}
+
+		__static(Controller,
+		['NORMALIZATIONI_FACTOR',function(){return this.NORMALIZATIONI_FACTOR=1 / Math.sqrt(2);}
+		]);
+		return Controller;
+	})()
+
+
+	//class STG.Player.Enum.EPlayerType
+	var EPlayerType=(function(){
+		function EPlayerType(){
+			this.mEnum="EPlayerType_ZhenWu";
+		}
+
+		__class(EPlayerType,'STG.Player.Enum.EPlayerType');
+		EPlayerType.ZHEN_WU="EPlayerType_ZhenWu";
+		EPlayerType.GAI_BANG="EPlayerType_GaiBang";
+		EPlayerType.SHEN_WEI="EPlayerType_ShenWei";
+		EPlayerType.TAI_BAI="EPlayerType_TaiBai";
+		EPlayerType.TANG_MEN="EPlayerType_TangMen";
+		EPlayerType.TIAN_XIANG="EPlayerType_TianXiang";
+		EPlayerType.WU_DU="EPlayerType_WuDu";
+		EPlayerType.SHEN_DAO="EPlayerType_ShenDao";
+		return EPlayerType;
 	})()
 
 
@@ -1881,8 +1573,13 @@ var Laya=window.Laya=(function(window,document){
 			this.mItems=[];
 			this.UP=0;
 			this.LEFT=0;
-			this.RIGHT=Const.PLAY_FILED_RIGHT;
+			this.RIGHT=1080;
 			this.DOWN=1920;
+			console.log("rebounce...");
+			console.log(this.LEFT);
+			console.log(this.RIGHT);
+			console.log(this.UP);
+			console.log(this.DOWN);
 		}
 
 		__class(RebounceManager,'STG.RebounceManager');
@@ -1904,14 +1601,13 @@ var Laya=window.Laya=(function(window,document){
 				};
 				var hw=obc.mBound.width / 2;
 				var hh=obc.mBound.height / 2;
-				var globalX=obc.getGlobalX(0);
-				var globalY=obc.getGlobalY(0);
-				if ((globalX <=this.LEFT+hw && MyMath.movingLeft(obc))
-					|| (globalX >=this.RIGHT-hw && MyMath.movingRight(obc))){
+				var gPos=obc.localToGlobal(new Point(0,0));
+				if ((gPos.x <=this.LEFT+hw && MyMath.movingLeft(obc))
+					|| (gPos.x >=this.RIGHT-hw && MyMath.movingRight(obc))){
 					MyMath.rebounceLR(obc);
 				}
-				if ((globalY <=this.UP+hh && MyMath.movingUp(obc))
-					|| (globalY >=this.DOWN-hh && MyMath.movingDown(obc))){
+				if ((gPos.y <=this.UP+hh && MyMath.movingUp(obc))
+					|| (gPos.y >=this.DOWN-hh && MyMath.movingDown(obc))){
 					MyMath.rebounceUD(obc);
 				}
 			}
@@ -2070,192 +1766,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	//class STG.Utils.Const
-	var Const=(function(){
-		function Const(){};
-		__class(Const,'STG.Utils.Const');
-		Const.WIN_WIDTH=1080;
-		Const.WIN_HEIGHT=1920;
-		Const.PLAY_FILED_LEFT=0;
-		Const.PLAY_FILED_UP=0;
-		Const.PLAY_FILED_RIGHT=1080;
-		Const.PLAY_FILED_DOWN=1920;
-		Const.PLAY_FILED_OFFSET=50;
-		Const.INIT_NUM_PLAYER=3;
-		Const.MAX_NUM_PLAYER=5;
-		Const.INIT_NUM_BOMB=2;
-		Const.MAX_NUM_BOMB=5;
-		Const.MAX_LEVEL=4;
-		Const.PLAYER_COLLI_ATK_SIZE=75;
-		Const.PLAYER_COLLI_ATK_POWER=5;
-		Const.DEFALT_SPEED=200;
-		Const.SHIFT_SPEED_ENTER=6;
-		Const.SHIFT_SPEED_LEAVE=20;
-		Const.RESPAWN_TIME=0.3;
-		Const.INVINCIBLILITY_TIME=5;
-		Const.BOMB_COOLDOWN_TIME=1;
-		Const.DROP_PROB=0.03;
-		Const.DROP_LIFE=10;
-		Const.DROP_SPEED=500;
-		Const.DROP_COLLI_R=50;
-		Const.BORD_OFFSET=200;
-		Const.DELETING_INTERVAL=100;
-		return Const;
-	})()
-
-
-	//class STG.Utils.MyMath
-	var MyMath=(function(){
-		function MyMath(){};
-		__class(MyMath,'STG.Utils.MyMath');
-		MyMath.aimA2B=function(ob,tgt){
-			ob.mDirection=MyMath.getDirection(ob,tgt);
-		}
-
-		MyMath.deltaAngle=function(theta,phi){
-			return (MyMath.normalizeAngle(theta)-MyMath.normalizeAngle(phi));
-		}
-
-		MyMath.getDirection=function(ob,tgt){
-			var obPosX=ob.getGlobalX(ob.pivotX);
-			var obPosY=ob.getGlobalY(ob.pivotY);
-			var tgtPosX=tgt.getGlobalX(tgt.pivotX);
-			var tgtPosY=tgt.getGlobalY(tgt.pivotY);
-			return (Math.atan2(-(tgtPosY-obPosY),
-			(tgtPosX-obPosX)));
-		}
-
-		MyMath.rebounceLR=function(obc){
-			var newDir=MyMath.normalizeAngle(Math.PI-obc.mDirection);
-			obc.mDirection=newDir;
-		}
-
-		MyMath.rebounceUD=function(obc){
-			var newDir=MyMath.normalizeAngle(-obc.mDirection);
-			obc.mDirection=newDir;
-		}
-
-		MyMath.normalizeAngle=function(theta){
-			while (theta > MyMath.DOUBLE_PI){
-				theta-=MyMath.DOUBLE_PI;
-			}
-			while (theta < 0){
-				theta+=MyMath.DOUBLE_PI;
-			}
-			return theta;
-		}
-
-		MyMath.movingLeft=function(ob){
-			return Math.cos(ob.mDirection)<-0.01;
-		}
-
-		MyMath.movingRight=function(ob){
-			return Math.cos(ob.mDirection)> 0.01;
-		}
-
-		MyMath.movingUp=function(ob){
-			return Math.sin(ob.mDirection)> 0.01;
-		}
-
-		MyMath.movingDown=function(ob){
-			return Math.sin(ob.mDirection)<-0.01;
-		}
-
-		MyMath.nearlyEq=function(a,b){
-			var diff=a-b;
-			return ((diff >-0.0000001)&& (diff < 0.0000001));
-		}
-
-		MyMath.distance=function(x1,y1,x2,y2){
-			var dx=x1-x2;
-			var dy=y1-y2;
-			return Math.sqrt(dx *dx+dy *dy);
-		}
-
-		MyMath.fluctuateZero=function(flt){
-			return flt *(Math.random()-0.5);
-		}
-
-		MyMath.fluctuate=function(num,per){
-			return num *(1+per *(Math.random()-0.5));
-		}
-
-		MyMath.PRECISION=0.0000001;
-		__static(MyMath,
-		['DOUBLE_PI',function(){return this.DOUBLE_PI=Math.PI *2;},'HALF_PI',function(){return this.HALF_PI=Math.PI / 2;}
-		]);
-		return MyMath;
-	})()
-
-
-	//class STG.Utils.PoolWrapper
-	var PoolWrapper=(function(){
-		function PoolWrapper(){};
-		__class(PoolWrapper,'STG.Utils.PoolWrapper');
-		PoolWrapper.getGameObject=function(cls,sign){
-			(sign===void 0)&& (sign="delete");
-			PoolWrapper.add(sign);
-			var obj;
-			var i=0;
-			do{
-				i++;
-				obj=Pool.getItemByClass(sign,cls);
-				obj.name=sign;
-				obj.visible=true;
-				if (i > 2){
-					console.log("warning: pool returned new class");
-					return new cls;
-				}
-			}
-			while (obj.destroyed);
-			obj.startTimer();
-			return obj;
-		}
-
-		PoolWrapper.clearPool=function(){
-			for (var i=0;i < PoolWrapper.mSetSign.length;i++){
-				Pool.clearBySign(PoolWrapper.mSetSign[i]);
-			}
-		}
-
-		PoolWrapper.recover=function(obj){
-			if (!obj.name){
-				throw new Error("tring to recover object without name!");
-			}
-			obj.clearTimer();
-			Pool.recover(obj.name,obj);
-			obj.mHaveInPool=true;
-			obj.removeSelf();
-			obj.visible=false;
-		}
-
-		PoolWrapper.add=function(sign){
-			if (PoolWrapper.hasSign(sign)){
-				return false;
-			}
-			else{
-				PoolWrapper.mSetSign.push(sign);
-				return true;
-			}
-		}
-
-		PoolWrapper.hasSign=function(sign){
-			for (var i=0;i < PoolWrapper.mSetSign.length;i++){
-				if (sign==PoolWrapper.mSetSign[i]){
-					return true;
-				}
-			}
-			return false;
-		}
-
-		PoolWrapper.mSetSign=[];
-		return PoolWrapper;
-	})()
-
-
-	/**
-	*Config 用于配置一些全局参数。如需更改，请在初始化引擎之前设置。
-	*/
 	//class Config
 	var Config=(function(){
 		function Config(){};
@@ -2273,11 +1783,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>Graphics</code> 类用于创建绘图显示对象。Graphics可以同时绘制多个位图或者矢量图，还可以结合save，restore，transform，scale，rotate，translate，alpha等指令对绘图效果进行变化。
-	*Graphics以命令流方式存储，可以通过cmds属性访问所有命令流。Graphics是比Sprite更轻量级的对象，合理使用能提高应用性能(比如把大量的节点绘图改为一个节点的Graphics命令集合，能减少大量节点创建消耗)。
-	*@see laya.display.Sprite#graphics
-	*/
 	//class laya.display.Graphics
 	var Graphics=(function(){
 		function Graphics(){
@@ -3229,9 +2734,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>EmitterBase</code> 类是粒子发射器类
-	*/
 	//class laya.particle.emitter.EmitterBase
 	var EmitterBase=(function(){
 		function EmitterBase(){
@@ -3321,11 +2823,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*
-	*<code>ParticleTemplateBase</code> 类是粒子模板基类
-	*
-	*/
 	//class laya.particle.ParticleTemplateBase
 	var ParticleTemplateBase=(function(){
 		function ParticleTemplateBase(){
@@ -3346,9 +2843,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>BitmapFont</code> 是位图字体类，用于定义位图字体信息。
-	*/
 	//class laya.display.BitmapFont
 	var BitmapFont=(function(){
 		function BitmapFont(){
@@ -3517,10 +3011,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*<code>Style</code> 类是元素样式定义类。
-	*/
 	//class laya.display.css.Style
 	var Style=(function(){
 		function Style(){
@@ -3687,10 +3177,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*<code>Font</code> 类是字体显示定义类。
-	*/
 	//class laya.display.css.Font
 	var Font=(function(){
 		function Font(src){
@@ -3864,9 +3350,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*/
 	//class laya.display.css.TransformInfo
 	var TransformInfo=(function(){
 		function TransformInfo(){
@@ -3884,9 +3367,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>Event</code> 是事件类型的集合。
-	*/
 	//class laya.events.Event
 	var Event=(function(){
 		function Event(){
@@ -4059,9 +3539,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>Keyboard</code> 类的属性是一些常数，这些常数表示控制游戏时最常用的键。
-	*/
 	//class laya.events.Keyboard
 	var Keyboard=(function(){
 		function Keyboard(){};
@@ -4169,12 +3646,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<p><code>KeyBoardManager</code> 是键盘事件管理类。该类从浏览器中接收键盘事件，并派发该事件。</p>
-	*<p>派发事件时若 Stage.focus 为空则只从 Stage 上派发该事件，否则将从 Stage.focus 对象开始一直冒泡派发该事件。所以在 Laya.stage 上监听键盘事件一定能够收到，如果在其他地方监听，则必须处在Stage.focus的冒泡链上才能收到该事件。</p>
-	*<p>用户可以通过代码 Laya.stage.focus=someNode 的方式来设置focus对象。</p>
-	*<p>用户可统一的根据事件对象中 e.keyCode 来判断按键类型，该属性兼容了不同浏览器的实现。</p>
-	*/
 	//class laya.events.KeyBoardManager
 	var KeyBoardManager=(function(){
 		function KeyBoardManager(){};
@@ -4219,13 +3690,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<p><code>MouseManager</code> 是鼠标、触摸交互管理器。</p>
-	*<p>鼠标事件流包括捕获阶段、目标阶段、冒泡阶段。<br/>
-	*捕获阶段：此阶段引擎会从stage开始递归检测stage及其子对象，直到找到命中的目标对象或者未命中任何对象；<br/>
-	*目标阶段：找到命中的目标对象；<br/>
-	*冒泡阶段：事件离开目标对象，按节点层级向上逐层通知，直到到达舞台的过程。</p>
-	*/
 	//class laya.events.MouseManager
 	var MouseManager=(function(){
 		function MouseManager(){
@@ -4525,10 +3989,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*Touch事件管理类，处理多点触控下的鼠标事件
-	*/
 	//class laya.events.TouchManager
 	var TouchManager=(function(){
 		function TouchManager(){
@@ -4828,9 +4288,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>Filter</code> 是滤镜基类。
-	*/
 	//class laya.filters.Filter
 	var Filter=(function(){
 		function Filter(){
@@ -4862,10 +4319,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*<code>ColorFilterAction</code> 是一个颜色滤镜应用类。
-	*/
 	//class laya.filters.ColorFilterAction
 	var ColorFilterAction=(function(){
 		function ColorFilterAction(){
@@ -4916,27 +4369,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*默认的FILTER,什么都不做
-	*@private
-	*/
-	//class laya.filters.FilterAction
-	var FilterAction=(function(){
-		function FilterAction(){
-			this.data=null;
-		}
-
-		__class(FilterAction,'laya.filters.FilterAction');
-		var __proto=FilterAction.prototype;
-		Laya.imps(__proto,{"laya.filters.IFilterAction":true})
-		__proto.apply=function(data){
-			return null;
-		}
-
-		return FilterAction;
-	})()
-
-
 	//class laya.filters.webgl.FilterActionGL
 	var FilterActionGL=(function(){
 		function FilterActionGL(){}
@@ -4955,66 +4387,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*/
-	//class laya.filters.WebGLFilter
-	var WebGLFilter=(function(){
-		function WebGLFilter(){};
-		__class(WebGLFilter,'laya.filters.WebGLFilter');
-		WebGLFilter.enable=function(){
-			if (WebGLFilter.isInit)return;
-			WebGLFilter.isInit=true;
-			if (!Render.isWebGL)return;
-			RunDriver.createFilterAction=function (type){
-				var action;
-				switch (type){
-					case 0x20:
-						action=new ColorFilterActionGL();
-						break ;
-					case 0x10:
-						action=new BlurFilterActionGL();
-						break ;
-					case 0x08:
-						action=new GlowFilterActionGL();
-						break ;
-					}
-				return action;
-			}
-		}
-
-		WebGLFilter.isInit=false;
-		WebGLFilter.__init$=function(){
-			BlurFilterActionGL;
-			ColorFilterActionGL;
-			GlowFilterActionGL;
-			Render;
-			RunDriver;{
-				RunDriver.createFilterAction=function (type){
-					var action;
-					switch (type){
-						case 0x10:
-							action=new FilterAction();
-							break ;
-						case 0x08:
-							action=new FilterAction();
-							break ;
-						case 0x20:
-							action=new ColorFilterAction();
-							break ;
-						}
-					return action;
-				}
-			}
-		}
-
-		return WebGLFilter;
-	})()
-
-
-	/**
-	*@private
-	*/
 	//class laya.maths.Arith
 	var Arith=(function(){
 		function Arith(){};
@@ -5043,10 +4415,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*计算贝塞尔曲线的工具类。
-	*/
 	//class laya.maths.Bezier
 	var Bezier=(function(){
 		function Bezier(){
@@ -5156,10 +4524,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*凸包算法。
-	*/
 	//class laya.maths.GrahamScan
 	var GrahamScan=(function(){
 		function GrahamScan(){};
@@ -5278,10 +4642,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*<code>MathUtil</code> 是一个数据处理工具类。
-	*/
 	//class laya.maths.MathUtil
 	var MathUtil=(function(){
 		function MathUtil(){};
@@ -5386,10 +4746,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<p> <code>Matrix</code> 类表示一个转换矩阵，它确定如何将点从一个坐标空间映射到另一个坐标空间。</p>
-	*<p>您可以对一个显示对象执行不同的图形转换，方法是设置 Matrix 对象的属性，将该 Matrix 对象应用于 Transform 对象的 matrix 属性，然后应用该 Transform 对象作为显示对象的 transform 属性。这些转换函数包括平移（x 和 y 重新定位）、旋转、缩放和倾斜。</p>
-	*/
 	//class laya.maths.Matrix
 	var Matrix=(function(){
 		function Matrix(a,b,c,d,tx,ty){
@@ -5878,9 +5234,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>Point</code> 对象表示二维坐标系统中的某个位置，其中 x 表示水平轴，y 表示垂直轴。
-	*/
 	//class laya.maths.Point
 	var Point=(function(){
 		function Point(x,y){
@@ -5939,10 +5292,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<p><code>Rectangle</code> 对象是按其位置（由它左上角的点 (x,y)确定）以及宽度和高度定义的区域。</p>
-	*<p>Rectangle 类的 x、y、width 和 height 属性相互独立；更改一个属性的值不会影响其他属性。</p>
-	*/
 	//class laya.maths.Rectangle
 	var Rectangle=(function(){
 		function Rectangle(x,y,width,height){
@@ -6159,9 +5508,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>SoundManager</code> 是一个声音管理类。提供了对背景音乐、音效的播放控制方法。
-	*/
 	//class laya.media.SoundManager
 	var SoundManager=(function(){
 		function SoundManager(){};
@@ -6418,9 +5764,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<p> <code>LocalStorage</code> 类用于没有时间限制的数据存储。</p>
-	*/
 	//class laya.net.LocalStorage
 	var LocalStorage=(function(){
 		var Storage;
@@ -6506,9 +5849,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<p> <code>URL</code> 类用于定义地址信息。</p>
-	*/
 	//class laya.net.URL
 	var URL=(function(){
 		function URL(url){
@@ -6585,9 +5925,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*/
 	//class laya.particle.ParticleData
 	var ParticleData=(function(){
 		function ParticleData(){
@@ -6662,9 +5999,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>ParticleSettings</code> 类是粒子配置数据类
-	*/
 	//class laya.particle.ParticleSetting
 	var ParticleSetting=(function(){
 		function ParticleSetting(){
@@ -6745,9 +6079,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*/
 	//class laya.particle.particleUtils.CanvasShader
 	var CanvasShader=(function(){
 		function CanvasShader(){
@@ -6844,12 +6175,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*
-	*@private
-	*
-	*@created 2015-8-25 下午3:41:07
-	*/
 	//class laya.particle.particleUtils.CMDParticle
 	var CMDParticle=(function(){
 		function CMDParticle(){
@@ -6917,10 +6242,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*<code>Render</code> 是渲染管理类。它是一个单例，可以使用 Laya.render 访问。
-	*/
 	//class laya.renders.Render
 	var Render=(function(){
 		function Render(width,height){
@@ -6996,10 +6317,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*渲染环境
-	*/
 	//class laya.renders.RenderContext
 	var RenderContext=(function(){
 		function RenderContext(width,height,canvas){
@@ -7465,10 +6782,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*精灵渲染器
-	*/
 	//class laya.renders.RenderSprite
 	var RenderSprite=(function(){
 		function RenderSprite(type,next){
@@ -7820,10 +7133,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*Context扩展类
-	*/
 	//class laya.resource.Context
 	var Context=(function(){
 		function Context(){
@@ -8058,10 +7367,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*<code>ResourceManager</code> 是资源管理类。它用于资源的载入、获取、销毁。
-	*/
 	//class laya.resource.ResourceManager
 	var ResourceManager=(function(){
 		function ResourceManager(){
@@ -8353,9 +7658,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*/
 	//class laya.system.System
 	var System=(function(){
 		function System(){};
@@ -8377,9 +7679,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>LayoutStyle</code> 是一个布局样式类。
-	*/
 	//class laya.ui.LayoutStyle
 	var LayoutStyle=(function(){
 		function LayoutStyle(){
@@ -8402,9 +7701,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>Styles</code> 定义了组件常用的样式属性。
-	*/
 	//class laya.ui.Styles
 	var Styles=(function(){
 		function Styles(){};
@@ -8420,9 +7716,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>UIUtils</code> 是文本工具集。
-	*/
 	//class laya.ui.UIUtils
 	var UIUtils=(function(){
 		function UIUtils(){};
@@ -8485,10 +7778,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	SoundManager;
-	/**
-	*<code>Browser</code> 是浏览器代理类。封装浏览器及原生 js 提供的一些功能。
-	*/
 	//class laya.utils.Browser
 	var Browser=(function(){
 		function Browser(){};
@@ -8666,10 +7955,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*对象缓存统一管理类
-	*/
 	//class laya.utils.CacheManger
 	var CacheManger=(function(){
 		function CacheManger(){}
@@ -8734,9 +8019,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>ClassUtils</code> 是一个类工具类。
-	*/
 	//class laya.utils.ClassUtils
 	var ClassUtils=(function(){
 		function ClassUtils(){};
@@ -9004,10 +8286,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*<code>Color</code> 是一个颜色值处理类。
-	*/
 	//class laya.utils.Color
 	var Color=(function(){
 		function Color(str){
@@ -9070,9 +8348,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>Dictionary</code> 是一个字典型的数据存取类。
-	*/
 	//class laya.utils.Dictionary
 	var Dictionary=(function(){
 		function Dictionary(){
@@ -9160,10 +8435,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*<code>Dragging</code> 类是触摸滑动控件。
-	*/
 	//class laya.utils.Dragging
 	var Dragging=(function(){
 		function Dragging(){
@@ -9406,9 +8677,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>Ease</code> 类定义了缓动函数，以便实现 <code>Tween</code> 动画的缓动效果。
-	*/
 	//class laya.utils.Ease
 	var Ease=(function(){
 		function Ease(){};
@@ -9615,9 +8883,96 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*鼠标点击区域，可以设置绘制一系列矢量图作为点击区域和非点击区域（目前只支持圆形，矩形，多边形）
-	*/
+	//class laya.utils.Handler
+	var Handler=(function(){
+		function Handler(caller,method,args,once){
+			//this.caller=null;
+			//this.method=null;
+			//this.args=null;
+			this.once=false;
+			this._id=0;
+			(once===void 0)&& (once=false);
+			this.setTo(caller,method,args,once);
+		}
+
+		__class(Handler,'laya.utils.Handler');
+		var __proto=Handler.prototype;
+		/**
+		*设置此对象的指定属性值。
+		*@param caller 执行域(this)。
+		*@param method 回调方法。
+		*@param args 携带的参数。
+		*@param once 是否只执行一次，如果为true，执行后执行recover()进行回收。
+		*@return 返回 handler 本身。
+		*/
+		__proto.setTo=function(caller,method,args,once){
+			this._id=Handler._gid++;
+			this.caller=caller;
+			this.method=method;
+			this.args=args;
+			this.once=once;
+			return this;
+		}
+
+		/**
+		*执行处理器。
+		*/
+		__proto.run=function(){
+			if (this.method==null)return null;
+			var id=this._id;
+			var result=this.method.apply(this.caller,this.args);
+			this._id===id && this.once && this.recover();
+			return result;
+		}
+
+		/**
+		*执行处理器，携带额外数据。
+		*@param data 附加的回调数据，可以是单数据或者Array(作为多参)。
+		*/
+		__proto.runWith=function(data){
+			if (this.method==null)return null;
+			var id=this._id;
+			if (data==null)
+				var result=this.method.apply(this.caller,this.args);
+			else if (!this.args && !data.unshift)result=this.method.call(this.caller,data);
+			else if (this.args)result=this.method.apply(this.caller,this.args.concat(data));
+			else result=this.method.apply(this.caller,data);
+			this._id===id && this.once && this.recover();
+			return result;
+		}
+
+		/**
+		*清理对象引用。
+		*/
+		__proto.clear=function(){
+			this.caller=null;
+			this.method=null;
+			this.args=null;
+			return this;
+		}
+
+		/**
+		*清理并回收到 Handler 对象池内。
+		*/
+		__proto.recover=function(){
+			if (this._id > 0){
+				this._id=0;
+				Handler._pool.push(this.clear());
+			}
+		}
+
+		Handler.create=function(caller,method,args,once){
+			(once===void 0)&& (once=true);
+			if (Handler._pool.length)return Handler._pool.pop().setTo(caller,method,args,once);
+			return new Handler(caller,method,args,once);
+		}
+
+		Handler._pool=[];
+		Handler._gid=1;
+		return Handler;
+	})()
+
+
 	//class laya.utils.HitArea
 	var HitArea=(function(){
 		function HitArea(){
@@ -9763,10 +9118,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*<code>HTMLChar</code> 是一个 HTML 字符类。
-	*/
 	//class laya.utils.HTMLChar
 	var HTMLChar=(function(){
 		function HTMLChar(char,w,h,style){
@@ -9866,9 +9217,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>Pool</code> 是对象池类，用于对象的存贮、重复使用。
-	*/
 	//class laya.utils.Pool
 	var Pool=(function(){
 		function Pool(){};
@@ -9916,9 +9264,116 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>Stat</code> 用于显示帧率统计信息。
-	*/
+	//class laya.utils.RunDriver
+	var RunDriver=(function(){
+		function RunDriver(){};
+		__class(RunDriver,'laya.utils.RunDriver');
+		RunDriver.FILTER_ACTIONS=[];
+		RunDriver.pixelRatio=-1;
+		RunDriver._charSizeTestDiv=null
+		RunDriver.now=function(){
+			return Date.now();
+		}
+
+		RunDriver.getWindow=function(){
+			return window;
+		}
+
+		RunDriver.getPixelRatio=function(){
+			if (RunDriver.pixelRatio < 0){
+				var ctx=Browser.context;
+				var backingStore=ctx.backingStorePixelRatio || ctx.webkitBackingStorePixelRatio || ctx.mozBackingStorePixelRatio || ctx.msBackingStorePixelRatio || ctx.oBackingStorePixelRatio || ctx.backingStorePixelRatio || 1;
+				RunDriver.pixelRatio=(Browser.window.devicePixelRatio || 1)/ backingStore;
+				if(RunDriver.pixelRatio<1)RunDriver.pixelRatio=1;
+			}
+			return RunDriver.pixelRatio;
+		}
+
+		RunDriver.getIncludeStr=function(name){
+			return null;
+		}
+
+		RunDriver.createShaderCondition=function(conditionScript){
+			var fn="(function() {return "+conditionScript+";})";
+			return Browser.window.eval(fn);
+		}
+
+		RunDriver.fontMap=[];
+		RunDriver.measureText=function(txt,font){
+			var isChinese=RunDriver.hanzi.test(txt);
+			if (isChinese && RunDriver.fontMap[font]){
+				return RunDriver.fontMap[font];
+			};
+			var ctx=Browser.context;
+			ctx.font=font;
+			var r=ctx.measureText(txt);
+			if (isChinese)RunDriver.fontMap[font]=r;
+			return r;
+		}
+
+		RunDriver.getWebGLContext=function(canvas){
+		};
+
+		RunDriver.beginFlush=function(){
+		};
+
+		RunDriver.endFinish=function(){
+		};
+
+		RunDriver.addToAtlas=null
+		RunDriver.flashFlushImage=function(atlasWebGLCanvas){
+		};
+
+		RunDriver.drawToCanvas=function(sprite,_renderType,canvasWidth,canvasHeight,offsetX,offsetY){
+			var canvas=HTMLCanvas.create("2D");
+			var context=new RenderContext(canvasWidth,canvasHeight,canvas);
+			RenderSprite.renders[_renderType]._fun(sprite,context,offsetX,offsetY);
+			return canvas;
+		}
+
+		RunDriver.createParticleTemplate2D=null
+		RunDriver.createGLTextur=null;
+		RunDriver.createWebGLContext2D=null;
+		RunDriver.changeWebGLSize=function(w,h){
+		};
+
+		RunDriver.createRenderSprite=function(type,next){
+			return new RenderSprite(type,next);
+		}
+
+		RunDriver.createFilterAction=function(type){
+			return new ColorFilterAction();
+		}
+
+		RunDriver.createGraphics=function(){
+			return new Graphics();
+		}
+
+		RunDriver.clear=function(value){
+			Render._context.ctx.clear();
+		}
+
+		RunDriver.clearAtlas=function(value){
+		};
+
+		RunDriver.addTextureToAtlas=function(value){
+		};
+
+		RunDriver.getTexturePixels=function(value,x,y,width,height){
+			return null;
+		}
+
+		RunDriver.skinAniSprite=function(){
+			return null;
+		}
+
+		__static(RunDriver,
+		['hanzi',function(){return this.hanzi=new RegExp("^[\u4E00-\u9FA5]$");}
+		]);
+		return RunDriver;
+	})()
+
+
 	//class laya.utils.Stat
 	var Stat=(function(){
 		function Stat(){};
@@ -10063,10 +9518,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*<code>StringKey</code> 类用于存取字符串对应的数字。
-	*/
 	//class laya.utils.StringKey
 	var StringKey=(function(){
 		function StringKey(){
@@ -10113,9 +9564,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>Timer</code> 是时钟管理类。它是一个单例，可以通过 Laya.timer 访问。
-	*/
 	//class laya.utils.Timer
 	var Timer=(function(){
 		var TimerHandler;
@@ -10427,9 +9875,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>Tween</code> 是一个缓动类。使用实现目标对象属性的渐变。
-	*/
 	//class laya.utils.Tween
 	var Tween=(function(){
 		function Tween(){
@@ -10707,9 +10152,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>Utils</code> 是工具类。
-	*/
 	//class laya.utils.Utils
 	var Utils=(function(){
 		function Utils(){};
@@ -10921,9 +10363,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*/
 	//class laya.utils.VectorGraphManager
 	var VectorGraphManager=(function(){
 		function VectorGraphManager(){
@@ -11053,9 +10492,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*/
 	//class laya.utils.WordText
 	var WordText=(function(){
 		function WordText(){
@@ -11509,7 +10945,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	;
 	//class laya.webgl.canvas.BlendMode
 	var BlendMode=(function(){
 		function BlendMode(){};
@@ -12154,9 +11589,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*这里销毁的问题，后面待确认
-	*/
 	//class laya.webgl.shader.d2.skinAnishader.SkinMesh
 	var SkinMesh=(function(){
 		function SkinMesh(){
@@ -12362,7 +11794,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	//此类可以减少代码
 	//class laya.webgl.shapes.BasePoly
 	var BasePoly=(function(){
 		function BasePoly(x,y,width,height,edges,color,borderWidth,borderColor,round){
@@ -13231,9 +12662,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*...特殊的字符，如泰文，必须重新实现这个类
-	*/
 	//class laya.webgl.text.CharSegment
 	var CharSegment=(function(){
 		function CharSegment(){
@@ -14038,9 +13466,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*@private
-	*/
 	//class laya.webgl.WebGL
 	var WebGL=(function(){
 		function WebGL(){};
@@ -14896,7 +14321,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**全局配置*/
 	//class UIConfig
 	var UIConfig=(function(){
 		function UIConfig(){};
@@ -14911,9 +14335,6 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
-	/**
-	*<code>Node</code> 类用于创建节点对象，节点是最基本的元素。
-	*/
 	//class laya.display.Node extends laya.events.EventDispatcher
 	var Node=(function(_super){
 		function Node(){
@@ -15482,18 +14903,13 @@ var Laya=window.Laya=(function(window,document){
 
 		__class(ColliEllipse,'STG.GameObject.Collision.ColliEllipse',_super);
 		var __proto=ColliEllipse.prototype;
-		__proto.toEllipseCoordinate=function(px,py){
-			var vecEPX=px-this.x;
-			var vecEPY=py-this.y;
-			var vecEXX=1;
-			var vecEXY=Math.tan(this.dir);
-			var vecEYX=-vecEXY;
-			var vecEYY=vecEXX;
-			var lenVecEX=MyMath.distance(vecEXX,vecEXY,0,0);
-			var lenVecEY=MyMath.distance(vecEYX,vecEYY,0,0);
+		__proto.toEllipseCoordinate=function(p){
+			var vecEP=new Point(p.x-this.x,p.y-this.y);
+			var vecEX=new Point(1,Math.tan(this.dir));
+			var vecEY=new Point(-vecEX.y,vecEX.x);
 			return new Point(
-			(vecEPX *vecEXX+vecEPY *vecEXY)/ lenVecEX,
-			(vecEPX *vecEYX+vecEPY *vecEYY)/ lenVecEY);
+			(vecEP.x *vecEX.x+vecEP.y *vecEX.y)/ vecEX.distance(0,0),
+			(vecEP.x *vecEY.x+vecEP.y *vecEY.y)/ vecEY.distance(0,0));
 		}
 
 		__proto.getC=function(){
@@ -15509,24 +14925,6 @@ var Laya=window.Laya=(function(window,document){
 	})(ColliBody)
 
 
-	//class STG.GameObject.Property.PropertyOfEnemy extends STG.GameObject.Property.PropertyOfGameObjColli
-	var PropertyOfEnemy=(function(_super){
-		function PropertyOfEnemy(){
-			this.mBullets=null;
-			this.mScore=null;
-			this.mHealth=0;
-			PropertyOfEnemy.__super.call(this);
-		}
-
-		__class(PropertyOfEnemy,'STG.GameObject.Property.PropertyOfEnemy',_super);
-		return PropertyOfEnemy;
-	})(PropertyOfGameObjColli)
-
-
-	/**
-	*@private
-	*<code>Resource</code> 资源存取类。
-	*/
 	//class laya.resource.Resource extends laya.events.EventDispatcher
 	var Resource=(function(_super){
 		function Resource(){
@@ -15783,16 +15181,6 @@ var Laya=window.Laya=(function(window,document){
 	})(EventDispatcher)
 
 
-	/**
-	*<p> <code>LoaderManager</code> 类用于用于批量加载资源、数据。</p>
-	*<p>批量加载器，单例，可以通过Laya.loader访问，注意大小写。</p>
-	*多线程：默认5个线程，可以通过maxLoader属性修改线程数量
-	*多优先级：默认5个优先级，0最快，4最慢，默认为1
-	*重复过滤：自动过滤重复加载以及已经加载过的地址，防止重复加载
-	*错误重试：资源加载失败后，会重试加载（按照最低优先级），retryNum设定加载失败后重试次数，retryDelay设定加载重试的时间间隔
-	*如果单个地址加载方式，加载重试后仍然失败，则调用complete回调，并返回null。如果多地址加载方式，重试后仍然失败，则调用complete回调，返回为success=false
-	*全部队列加载完成，会派发complete事件，如果队列中任意一个加载失败，会派发error事件
-	*/
 	//class laya.net.LoaderManager extends laya.events.EventDispatcher
 	var LoaderManager=(function(_super){
 		var ResInfo;
@@ -16161,10 +15549,6 @@ var Laya=window.Laya=(function(window,document){
 	})(EventDispatcher)
 
 
-	/**
-	*@private
-	*使用Audio标签播放声音
-	*/
 	//class laya.media.h5audio.AudioSound extends laya.events.EventDispatcher
 	var AudioSound=(function(_super){
 		function AudioSound(){
@@ -16281,10 +15665,6 @@ var Laya=window.Laya=(function(window,document){
 	})(EventDispatcher)
 
 
-	/**
-	*<p> <code>SoundChannel</code> 用来控制程序中的声音。每个声音均分配给一个声道，而且应用程序可以具有混合在一起的多个声道。</p>
-	*<p> <code>SoundChannel</code> 类包含控制声音的播放、暂停、停止、音量的方法，以及获取声音的播放状态、总时间、当前播放时间、总循环次数、播放地址等信息的方法。</p>
-	*/
 	//class laya.media.SoundChannel extends laya.events.EventDispatcher
 	var SoundChannel=(function(_super){
 		function SoundChannel(){
@@ -16349,9 +15729,6 @@ var Laya=window.Laya=(function(window,document){
 	})(EventDispatcher)
 
 
-	/**
-	*<code>Sound</code> 类是用来播放控制声音的类。
-	*/
 	//class laya.media.Sound extends laya.events.EventDispatcher
 	var Sound=(function(_super){
 		function Sound(){Sound.__super.call(this);;
@@ -16394,10 +15771,6 @@ var Laya=window.Laya=(function(window,document){
 	})(EventDispatcher)
 
 
-	/**
-	*@private
-	*web audio api方式播放声音
-	*/
 	//class laya.media.webaudio.WebAudioSound extends laya.events.EventDispatcher
 	var WebAudioSound=(function(_super){
 		function WebAudioSound(){
@@ -16584,9 +15957,6 @@ var Laya=window.Laya=(function(window,document){
 	})(EventDispatcher)
 
 
-	/**
-	*<code>HttpRequest</code> 通过 HTTP 协议传送或接收 XML 及其他数据。
-	*/
 	//class laya.net.HttpRequest extends laya.events.EventDispatcher
 	var HttpRequest=(function(_super){
 		function HttpRequest(){
@@ -16740,9 +16110,6 @@ var Laya=window.Laya=(function(window,document){
 	})(EventDispatcher)
 
 
-	/**
-	*<code>Loader</code> 类可用来加载文本、JSON、XML、二进制、图像等资源。
-	*/
 	//class laya.net.Loader extends laya.events.EventDispatcher
 	var Loader=(function(_super){
 		function Loader(){
@@ -17099,9 +16466,6 @@ var Laya=window.Laya=(function(window,document){
 	})(EventDispatcher)
 
 
-	/**
-	*@private
-	*/
 	//class laya.particle.ParticleTemplateWebGL extends laya.particle.ParticleTemplateBase
 	var ParticleTemplateWebGL=(function(_super){
 		function ParticleTemplateWebGL(parSetting){
@@ -17226,9 +16590,6 @@ var Laya=window.Laya=(function(window,document){
 	})(ParticleTemplateBase)
 
 
-	/**
-	*<code>Texture</code> 是一个纹理处理类。
-	*/
 	//class laya.resource.Texture extends laya.events.EventDispatcher
 	var Texture=(function(_super){
 		function Texture(bitmap,uv){
@@ -17494,10 +16855,6 @@ var Laya=window.Laya=(function(window,document){
 	})(EventDispatcher)
 
 
-	/**
-	*<code>AutoBitmap</code> 类是用于表示位图图像或绘制图形的显示对象。
-	*<p>封装了位置，宽高及九宫格的处理，供UI组件使用。</p>
-	*/
 	//class laya.ui.AutoBitmap extends laya.display.Graphics
 	var AutoBitmap=(function(_super){
 		function AutoBitmap(){
@@ -17703,10 +17060,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Graphics)
 
 
-	/**
-	*
-	*@private
-	*/
 	//class laya.particle.emitter.Emitter2D extends laya.particle.emitter.EmitterBase
 	var Emitter2D=(function(_super){
 		function Emitter2D(_template){
@@ -17805,9 +17158,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Graphics)
 
 
-	/**
-	*@private
-	*/
 	//class laya.particle.ParticleTemplateCanvas extends laya.particle.ParticleTemplateBase
 	var ParticleTemplateCanvas=(function(_super){
 		function ParticleTemplateCanvas(particleSetting){
@@ -18033,10 +17383,6 @@ var Laya=window.Laya=(function(window,document){
 	})(ParticleTemplateBase)
 
 
-	/**
-	*@private
-	*<code>CSSStyle</code> 类是元素CSS样式定义类。
-	*/
 	//class laya.display.css.CSSStyle extends laya.display.css.Style
 	var CSSStyle=(function(_super){
 		function CSSStyle(ower){
@@ -18719,54 +18065,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Style)
 
 
-	/**
-	*模糊滤镜
-	*/
-	//class laya.filters.BlurFilter extends laya.filters.Filter
-	var BlurFilter=(function(_super){
-		function BlurFilter(strength){
-			this.strength=NaN;
-			BlurFilter.__super.call(this);
-			(strength===void 0)&& (strength=4);
-			if (Render.isWebGL)WebGLFilter.enable();
-			this.strength=strength;
-			this._action=RunDriver.createFilterAction(0x10);
-			this._action.data=this;
-		}
-
-		__class(BlurFilter,'laya.filters.BlurFilter',_super);
-		var __proto=BlurFilter.prototype;
-		/**
-		*@private 通知微端
-		*/
-		__proto.callNative=function(sp){
-			sp.conchModel &&sp.conchModel.blurFilter&&sp.conchModel.blurFilter(this.strength);
-		}
-
-		/**
-		*@private
-		*当前滤镜对应的操作器
-		*/
-		__getset(0,__proto,'action',function(){
-			return this._action;
-		});
-
-		/**
-		*@private
-		*当前滤镜的类型
-		*/
-		__getset(0,__proto,'type',function(){
-			return 0x10;
-		});
-
-		return BlurFilter;
-	})(Filter)
-
-
-	/**
-	*<p><code>ColorFilter</code> 是颜色滤镜。使用 ColorFilter 类可以将 4 x 5 矩阵转换应用于输入图像上的每个像素的 RGBA 颜色和 Alpha 值，以生成具有一组新的 RGBA 颜色和 Alpha 值的结果。该类允许饱和度更改、色相旋转、亮度转 Alpha 以及各种其他效果。您可以将滤镜应用于任何显示对象（即，从 Sprite 类继承的对象）。</p>
-	*<p>注意：对于 RGBA 值，最高有效字节代表红色通道值，其后的有效字节分别代表绿色、蓝色和 Alpha 通道值。</p>
-	*/
 	//class laya.filters.ColorFilter extends laya.filters.Filter
 	var ColorFilter=(function(_super){
 		function ColorFilter(mat){
@@ -18816,120 +18114,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Filter)
 
 
-	/**
-	*发光滤镜(也可以当成阴影滤使用）
-	*/
-	//class laya.filters.GlowFilter extends laya.filters.Filter
-	var GlowFilter=(function(_super){
-		function GlowFilter(color,blur,offX,offY){
-			this._color=null;
-			GlowFilter.__super.call(this);
-			this._elements=new Float32Array(9);
-			(blur===void 0)&& (blur=4);
-			(offX===void 0)&& (offX=6);
-			(offY===void 0)&& (offY=6);
-			if (Render.isWebGL){
-				WebGLFilter.enable();
-			}
-			this._color=new Color(color);
-			this.blur=Math.min(blur,20);
-			this.offX=offX;
-			this.offY=offY;
-			this._action=RunDriver.createFilterAction(0x08);
-			this._action.data=this;
-		}
-
-		__class(GlowFilter,'laya.filters.GlowFilter',_super);
-		var __proto=GlowFilter.prototype;
-		/**@private */
-		__proto.getColor=function(){
-			return this._color._color;
-		}
-
-		/**
-		*@private 通知微端
-		*/
-		__proto.callNative=function(sp){
-			sp.conchModel &&sp.conchModel.glowFilter&&sp.conchModel.glowFilter(this._color.strColor,this._elements[4],this._elements[5],this._elements[6]);
-		}
-
-		/**
-		*@private
-		*滤镜类型
-		*/
-		__getset(0,__proto,'type',function(){
-			return 0x08;
-		});
-
-		/**@private */
-		__getset(0,__proto,'action',function(){
-			return this._action;
-		});
-
-		/**@private */
-		/**@private */
-		__getset(0,__proto,'offY',function(){
-			return this._elements[6];
-			},function(value){
-			this._elements[6]=value;
-		});
-
-		/**@private */
-		/**@private */
-		__getset(0,__proto,'offX',function(){
-			return this._elements[5];
-			},function(value){
-			this._elements[5]=value;
-		});
-
-		/**@private */
-		/**@private */
-		__getset(0,__proto,'blur',function(){
-			return this._elements[4];
-			},function(value){
-			this._elements[4]=value;
-		});
-
-		return GlowFilter;
-	})(Filter)
-
-
-	/**
-	*@private
-	*/
-	//class laya.filters.webgl.BlurFilterActionGL extends laya.filters.webgl.FilterActionGL
-	var BlurFilterActionGL=(function(_super){
-		function BlurFilterActionGL(){
-			this.data=null;
-			BlurFilterActionGL.__super.call(this);
-		}
-
-		__class(BlurFilterActionGL,'laya.filters.webgl.BlurFilterActionGL',_super);
-		var __proto=BlurFilterActionGL.prototype;
-		__proto.setValueMix=function(shader){
-			shader.defines.add(this.data.type);
-			var o=shader;
-		}
-
-		__proto.apply3d=function(scope,sprite,context,x,y){
-			var b=scope.getValue("bounds");
-			var shaderValue=Value2D.create(0x01,0);
-			shaderValue.setFilters([this.data]);
-			var tMatrix=Matrix.EMPTY;
-			tMatrix.identity();
-			context.ctx.drawTarget(scope,0,0,b.width,b.height,Matrix.EMPTY,"src",shaderValue);
-			shaderValue.setFilters(null);
-		}
-
-		__proto.setValue=function(shader){
-			shader.strength=this.data.strength;
-		}
-
-		__getset(0,__proto,'typeMix',function(){return 0x10;});
-		return BlurFilterActionGL;
-	})(FilterActionGL)
-
-
 	//class laya.filters.webgl.ColorFilterActionGL extends laya.filters.webgl.FilterActionGL
 	var ColorFilterActionGL=(function(_super){
 		function ColorFilterActionGL(){
@@ -18958,102 +18142,6 @@ var Laya=window.Laya=(function(window,document){
 	})(FilterActionGL)
 
 
-	/**
-	*@private
-	*/
-	//class laya.filters.webgl.GlowFilterActionGL extends laya.filters.webgl.FilterActionGL
-	var GlowFilterActionGL=(function(_super){
-		function GlowFilterActionGL(){
-			this.data=null;
-			this._initKey=false;
-			this._textureWidth=0;
-			this._textureHeight=0;
-			GlowFilterActionGL.__super.call(this);
-		}
-
-		__class(GlowFilterActionGL,'laya.filters.webgl.GlowFilterActionGL',_super);
-		var __proto=GlowFilterActionGL.prototype;
-		Laya.imps(__proto,{"laya.filters.IFilterActionGL":true})
-		__proto.setValueMix=function(shader){}
-		__proto.apply3d=function(scope,sprite,context,x,y){
-			var b=scope.getValue("bounds");
-			scope.addValue("color",this.data.getColor());
-			var w=b.width,h=b.height;
-			this._textureWidth=w;
-			this._textureHeight=h;
-			var submit=SubmitCMD.create([scope,sprite,context,0,0],GlowFilterActionGL.tmpTarget);
-			context.ctx.addRenderObject(submit);
-			var shaderValue;
-			var mat=Matrix.TEMP;
-			mat.identity();
-			shaderValue=Value2D.create(0x01,0);
-			shaderValue.setFilters([this.data]);
-			context.ctx.drawTarget(scope,0,0,this._textureWidth,this._textureHeight,mat,"src",shaderValue,null,BlendMode.TOINT.overlay);
-			submit=SubmitCMD.create([scope,sprite,context,0,0],GlowFilterActionGL.startOut);
-			context.ctx.addRenderObject(submit);
-			shaderValue=Value2D.create(0x01,0);
-			context.ctx.drawTarget(scope,0,0,this._textureWidth,this._textureHeight,mat,"tmpTarget",shaderValue,Texture.INV_UV,BlendMode.TOINT.overlay);
-			shaderValue=Value2D.create(0x01,0);
-			context.ctx.drawTarget(scope,0,0,this._textureWidth,this._textureHeight,mat,"src",shaderValue);
-			submit=SubmitCMD.create([scope,sprite,context,0,0],GlowFilterActionGL.recycleTarget);
-			context.ctx.addRenderObject(submit);
-			return null;
-		}
-
-		__proto.setSpriteWH=function(sprite){
-			this._textureWidth=sprite.width;
-			this._textureHeight=sprite.height;
-		}
-
-		__proto.setValue=function(shader){
-			shader.u_offsetX=this.data.offX;
-			shader.u_offsetY=-this.data.offY;
-			shader.u_strength=1.0;
-			shader.u_blurX=this.data.blur;
-			shader.u_blurY=this.data.blur;
-			shader.u_textW=this._textureWidth;
-			shader.u_textH=this._textureHeight;
-			shader.u_color=this.data.getColor();
-		}
-
-		__getset(0,__proto,'typeMix',function(){return 0x08;});
-		GlowFilterActionGL.tmpTarget=function(scope,sprite,context,x,y){
-			var b=scope.getValue("bounds");
-			var out=scope.getValue("out");
-			out.end();
-			var tmpTarget=RenderTarget2D.create(b.width,b.height);
-			tmpTarget.start();
-			var color=scope.getValue("color");
-			if (color){
-				tmpTarget.clear(color[0],color[1],color[2],0);
-			}
-			scope.addValue("tmpTarget",tmpTarget);
-		}
-
-		GlowFilterActionGL.startOut=function(scope,sprite,context,x,y){
-			var tmpTarget=scope.getValue("tmpTarget");
-			tmpTarget.end();
-			var out=scope.getValue("out");
-			out.start();
-			var color=scope.getValue("color");
-			if (color){
-				out.clear(color[0],color[1],color[2],0);
-			}
-		}
-
-		GlowFilterActionGL.recycleTarget=function(scope,sprite,context,x,y){
-			var src=scope.getValue("src");
-			var tmpTarget=scope.getValue("tmpTarget");
-			tmpTarget.recycle();
-		}
-
-		return GlowFilterActionGL;
-	})(FilterActionGL)
-
-
-	/**
-	*<code>UIEvent</code> 类用来定义UI组件类的事件类型。
-	*/
 	//class laya.ui.UIEvent extends laya.events.Event
 	var UIEvent=(function(_super){
 		function UIEvent(){UIEvent.__super.call(this);;
@@ -21206,144 +20294,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Submit)
 
 
-	/**
-	*<p> <code>Sprite</code> 是基本显示列表构造块：一个可显示图形的显示列表节点。通过<code>graphics</code>可以绘制图片或者矢量图，支持旋转，缩放，位移等操作。<code>Sprite</code>同时也是容器类，用来添加多个子节点。</p>
-	*<p>LayaAir引擎API设计精简巧妙。核心显示类只有一个<code>Sprite</code>。<code>Sprite</code>针对不同的情况做了渲染优化，所以保证一个类实现丰富功能的同时，又达到高性能。</p>
-	*<p><code>Sprite</code>默认没有宽高，可以手动设置宽高，或者通过<code>getbounds</code>函数获取，还可以设置<code>autoSize=true</code>，然后再获取宽高。<code>Sprite</code>的宽高只是用来做碰撞使用，并不影响显示大小，如果更改显示大小，需要使用<code>scaleX</code>，<code>scaleY</code>。</p>
-	*<p><code>Sprite</code>默认不接受鼠标事件，即<code>mouseEnabled=false</code>，但是只要对其监听任意鼠标事件，会自动打开自己以及所有父对象的<code>mouseEnabled=true</code>。所以一般也无需手动设置<code>mouseEnabled</code>。</p>
-	*
-	*@example <caption>创建了一个 <code>Sprite</code> 实例。</caption>
-	*package
-	*{
-		*import laya.display.Sprite;
-		*import laya.events.Event;
-		*
-		*public class Sprite_Example
-		*{
-			*private var sprite:Sprite;
-			*private var shape:Sprite
-			*public function Sprite_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高、渲染模式。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*onInit();
-				*}
-			*private function onInit():void
-			*{
-				*sprite=new Sprite();//创建一个 Sprite 类的实例对象 sprite 。
-				*sprite.loadImage("resource/ui/bg.png");//加载并显示图片。
-				*sprite.x=200;//设置 sprite 对象相对于父容器的水平方向坐标值。
-				*sprite.y=200;//设置 sprite 对象相对于父容器的垂直方向坐标值。
-				*sprite.pivotX=0;//设置 sprite 对象的水平方法轴心点坐标。
-				*sprite.pivotY=0;//设置 sprite 对象的垂直方法轴心点坐标。
-				*Laya.stage.addChild(sprite);//将此 sprite 对象添加到显示列表。
-				*sprite.on(Event.CLICK,this,onClickSprite);//给 sprite 对象添加点击事件侦听。
-				*shape=new Sprite();//创建一个 Sprite 类的实例对象 sprite 。
-				*shape.graphics.drawRect(0,0,100,100,"#ccff00","#ff0000",2);//绘制一个有边框的填充矩形。
-				*shape.x=400;//设置 shape 对象相对于父容器的水平方向坐标值。
-				*shape.y=200;//设置 shape 对象相对于父容器的垂直方向坐标值。
-				*shape.width=100;//设置 shape 对象的宽度。
-				*shape.height=100;//设置 shape 对象的高度。
-				*shape.pivotX=50;//设置 shape 对象的水平方法轴心点坐标。
-				*shape.pivotY=50;//设置 shape 对象的垂直方法轴心点坐标。
-				*Laya.stage.addChild(shape);//将此 shape 对象添加到显示列表。
-				*shape.on(Event.CLICK,this,onClickShape);//给 shape 对象添加点击事件侦听。
-				*}
-			*private function onClickSprite():void
-			*{
-				*trace("点击 sprite 对象。");
-				*sprite.rotation+=5;//旋转 sprite 对象。
-				*}
-			*private function onClickShape():void
-			*{
-				*trace("点击 shape 对象。");
-				*shape.rotation+=5;//旋转 shape 对象。
-				*}
-			*}
-		*}
-	*
-	*@example
-	*var sprite;
-	*var shape;
-	*Sprite_Example();
-	*function Sprite_Example()
-	*{
-		*Laya.init(640,800);//设置游戏画布宽高、渲染模式。
-		*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-		*onInit();
-		*}
-	*function onInit()
-	*{
-		*sprite=new laya.display.Sprite();//创建一个 Sprite 类的实例对象 sprite 。
-		*sprite.loadImage("resource/ui/bg.png");//加载并显示图片。
-		*sprite.x=200;//设置 sprite 对象相对于父容器的水平方向坐标值。
-		*sprite.y=200;//设置 sprite 对象相对于父容器的垂直方向坐标值。
-		*sprite.pivotX=0;//设置 sprite 对象的水平方法轴心点坐标。
-		*sprite.pivotY=0;//设置 sprite 对象的垂直方法轴心点坐标。
-		*Laya.stage.addChild(sprite);//将此 sprite 对象添加到显示列表。
-		*sprite.on(Event.CLICK,this,onClickSprite);//给 sprite 对象添加点击事件侦听。
-		*shape=new laya.display.Sprite();//创建一个 Sprite 类的实例对象 sprite 。
-		*shape.graphics.drawRect(0,0,100,100,"#ccff00","#ff0000",2);//绘制一个有边框的填充矩形。
-		*shape.x=400;//设置 shape 对象相对于父容器的水平方向坐标值。
-		*shape.y=200;//设置 shape 对象相对于父容器的垂直方向坐标值。
-		*shape.width=100;//设置 shape 对象的宽度。
-		*shape.height=100;//设置 shape 对象的高度。
-		*shape.pivotX=50;//设置 shape 对象的水平方法轴心点坐标。
-		*shape.pivotY=50;//设置 shape 对象的垂直方法轴心点坐标。
-		*Laya.stage.addChild(shape);//将此 shape 对象添加到显示列表。
-		*shape.on(laya.events.Event.CLICK,this,onClickShape);//给 shape 对象添加点击事件侦听。
-		*}
-	*function onClickSprite()
-	*{
-		*console.log("点击 sprite 对象。");
-		*sprite.rotation+=5;//旋转 sprite 对象。
-		*}
-	*function onClickShape()
-	*{
-		*console.log("点击 shape 对象。");
-		*shape.rotation+=5;//旋转 shape 对象。
-		*}
-	*
-	*@example
-	*import Sprite=laya.display.Sprite;
-	*class Sprite_Example {
-		*private sprite:Sprite;
-		*private shape:Sprite
-		*public Sprite_Example(){
-			*Laya.init(640,800);//设置游戏画布宽高、渲染模式。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*this.onInit();
-			*}
-		*private onInit():void {
-			*this.sprite=new Sprite();//创建一个 Sprite 类的实例对象 sprite 。
-			*this.sprite.loadImage("resource/ui/bg.png");//加载并显示图片。
-			*this.sprite.x=200;//设置 sprite 对象相对于父容器的水平方向坐标值。
-			*this.sprite.y=200;//设置 sprite 对象相对于父容器的垂直方向坐标值。
-			*this.sprite.pivotX=0;//设置 sprite 对象的水平方法轴心点坐标。
-			*this.sprite.pivotY=0;//设置 sprite 对象的垂直方法轴心点坐标。
-			*Laya.stage.addChild(this.sprite);//将此 sprite 对象添加到显示列表。
-			*this.sprite.on(laya.events.Event.CLICK,this,this.onClickSprite);//给 sprite 对象添加点击事件侦听。
-			*this.shape=new Sprite();//创建一个 Sprite 类的实例对象 sprite 。
-			*this.shape.graphics.drawRect(0,0,100,100,"#ccff00","#ff0000",2);//绘制一个有边框的填充矩形。
-			*this.shape.x=400;//设置 shape 对象相对于父容器的水平方向坐标值。
-			*this.shape.y=200;//设置 shape 对象相对于父容器的垂直方向坐标值。
-			*this.shape.width=100;//设置 shape 对象的宽度。
-			*this.shape.height=100;//设置 shape 对象的高度。
-			*this.shape.pivotX=50;//设置 shape 对象的水平方法轴心点坐标。
-			*this.shape.pivotY=50;//设置 shape 对象的垂直方法轴心点坐标。
-			*Laya.stage.addChild(this.shape);//将此 shape 对象添加到显示列表。
-			*this.shape.on(laya.events.Event.CLICK,this,this.onClickShape);//给 shape 对象添加点击事件侦听。
-			*}
-		*private onClickSprite():void {
-			*console.log("点击 sprite 对象。");
-			*this.sprite.rotation+=5;//旋转 sprite 对象。
-			*}
-		*private onClickShape():void {
-			*console.log("点击 shape 对象。");
-			*this.shape.rotation+=5;//旋转 shape 对象。
-			*}
-		*}
-	*/
 	//class laya.display.Sprite extends laya.display.Node
 	var Sprite=(function(_super){
 		function Sprite(){
@@ -22706,10 +21656,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Resource)
 
 
-	/**
-	*...
-	*@author ...
-	*/
 	//class laya.webgl.shader.BaseShader extends laya.resource.Resource
 	var BaseShader=(function(_super){
 		function BaseShader(){
@@ -22723,10 +21669,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Resource)
 
 
-	/**
-	*@private
-	*<code>Bitmap</code> 是图片资源类。
-	*/
 	//class laya.resource.Bitmap extends laya.resource.Resource
 	var Bitmap=(function(_super){
 		function Bitmap(){
@@ -22774,10 +21716,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Resource)
 
 
-	/**
-	*@private
-	*audio标签播放声音的音轨控制
-	*/
 	//class laya.media.h5audio.AudioSoundChannel extends laya.media.SoundChannel
 	var AudioSoundChannel=(function(_super){
 		function AudioSoundChannel(audio){
@@ -22919,10 +21857,6 @@ var Laya=window.Laya=(function(window,document){
 	})(SoundChannel)
 
 
-	/**
-	*@private
-	*web audio api方式播放声音的音轨控制
-	*/
 	//class laya.media.webaudio.WebAudioSoundChannel extends laya.media.SoundChannel
 	var WebAudioSoundChannel=(function(_super){
 		function WebAudioSoundChannel(){
@@ -23081,9 +22015,6 @@ var Laya=window.Laya=(function(window,document){
 	})(SoundChannel)
 
 
-	/**
-	*@private
-	*/
 	//class laya.particle.ParticleTemplate2D extends laya.particle.ParticleTemplateWebGL
 	var ParticleTemplate2D=(function(_super){
 		function ParticleTemplate2D(parSetting){
@@ -23426,9 +22357,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Texture)
 
 
-	/**
-	*@private
-	*/
 	//class laya.particle.shader.value.ParticleShaderValue extends laya.webgl.shader.d2.value.Value2D
 	var ParticleShaderValue=(function(_super){
 		function ParticleShaderValue(){
@@ -23576,76 +22504,231 @@ var Laya=window.Laya=(function(window,document){
 	})(Value2D)
 
 
-	//class STG.GameObject.MyNode extends laya.display.Sprite
-	var MyNode=(function(_super){
-		function MyNode(){
-			this.mChildren=[];
-			MyNode.__super.call(this);
-			this.name="delete";
-			Laya.timer.frameLoop(1,this,this.update);
+	//class STG.GameObject.GameObject extends laya.display.Sprite
+	var GameObject=(function(_super){
+		function GameObject(){
+			this.mASpeed=0;
+			this.mNSpeed=0;
+			this.mRSpeed=0;
+			this.mAcceleration=0;
+			this.mDirection=0;
+			this.mBound=null;
+			this.mIsEmpty=false;
+			this.mIsRotbyDir=false;
+			this.mAge=0;
+			this.mTasks=[];
+			this.mIdxTask=0;
+			this.mNDirection=-GameObject.HALF_PI;
+			GameObject.__super.call(this);
+			this.mIdxTask=0;
+			Laya.timer.frameOnce(1,this,this.laterInit);
 		}
 
-		__class(MyNode,'STG.GameObject.MyNode',_super);
-		var __proto=MyNode.prototype;
-		__proto.startTimer=function(){
-			Laya.timer.frameLoop(1,this,this.update);
+		__class(GameObject,'STG.GameObject.GameObject',_super);
+		var __proto=GameObject.prototype;
+		/*wrapper for convennience */
+		__proto.drawTexture=function(tex,x,y,width,height,m,alpha){
+			(x===void 0)&& (x=0);
+			(y===void 0)&& (y=0);
+			(width===void 0)&& (width=0);
+			(height===void 0)&& (height=0);
+			(alpha===void 0)&& (alpha=1);
+			this.graphics.drawTexture(tex,x,y,width,height,m,alpha);
 		}
 
-		__proto.clearTimer=function(){
-			Laya.timer.clearAll(this);
+		__proto.isEmpty=function(){
+			return this.mIsEmpty;
 		}
 
-		__proto.getNumChildren=function(){
-			return this.mChildren.length;
-		}
-
-		__proto.getGlobalX=function(x){
-			var nd=this;
-			while (nd){
-				if (nd !=Laya.stage){
-					x=x+nd.x-nd.pivotX;
-					nd=nd.parent;
-				}
-				else{
-					break ;
-				}
+		__proto.update=function(delta){
+			if (this.destroyed){
+				return;
 			}
-			return x;
-		}
-
-		__proto.getGlobalY=function(y){
-			var nd=this;
-			while (nd){
-				if (nd !=Laya.stage){
-					y=y+nd.y-nd.pivotY;
-					nd=nd.parent;
-				}
-				else{
-					break ;
-				}
+			if ((! this.mBound)|| this.mBound.width==0 || this.mBound.height==0){
+				this.mBound=this.getGraphicBounds();
 			}
-			return y;
+			this.updateSelf(delta);
+			this.updateChildren(delta);
 		}
 
-		__proto.update=function(){
-			var deltaInt=Laya.timer.delta;
-			if (!this.destroyed){
-				this.updateSelf(deltaInt / 1000);
+		__proto.setPivotToCenter=function(){
+			var bound=this.getGraphicBounds(true);
+			this.pivot(bound.width / 2,bound.height / 2);
+		}
+
+		__proto.addTask=function(t){
+			this.mTasks.push(t);
+		}
+
+		__proto.evalCondition=function(tsk){
+			if (! tsk.mCondition){
+				return true;
+			};
+			var conditionFuncion=tsk.getConditionFuncion();
+			var value=tsk.mCondition.mConditionRight;
+			switch(tsk.mCondition.mConditionLeft){
+				case "EConditionLeft_X" :
+					return conditionFuncion(this.localToGlobal(new Point(0,0)).x,value);
+				case "EConditionLeft_Y" :
+					return conditionFuncion(this.localToGlobal(new Point(0,0)).y,value);
+				case "EConditionLeft_ASpeed" :
+					return conditionFuncion(this.mASpeed,value);
+				case "EConditionLeft_NSpeed" :
+					return conditionFuncion(this.mNSpeed,value);
+				case "EConditionLeft_RSpeed" :
+					return conditionFuncion(this.mRSpeed,value);
+				case "EConditionLeft_Acceleration":
+					return conditionFuncion(this.mAcceleration,value);
+				case "EConditionLeft_Direction":
+					return conditionFuncion(this.mDirection,value);
+				case "EConditionLeft_Age":
+					return conditionFuncion(this.mAge,value);
+				default :
+					throw new Error("eval error. invalid condition left value");
+				}
+		}
+
+		__proto.addChild=function(o){
+			laya.display.Node.prototype.addChild.call(this,o);this.mBound=this.mBound|| this.getGraphicBounds();
+			o.x+=this.mBound.width / 2;
+			o.y+=this.mBound.height / 2;
+			return o;
+		}
+
+		__proto.laterInit=function(){
+			this.setPivotToCenter();
+		}
+
+		__proto.evalTaskAction=function(tsk){
+			var value=tsk.mAction.mActionRight;
+			switch(tsk.mAction.mActionOp){
+				case "EActionOp_Set":{
+					switch(tsk.mAction.mActionLeft){
+						case "EActionLeft_X":
+							this.x=value;
+							break ;
+						case "EActionLeft_Y":
+							this.y=value;
+							break ;
+						case "EActionLeft_ASpeed":
+							this.mASpeed=value;
+							break ;
+						case "EActionLeft_NSpeed":
+							this.mNSpeed=value;
+							break ;
+						case "EActionLeft_RSpeed":
+							this.mRSpeed=value;
+							break ;
+						case "EActionLeft_Acceleration":
+							this.mAcceleration=value;
+							break ;
+						case "EActionLeft_Direction":
+							this.mDirection=value;
+							break ;
+						default :
+							throw new Error("eval action. invalid action left value");
+						}
+				}break ;
+				case "EActionOp_Increase":{
+					switch(tsk.mAction.mActionLeft){
+						case "EActionLeft_X":
+							this.x+=value;
+							break ;
+						case "EActionLeft_Y":
+							this.y+=value;
+							break ;
+						case "EActionLeft_ASpeed":
+							this.mASpeed+=value;
+							break ;
+						case "EActionLeft_NSpeed":
+							this.mNSpeed+=value;
+							break ;
+						case "EActionLeft_RSpeed":
+							this.mRSpeed+=value;
+							break ;
+						case "EActionLeft_Acceleration":
+							this.mAcceleration+=value;
+							break ;
+						case "EActionLeft_Direction":
+							this.mDirection+=value;
+							break ;
+						default :
+							throw new Error("eval action. invalid action left value");
+						}
+				}break ;
+				case "EActionOp_Aim":{
+					Manager.getManager().aimToPlayer(this);
+				}break ;
+				default :{
+					throw new Error("eval action. invalid action operator");
+				}break ;
 			}
 		}
 
 		__proto.updateSelf=function(delta){
-			return true;
+			if (this.destroyed){
+				return;
+			}
+			this.mASpeed+=this.mAcceleration *delta;
+			this.mAge+=delta;
+			this.mNDirection=this.mDirection-Math.PI / 2;
+			var deltaX=Math.cos(this.mDirection)*this.mASpeed+Math.cos(this.mNDirection)*this.mNSpeed;
+			var deltaY=Math.sin(this.mDirection)*this.mASpeed+Math.sin(this.mNDirection)*this.mNSpeed;
+			this.x+=deltaX;
+			this.y-=deltaY;
+			if (this.mIsRotbyDir){
+				if (! this.mIsEmpty){
+					if (this.mNSpeed==0){
+						this.rotation=-this.mDirection / Math.PI *180;
+					}
+					else{
+						var cDir=Math.cos(this.mDirection);
+						var sDir=Math.sin(this.mDirection);
+						var realDir=Math.atan2(
+						(this.mNSpeed *cDir+this.mASpeed *sDir)
+						,(this.mASpeed *cDir+this.mNSpeed *sDir));
+						this.rotation=-realDir / Math.PI *180;
+					}
+				}
+			}
+			else{
+				this.rotation-=this.mRSpeed *delta;
+			}
+			this.excuteTask();
 		}
 
-		return MyNode;
+		__proto.excuteTask=function(){
+			while (this.mIdxTask < this.mTasks.length){
+				var nowTask=this.mTasks[this.mIdxTask];
+				if (this.evalCondition(nowTask)){
+					this.evalTaskAction(nowTask);
+					this.mIdxTask++;
+				}
+				else{
+					return;
+				}
+			}
+		}
+
+		__proto.updateChildren=function(delta){
+			if (this.destroyed){
+				return;
+			}
+			for (var i=0;i < this.numChildren;i++){
+				var child=this.getChildAt(i);
+				if ((child instanceof STG.GameObject.GameObject )){
+					child.update(delta);
+				}
+			}
+		}
+
+		__static(GameObject,
+		['HALF_PI',function(){return this.HALF_PI=Math.PI / 2;}
+		]);
+		return GameObject;
 	})(Sprite)
 
 
-	/**
-	*<code>Component</code> 是ui控件类的基类。
-	*<p>生命周期：preinitialize > createChildren > initialize > 组件构造函数</p>
-	*/
 	//class laya.ui.Component extends laya.display.Sprite
 	var Component=(function(_super){
 		function Component(){
@@ -24129,7 +23212,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Sprite)
 
 
-	//
 	//class STG.Scene.MainScene extends laya.display.Sprite
 	var MainScene=(function(_super){
 		function MainScene(){
@@ -24144,89 +23226,243 @@ var Laya=window.Laya=(function(window,document){
 	})(Sprite)
 
 
-	/**
-	*<p> <code>Text</code> 类用于创建显示对象以显示文本。</p>
-	*@example
-	*package
-	*{
-		*import laya.display.Text;
-		*public class Text_Example
-		*{
-			*public function Text_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高、渲染模式。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*onInit();
-				*}
-			*private function onInit():void
-			*{
-				*var text:Text=new Text();//创建一个 Text 类的实例对象 text 。
-				*text.text="这个是一个 Text 文本示例。";
-				*text.color="#008fff";//设置 text 的文本颜色。
-				*text.font="Arial";//设置 text 的文本字体。
-				*text.bold=true;//设置 text 的文本显示为粗体。
-				*text.fontSize=30;//设置 text 的字体大小。
-				*text.wordWrap=true;//设置 text 的文本自动换行。
-				*text.x=100;//设置 text 对象的属性 x 的值，用于控制 text 对象的显示位置。
-				*text.y=100;//设置 text 对象的属性 y 的值，用于控制 text 对象的显示位置。
-				*text.width=300;//设置 text 的宽度。
-				*text.height=200;//设置 text 的高度。
-				*text.italic=true;//设置 text 的文本显示为斜体。
-				*text.borderColor="#fff000";//设置 text 的文本边框颜色。
-				*Laya.stage.addChild(text);//将 text 添加到显示列表。
-				*}
-			*}
-		*}
-	*@example
-	*Text_Example();
-	*function Text_Example()
-	*{
-		*Laya.init(640,800);//设置游戏画布宽高、渲染模式。
-		*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-		*onInit();
-		*}
-	*function onInit()
-	*{
-		*var text=new laya.display.Text();//创建一个 Text 类的实例对象 text 。
-		*text.text="这个是一个 Text 文本示例。";
-		*text.color="#008fff";//设置 text 的文本颜色。
-		*text.font="Arial";//设置 text 的文本字体。
-		*text.bold=true;//设置 text 的文本显示为粗体。
-		*text.fontSize=30;//设置 text 的字体大小。
-		*text.wordWrap=true;//设置 text 的文本自动换行。
-		*text.x=100;//设置 text 对象的属性 x 的值，用于控制 text 对象的显示位置。
-		*text.y=100;//设置 text 对象的属性 y 的值，用于控制 text 对象的显示位置。
-		*text.width=300;//设置 text 的宽度。
-		*text.height=200;//设置 text 的高度。
-		*text.italic=true;//设置 text 的文本显示为斜体。
-		*text.borderColor="#fff000";//设置 text 的文本边框颜色。
-		*Laya.stage.addChild(text);//将 text 添加到显示列表。
-		*}
-	*@example
-	*class Text_Example {
-		*constructor(){
-			*Laya.init(640,800);//设置游戏画布宽高、渲染模式。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*this.onInit();
-			*}
-		*private onInit():void {
-			*var text:laya.display.Text=new laya.display.Text();//创建一个 Text 类的实例对象 text 。
-			*text.text="这个是一个 Text 文本示例。";
-			*text.color="#008fff";//设置 text 的文本颜色。
-			*text.font="Arial";//设置 text 的文本字体。
-			*text.bold=true;//设置 text 的文本显示为粗体。
-			*text.fontSize=30;//设置 text 的字体大小。
-			*text.wordWrap=true;//设置 text 的文本自动换行。
-			*text.x=100;//设置 text 对象的属性 x 的值，用于控制 text 对象的显示位置。
-			*text.y=100;//设置 text 对象的属性 y 的值，用于控制 text 对象的显示位置。
-			*text.width=300;//设置 text 的宽度。
-			*text.height=200;//设置 text 的高度。
-			*text.italic=true;//设置 text 的文本显示为斜体。
-			*text.borderColor="#fff000";//设置 text 的文本边框颜色。
-			*Laya.stage.addChild(text);//将 text 添加到显示列表。
-			*}
-		*}
-	*/
+	//class laya.display.AnimationPlayerBase extends laya.display.Sprite
+	var AnimationPlayerBase=(function(_super){
+		function AnimationPlayerBase(){
+			this.loop=false;
+			this.wrapMode=0;
+			this._index=0;
+			this._count=0;
+			this._isPlaying=false;
+			this._labels=null;
+			this._isReverse=false;
+			this._frameRateChanged=false;
+			this._controlNode=null;
+			this._actionName=null;
+			AnimationPlayerBase.__super.call(this);
+			this._interval=Config.animationInterval;
+			this._setUpNoticeType(0x1);
+		}
+
+		__class(AnimationPlayerBase,'laya.display.AnimationPlayerBase',_super);
+		var __proto=AnimationPlayerBase.prototype;
+		/**
+		*<p>开始播放动画。play(...)方法被设计为在创建实例后的任何时候都可以被调用，当相应的资源加载完毕、调用动画帧填充方法(set frames)或者将实例显示在舞台上时，会判断是否正在播放中，如果是，则进行播放。</p>
+		*<p>配合wrapMode属性，可设置动画播放顺序类型。</p>
+		*@param start （可选）指定动画播放开始的索引(int)或帧标签(String)。帧标签可以通过addLabel(...)和removeLabel(...)进行添加和删除。
+		*@param loop （可选）是否循环播放。
+		*@param name （可选）动画名称。
+		*/
+		__proto.play=function(start,loop,name){
+			(start===void 0)&& (start=0);
+			(loop===void 0)&& (loop=true);
+			(name===void 0)&& (name="");
+			this._isPlaying=true;
+			this.index=((typeof start=='string'))? this._getFrameByLabel(start):start;
+			this.loop=loop;
+			this._actionName=name;
+			this._isReverse=this.wrapMode==1;
+			if (this.interval > 0){
+				this.timerLoop(this.interval,this,this._frameLoop,null,true);
+			}
+		}
+
+		/**@private */
+		__proto._getFrameByLabel=function(label){
+			var i=0;
+			for (i=0;i < this._count;i++){
+				if (this._labels[i] && (this._labels [i]).indexOf(label)>=0)return i;
+			}
+			return 0;
+		}
+
+		/**@private */
+		__proto._frameLoop=function(){
+			if (this._isReverse){
+				this._index--;
+				if (this._index < 0){
+					if (this.loop){
+						if (this.wrapMode==2){
+							this._index=this._count > 0 ? 1 :0;
+							this._isReverse=false;
+							}else {
+							this._index=this._count-1;
+						}
+						this.event("complete");
+						}else {
+						this._index=0;
+						this.stop();
+						this.event("complete");
+						return;
+					}
+				}
+				}else {
+				this._index++;
+				if (this._index >=this._count){
+					if (this.loop){
+						if (this.wrapMode==2){
+							this._index=this._count-2 >=0 ? this._count-2 :0;
+							this._isReverse=true;
+							}else {
+							this._index=0;
+						}
+						this.event("complete");
+						}else {
+						this._index--;
+						this.stop();
+						this.event("complete");
+						return;
+					}
+				}
+			}
+			this.index=this._index;
+		}
+
+		/**@private */
+		__proto._setControlNode=function(node){
+			if (this._controlNode){
+				this._controlNode.off("display",this,this._checkResumePlaying);
+				this._controlNode.off("undisplay",this,this._checkResumePlaying);
+			}
+			this._controlNode=node;
+			if (node && node !=this){
+				node.on("display",this,this._checkResumePlaying);
+				node.on("undisplay",this,this._checkResumePlaying);
+			}
+		}
+
+		/**@private */
+		__proto._setDisplay=function(value){
+			_super.prototype._setDisplay.call(this,value);
+			this._checkResumePlaying();
+		}
+
+		/**@private */
+		__proto._checkResumePlaying=function(){
+			if (this._isPlaying){
+				if (this._controlNode.displayedInStage)this.play(this._index,this.loop,this._actionName);
+				else this.clearTimer(this,this._frameLoop);
+			}
+		}
+
+		/**
+		*停止动画播放。
+		*/
+		__proto.stop=function(){
+			this._isPlaying=false;
+			this.clearTimer(this,this._frameLoop);
+		}
+
+		/**
+		*增加一个帧标签到指定索引的帧上。当动画播放到此索引的帧时会派发Event.LABEL事件，派发事件是在完成当前帧画面更新之后。
+		*@param label 帧标签名称
+		*@param index 帧索引
+		*/
+		__proto.addLabel=function(label,index){
+			if (!this._labels)this._labels={};
+			if (!this._labels[index])this._labels[index]=[];
+			this._labels[index].push(label);
+		}
+
+		/**
+		*删除指定的帧标签。
+		*@param label 帧标签名称。注意：如果为空，则删除所有帧标签！
+		*/
+		__proto.removeLabel=function(label){
+			if (!label)this._labels=null;
+			else if (this._labels){
+				for (var name in this._labels){
+					this._removeLabelFromLabelList(this._labels[name],label);
+				}
+			}
+		}
+
+		/**@private */
+		__proto._removeLabelFromLabelList=function(list,label){
+			if (!list)return;
+			for (var i=list.length-1;i >=0;i--){
+				if (list[i]==label){
+					list.splice(i,1);
+				}
+			}
+		}
+
+		/**
+		*将动画切换到指定帧并停在那里。
+		*@param position 帧索引或帧标签
+		*/
+		__proto.gotoAndStop=function(position){
+			this.index=((typeof position=='string'))? this._getFrameByLabel(position):position;
+			this.stop();
+		}
+
+		/**
+		*@private
+		*显示到某帧
+		*@param value 帧索引
+		*/
+		__proto._displayToIndex=function(value){}
+		/**
+		*停止动画播放，并清理对象属性。之后可存入对象池，方便对象复用。
+		*/
+		__proto.clear=function(){
+			this.stop();
+			this._labels=null;
+		}
+
+		/**
+		*<p>动画播放的帧间隔时间(单位：毫秒)。默认值依赖于Config.animationInterval=50，通过Config.animationInterval可以修改默认帧间隔时间。</p>
+		*<p>要想为某动画设置独立的帧间隔时间，可以使用set interval，注意：如果动画正在播放，设置后会重置帧循环定时器的起始时间为当前时间，也就是说，如果频繁设置interval，会导致动画帧更新的时间间隔会比预想的要慢，甚至不更新。</p>
+		*/
+		__getset(0,__proto,'interval',function(){
+			return this._interval;
+			},function(value){
+			if (this._interval !=value){
+				this._frameRateChanged=true;
+				this._interval=value;
+				if (this._isPlaying && value > 0){
+					this.timerLoop(value,this,this._frameLoop,null,true);
+				}
+			}
+		});
+
+		/**
+		*是否正在播放中。
+		*/
+		__getset(0,__proto,'isPlaying',function(){
+			return this._isPlaying;
+		});
+
+		/**
+		*动画当前帧的索引。
+		*/
+		__getset(0,__proto,'index',function(){
+			return this._index;
+			},function(value){
+			this._index=value;
+			this._displayToIndex(value);
+			if (this._labels && this._labels[value]){
+				var tArr=this._labels[value];
+				for (var i=0,len=tArr.length;i < len;i++){
+					this.event("label",tArr[i]);
+				}
+			}
+		});
+
+		/**
+		*当前动画中帧的总数。
+		*/
+		__getset(0,__proto,'count',function(){
+			return this._count;
+		});
+
+		AnimationPlayerBase.WRAP_POSITIVE=0;
+		AnimationPlayerBase.WRAP_REVERSE=1;
+		AnimationPlayerBase.WRAP_PINGPONG=2;
+		return AnimationPlayerBase;
+	})(Sprite)
+
+
 	//class laya.display.Text extends laya.display.Sprite
 	var Text=(function(_super){
 		function Text(){
@@ -24986,252 +24222,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Sprite)
 
 
-	/**
-	*<p>动画播放基类，提供了基础的动画播放控制方法和帧标签事件相关功能。</p>
-	*<p>可以继承此类，但不要直接实例化此类，因为有些方法需要由子类实现。</p>
-	*/
-	//class laya.display.AnimationPlayerBase extends laya.display.Sprite
-	var AnimationPlayerBase=(function(_super){
-		function AnimationPlayerBase(){
-			this.loop=false;
-			this.wrapMode=0;
-			this._index=0;
-			this._count=0;
-			this._isPlaying=false;
-			this._labels=null;
-			this._isReverse=false;
-			this._frameRateChanged=false;
-			this._controlNode=null;
-			this._actionName=null;
-			AnimationPlayerBase.__super.call(this);
-			this._interval=Config.animationInterval;
-			this._setUpNoticeType(0x1);
-		}
-
-		__class(AnimationPlayerBase,'laya.display.AnimationPlayerBase',_super);
-		var __proto=AnimationPlayerBase.prototype;
-		/**
-		*<p>开始播放动画。play(...)方法被设计为在创建实例后的任何时候都可以被调用，当相应的资源加载完毕、调用动画帧填充方法(set frames)或者将实例显示在舞台上时，会判断是否正在播放中，如果是，则进行播放。</p>
-		*<p>配合wrapMode属性，可设置动画播放顺序类型。</p>
-		*@param start （可选）指定动画播放开始的索引(int)或帧标签(String)。帧标签可以通过addLabel(...)和removeLabel(...)进行添加和删除。
-		*@param loop （可选）是否循环播放。
-		*@param name （可选）动画名称。
-		*/
-		__proto.play=function(start,loop,name){
-			(start===void 0)&& (start=0);
-			(loop===void 0)&& (loop=true);
-			(name===void 0)&& (name="");
-			this._isPlaying=true;
-			this.index=((typeof start=='string'))? this._getFrameByLabel(start):start;
-			this.loop=loop;
-			this._actionName=name;
-			this._isReverse=this.wrapMode==1;
-			if (this.interval > 0){
-				this.timerLoop(this.interval,this,this._frameLoop,null,true);
-			}
-		}
-
-		/**@private */
-		__proto._getFrameByLabel=function(label){
-			var i=0;
-			for (i=0;i < this._count;i++){
-				if (this._labels[i] && (this._labels [i]).indexOf(label)>=0)return i;
-			}
-			return 0;
-		}
-
-		/**@private */
-		__proto._frameLoop=function(){
-			if (this._isReverse){
-				this._index--;
-				if (this._index < 0){
-					if (this.loop){
-						if (this.wrapMode==2){
-							this._index=this._count > 0 ? 1 :0;
-							this._isReverse=false;
-							}else {
-							this._index=this._count-1;
-						}
-						this.event("complete");
-						}else {
-						this._index=0;
-						this.stop();
-						this.event("complete");
-						return;
-					}
-				}
-				}else {
-				this._index++;
-				if (this._index >=this._count){
-					if (this.loop){
-						if (this.wrapMode==2){
-							this._index=this._count-2 >=0 ? this._count-2 :0;
-							this._isReverse=true;
-							}else {
-							this._index=0;
-						}
-						this.event("complete");
-						}else {
-						this._index--;
-						this.stop();
-						this.event("complete");
-						return;
-					}
-				}
-			}
-			this.index=this._index;
-		}
-
-		/**@private */
-		__proto._setControlNode=function(node){
-			if (this._controlNode){
-				this._controlNode.off("display",this,this._checkResumePlaying);
-				this._controlNode.off("undisplay",this,this._checkResumePlaying);
-			}
-			this._controlNode=node;
-			if (node && node !=this){
-				node.on("display",this,this._checkResumePlaying);
-				node.on("undisplay",this,this._checkResumePlaying);
-			}
-		}
-
-		/**@private */
-		__proto._setDisplay=function(value){
-			_super.prototype._setDisplay.call(this,value);
-			this._checkResumePlaying();
-		}
-
-		/**@private */
-		__proto._checkResumePlaying=function(){
-			if (this._isPlaying){
-				if (this._controlNode.displayedInStage)this.play(this._index,this.loop,this._actionName);
-				else this.clearTimer(this,this._frameLoop);
-			}
-		}
-
-		/**
-		*停止动画播放。
-		*/
-		__proto.stop=function(){
-			this._isPlaying=false;
-			this.clearTimer(this,this._frameLoop);
-		}
-
-		/**
-		*增加一个帧标签到指定索引的帧上。当动画播放到此索引的帧时会派发Event.LABEL事件，派发事件是在完成当前帧画面更新之后。
-		*@param label 帧标签名称
-		*@param index 帧索引
-		*/
-		__proto.addLabel=function(label,index){
-			if (!this._labels)this._labels={};
-			if (!this._labels[index])this._labels[index]=[];
-			this._labels[index].push(label);
-		}
-
-		/**
-		*删除指定的帧标签。
-		*@param label 帧标签名称。注意：如果为空，则删除所有帧标签！
-		*/
-		__proto.removeLabel=function(label){
-			if (!label)this._labels=null;
-			else if (this._labels){
-				for (var name in this._labels){
-					this._removeLabelFromLabelList(this._labels[name],label);
-				}
-			}
-		}
-
-		/**@private */
-		__proto._removeLabelFromLabelList=function(list,label){
-			if (!list)return;
-			for (var i=list.length-1;i >=0;i--){
-				if (list[i]==label){
-					list.splice(i,1);
-				}
-			}
-		}
-
-		/**
-		*将动画切换到指定帧并停在那里。
-		*@param position 帧索引或帧标签
-		*/
-		__proto.gotoAndStop=function(position){
-			this.index=((typeof position=='string'))? this._getFrameByLabel(position):position;
-			this.stop();
-		}
-
-		/**
-		*@private
-		*显示到某帧
-		*@param value 帧索引
-		*/
-		__proto._displayToIndex=function(value){}
-		/**
-		*停止动画播放，并清理对象属性。之后可存入对象池，方便对象复用。
-		*/
-		__proto.clear=function(){
-			this.stop();
-			this._labels=null;
-		}
-
-		/**
-		*<p>动画播放的帧间隔时间(单位：毫秒)。默认值依赖于Config.animationInterval=50，通过Config.animationInterval可以修改默认帧间隔时间。</p>
-		*<p>要想为某动画设置独立的帧间隔时间，可以使用set interval，注意：如果动画正在播放，设置后会重置帧循环定时器的起始时间为当前时间，也就是说，如果频繁设置interval，会导致动画帧更新的时间间隔会比预想的要慢，甚至不更新。</p>
-		*/
-		__getset(0,__proto,'interval',function(){
-			return this._interval;
-			},function(value){
-			if (this._interval !=value){
-				this._frameRateChanged=true;
-				this._interval=value;
-				if (this._isPlaying && value > 0){
-					this.timerLoop(value,this,this._frameLoop,null,true);
-				}
-			}
-		});
-
-		/**
-		*是否正在播放中。
-		*/
-		__getset(0,__proto,'isPlaying',function(){
-			return this._isPlaying;
-		});
-
-		/**
-		*动画当前帧的索引。
-		*/
-		__getset(0,__proto,'index',function(){
-			return this._index;
-			},function(value){
-			this._index=value;
-			this._displayToIndex(value);
-			if (this._labels && this._labels[value]){
-				var tArr=this._labels[value];
-				for (var i=0,len=tArr.length;i < len;i++){
-					this.event("label",tArr[i]);
-				}
-			}
-		});
-
-		/**
-		*当前动画中帧的总数。
-		*/
-		__getset(0,__proto,'count',function(){
-			return this._count;
-		});
-
-		AnimationPlayerBase.WRAP_POSITIVE=0;
-		AnimationPlayerBase.WRAP_REVERSE=1;
-		AnimationPlayerBase.WRAP_PINGPONG=2;
-		return AnimationPlayerBase;
-	})(Sprite)
-
-
-	/**
-	*<p> <code>Stage</code> 是舞台类，显示列表的根节点，所有显示对象都在舞台上显示。通过 Laya.stage 单例访问。</p>
-	*<p>Stage提供几种适配模式，不同的适配模式会产生不同的画布大小，画布越大，渲染压力越大，所以要选择合适的适配方案。<p>
-	*<p>Stage提供不同的帧率模式，帧率越高，渲染压力越大，越费电，合理使用帧率甚至动态更改帧率有利于改进手机耗电。<p>
-	*/
 	//class laya.display.Stage extends laya.display.Sprite
 	var Stage=(function(_super){
 		function Stage(){
@@ -25804,10 +24794,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Sprite)
 
 
-	/**
-	*<code>Particle2D</code> 类是2D粒子播放类
-	*
-	*/
 	//class laya.particle.Particle2D extends laya.display.Sprite
 	var Particle2D=(function(_super){
 		function Particle2D(setting){
@@ -25951,12 +24937,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Sprite)
 
 
-	/**
-	*<code>DialogManager</code> 对话框管理容器，所有的对话框都在该容器内，并且受管理器管理。
-	*任意对话框打开和关闭，都会出发管理类的open和close事件
-	*可以通过UIConfig设置弹出框背景透明度，模式窗口点击边缘是否关闭，点击窗口是否切换层次等
-	*通过设置对话框的zOrder属性，可以更改弹出的层次
-	*/
 	//class laya.ui.DialogManager extends laya.display.Sprite
 	var DialogManager=(function(_super){
 		function DialogManager(){
@@ -26901,10 +25881,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Buffer)
 
 
-	/**
-	*@private
-	*<code>FileBitmap</code> 是图片文件资源类。
-	*/
 	//class laya.resource.FileBitmap extends laya.resource.Bitmap
 	var FileBitmap=(function(_super){
 		function FileBitmap(){
@@ -26941,9 +25917,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Bitmap)
 
 
-	/**
-	*<code>HTMLCanvas</code> 是 Html Canvas 的代理类，封装了 Canvas 的属性和方法。。请不要直接使用 new HTMLCanvas！
-	*/
 	//class laya.resource.HTMLCanvas extends laya.resource.Bitmap
 	var HTMLCanvas=(function(_super){
 		function HTMLCanvas(type){
@@ -27061,9 +26034,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Bitmap)
 
 
-	/**
-	*@private
-	*/
 	//class laya.resource.HTMLSubImage extends laya.resource.Bitmap
 	var HTMLSubImage=(function(_super){
 		//请不要直接使用new HTMLSubImage
@@ -27747,227 +26717,746 @@ var Laya=window.Laya=(function(window,document){
 	})(TextureSV)
 
 
-	//class STG.GameObject.GameObject extends STG.GameObject.MyNode
-	var GameObject=(function(_super){
-		function GameObject(){
-			this.mASpeed=0;
-			this.mNSpeed=0;
-			this.mRSpeed=0;
-			this.mAcceleration=0;
-			this.mDirection=0;
-			this.mBound=null;
-			this.mIsEmpty=false;
-			this.mIsRotbyDir=false;
-			this.mAge=0;
-			this.mTasks=[];
-			this.mIdxTask=0;
-			this.mNDirection=-MyMath.HALF_PI;
-			GameObject.__super.call(this);
-			this.mIdxTask=0;
-			this.mBound=new Rectangle();
+	//class STG.BG extends STG.GameObject.GameObject
+	var BG=(function(_super){
+		function BG(s){
+			this.mSpeed=1;
+			this.mBGs=[];
+			this.mIndexNowBG=0;
+			BG.__super.call(this);
+			this.mSpeed=s;
 		}
 
-		__class(GameObject,'STG.GameObject.GameObject',_super);
-		var __proto=GameObject.prototype;
-		__proto.drawTexture=function(tex){
-			this.setPivotToCenter(tex);
-			this.graphics.drawTexture(tex);
+		__class(BG,'STG.BG',_super);
+		var __proto=BG.prototype;
+		__proto.addBG=function(strRes){
+			var newBG=new GameObject();
+			newBG.drawTexture(Laya.loader.getRes(strRes));
+			newBG.x=1080 / 2;
+			newBG.mDirection=-Math.PI / 2;
+			this.stopMoving(newBG);
+			this.mBGs.push(newBG);
+			this.addChild(newBG);
 		}
 
-		__proto.isEmpty=function(){
-			return this.mIsEmpty;
+		__proto.start=function(){
+			this.mBGs[this.mIndexNowBG].y=1920 / 2;
+			this.startMoving(this.mBGs[this.mIndexNowBG]);
+			var idxNext=(this.mIndexNowBG+1)% this.mBGs.length;
+			this.startMoving(this.mBGs[idxNext]);
 		}
 
-		__proto.setPivotToCenter=function(tx){
-			this.pivot(tx.width / 2,tx.height / 2);
-			this.mBound.width=tx.width;
-			this.mBound.height=tx.height;
+		__proto.startMoving=function(bg){
+			bg.mASpeed=this.mSpeed;
+			bg.visible=true;
 		}
 
-		__proto.addTask=function(t){
-			this.mTasks.push(t);
-		}
-
-		__proto.evalCondition=function(tsk){
-			if (! tsk.mCondition){
-				return true;
-			};
-			var conditionFuncion=tsk.getConditionFuncion();
-			var value=tsk.mCondition.mConditionRight;
-			switch(tsk.mCondition.mConditionLeft){
-				case "EConditionLeft_X" :
-					return conditionFuncion(this.getGlobalX(0),value);
-				case "EConditionLeft_Y" :
-					return conditionFuncion(this.getGlobalY(0),value);
-				case "EConditionLeft_ASpeed" :
-					return conditionFuncion(this.mASpeed,value);
-				case "EConditionLeft_NSpeed" :
-					return conditionFuncion(this.mNSpeed,value);
-				case "EConditionLeft_RSpeed" :
-					return conditionFuncion(this.mRSpeed,value);
-				case "EConditionLeft_Acceleration":
-					return conditionFuncion(this.mAcceleration,value);
-				case "EConditionLeft_Direction":
-					return conditionFuncion(this.mDirection,value);
-				case "EConditionLeft_Age":
-					return conditionFuncion(this.mAge,value);
-				default :
-					throw new Error("eval error. invalid condition left value");
-				}
-		}
-
-		__proto.addChild=function(o){
-			laya.display.Node.prototype.addChild.call(this,o);
-			o.x+=this.mBound.width / 2;
-			o.y+=this.mBound.height / 2;
-			return o;
-		}
-
-		__proto.evalTaskAction=function(tsk){
-			var value=tsk.mAction.mActionRight;
-			switch(tsk.mAction.mActionOp){
-				case "EActionOp_Set":{
-					switch(tsk.mAction.mActionLeft){
-						case "EActionLeft_X":
-							this.x=value;
-							break ;
-						case "EActionLeft_Y":
-							this.y=value;
-							break ;
-						case "EActionLeft_ASpeed":
-							this.mASpeed=value;
-							break ;
-						case "EActionLeft_NSpeed":
-							this.mNSpeed=value;
-							break ;
-						case "EActionLeft_RSpeed":
-							this.mRSpeed=value;
-							break ;
-						case "EActionLeft_Acceleration":
-							this.mAcceleration=value;
-							break ;
-						case "EActionLeft_Direction":
-							this.mDirection=value;
-							break ;
-						default :
-							throw new Error("eval action. invalid action left value");
-						}
-				}break ;
-				case "EActionOp_Increase":{
-					switch(tsk.mAction.mActionLeft){
-						case "EActionLeft_X":
-							this.x+=value;
-							break ;
-						case "EActionLeft_Y":
-							this.y+=value;
-							break ;
-						case "EActionLeft_ASpeed":
-							this.mASpeed+=value;
-							break ;
-						case "EActionLeft_NSpeed":
-							this.mNSpeed+=value;
-							break ;
-						case "EActionLeft_RSpeed":
-							this.mRSpeed+=value;
-							break ;
-						case "EActionLeft_Acceleration":
-							this.mAcceleration+=value;
-							break ;
-						case "EActionLeft_Direction":
-							this.mDirection+=value;
-							break ;
-						default :
-							throw new Error("eval action. invalid action left value");
-						}
-				}break ;
-				case "EActionOp_Aim":{
-					Manager.getManager().getGameScene().aimToPlayer(this);
-				}break ;
-				default :{
-					throw new Error("eval action. invalid action operator");
-				}break ;
-			}
-		}
-
-		__proto.calculateDeltaX=function(delta){
-			if (MyMath.nearlyEq(this.mNSpeed,0)){
-				return delta *Math.cos(this.mDirection)*this.mASpeed;
-			}
-			else{
-				return delta *
-				(Math.cos(this.mDirection)*this.mASpeed+Math.cos(this.mNDirection)*this.mNSpeed);
-			}
-		}
-
-		__proto.calculateDeltaY=function(delta){
-			if (MyMath.nearlyEq(this.mNSpeed,0)){
-				return delta *Math.sin(this.mDirection)*this.mASpeed;
-			}
-			else{
-				return delta *
-				(Math.sin(this.mDirection)*this.mASpeed+Math.sin(this.mNDirection)*this.mNSpeed);
-			}
+		/*move bg to the top of screen in this function */
+		__proto.stopMoving=function(bg){
+			bg.y=-1920 / 2;
+			bg.mASpeed=0;
+			bg.visible=false;
 		}
 
 		__proto.updateSelf=function(delta){
-			if (! _super.prototype.updateSelf.call(this,delta)){
+			var nowBG=this.mBGs[this.mIndexNowBG];
+			var len=this.mBGs.length;
+			if (nowBG.y >=1920 / 2 *3){
+				this.stopMoving(nowBG);
+				var nextNextBG=this.mBGs[(this.mIndexNowBG+2)% len];
+				this.startMoving(nextNextBG);
+				this.mIndexNowBG=(this.mIndexNowBG+1)% len;
+			}
+		}
+
+		return BG;
+	})(GameObject)
+
+
+	//class STG.Bullet.BulletGenerator extends STG.GameObject.GameObject
+	var BulletGenerator=(function(_super){
+		function BulletGenerator(type,f,interval,n,complete){
+			this.mGenerationInterval=null;
+			this.mGenerationTotalTimes=1;
+			this.mGeneratorFunction=null;
+			this.mLastGenerationAge=0;
+			this.mGenerationCounter=0;
+			this.mIsGenerating=true;
+			this.mType="player";
+			this.mCompleteCallback=null;
+			BulletGenerator.__super.call(this);
+			(f===void 0)&& (f=undefined);
+			(interval===void 0)&& (interval=1000);
+			(n===void 0)&& (n=1);
+			this.mType=type;
+			this.mGenerationInterval=interval;
+			this.mGenerationTotalTimes=n;
+			this.mGeneratorFunction=f;
+			this.mLastGenerationAge=0;
+			this.mCompleteCallback=complete;
+			this.mIsEmpty=true;
+		}
+
+		__class(BulletGenerator,'STG.Bullet.BulletGenerator',_super);
+		var __proto=BulletGenerator.prototype;
+		__proto.setGenerating=function(g){
+			this.mIsGenerating=g;
+		}
+
+		__proto.setInterval=function(itv){
+			this.mGenerationInterval=itv;
+		}
+
+		__proto.setGenerator=function(f){
+			this.mGeneratorFunction=f;
+		}
+
+		__proto.updateSelf=function(delta){
+			_super.prototype.updateSelf.call(this,delta);
+			if (this.mGenerationTotalTimes==-1){
+				this.checkAndGenerate()
+				return;
+			}
+			else{
+				if (this.mGenerationCounter < this.mGenerationTotalTimes){
+					this.checkAndGenerate();
+				}
+				else{
+					if (! this.destroyed){
+						Manager.getManager().autoDelete(this);
+					}
+					this.mCompleteCallback.run();
+				}
+			}
+		}
+
+		__proto.checkAndGenerate=function(){
+			if (! this.mIsGenerating){
+				return;
+			}
+			if (this.mAge-this.mLastGenerationAge > this.mGenerationInterval){
+				this.mLastGenerationAge=this.mAge;
+				var bullet=this.mGeneratorFunction();
+				var pos=this.localToGlobal(new Point(0,0));
+				bullet.x=pos.x;
+				bullet.y=pos.y;
+				if (this.mType=="player"){
+					Manager.getManager().addPlayerBullet(bullet);
+				}
+				else if (this.mType=="enemy"){
+					Manager.getManager().addEnemyBullet(bullet);
+				}
+				this.mGenerationCounter++;
+			}
+		}
+
+		return BulletGenerator;
+	})(GameObject)
+
+
+	//class STG.GameObject.GameObjectCollision extends STG.GameObject.GameObject
+	var GameObjectCollision=(function(_super){
+		function GameObjectCollision(){
+			this.mCollisionBody=null;
+			this.mAutoSize=false;
+			this.mRebound=false;
+			GameObjectCollision.__super.call(this);
+		}
+
+		__class(GameObjectCollision,'STG.GameObject.GameObjectCollision',_super);
+		var __proto=GameObjectCollision.prototype;
+		__proto.checkCollision=function(other){
+			return ColliChecker.isCollision(this.mCollisionBody,other.mCollisionBody);
+		}
+
+		__proto.destroy=function(destroyChild){
+			(destroyChild===void 0)&& (destroyChild=true);
+			this.mCollisionBody=null;
+			laya.display.Sprite.prototype.destroy.call(this,destroyChild);
+		}
+
+		__proto.evalTaskAction=function(tsk){
+			_super.prototype.evalTaskAction.call(this,tsk);
+		}
+
+		__proto.updateSelf=function(delta){
+			_super.prototype.updateSelf.call(this,delta);
+			if (this.mIsEmpty){
+				return;
+			};
+			var globalPos=this.localToGlobal(new Point(this.pivotX,this.pivotY));
+			var theta=-this.rotation / 180 *Math.PI;
+			this.mCollisionBody.x=globalPos.x;
+			this.mCollisionBody.y=-globalPos.y;
+			if ((this.mCollisionBody instanceof STG.GameObject.Collision.ColliCircle )){
+				if (this.mAutoSize)
+				{this.mCollisionBody.r=this.mCollisionBody.r|| this.getGraphicBounds().width / 2 *this.scaleX;
+				}
+			}
+			if ((this.mCollisionBody instanceof STG.GameObject.Collision.ColliEllipse )){
+				this.mCollisionBody.dir=theta;
+				if (this.mAutoSize)
+				{this.mCollisionBody.a=this.mCollisionBody.a|| this.getGraphicBounds().width / 2;this.mCollisionBody.b=this.mCollisionBody.b|| this.getGraphicBounds().height / 2;
+				}
+			}
+		}
+
+		return GameObjectCollision;
+	})(GameObject)
+
+
+	//class STG.Layer extends STG.GameObject.GameObject
+	var Layer=(function(_super){
+		function Layer(n){
+			this.mN=0;
+			Layer.__super.call(this);
+			this.mN=n;
+			for (var i=0;i < n;i++){
+				var aLayer=new GameObject();
+				this.addChild(aLayer);
+			}
+			this.mIsEmpty=true;
+		}
+
+		__class(Layer,'STG.Layer',_super);
+		var __proto=Layer.prototype;
+		/*without layers */
+		__proto.clear=function(){
+			for (var i=0;i < this.mN;i++){
+				this.getChildAt(i).destroyChildren();
+			}
+		}
+
+		__proto.addSpriteToLayer=function(s,l){
+			if (l >=this.numChildren){
+				throw new Error("only "+this.numChildren+" layers available");
+			}
+			this.getChildAt(l).addChild(s);
+		}
+
+		__proto.addChild=function(node){
+			return _super.prototype.addChild.call(this,node);
+		}
+
+		return Layer;
+	})(GameObject)
+
+
+	//class STG.Player.Player extends STG.GameObject.GameObject
+	var Player=(function(_super){
+		function Player(){
+			this.mController=null;
+			this.mColliCircle=null;
+			this.mFiring=false;
+			this.mShiftMode=false;
+			this.mLevel=0;
+			this.mWorking=true;
+			this.mInvincible=false;
+			this.mNumBomb=3;
+			Player.__super.call(this);this.mController=this.mController|| new Controller(this,0.5);
+		}
+
+		__class(Player,'STG.Player.Player',_super);
+		var __proto=Player.prototype;
+		__proto.getNumBomb=function(){
+			return this.mNumBomb;
+		}
+
+		__proto.incNumBomb=function(){
+			if (this.mNumBomb < 5){
+				this.mNumBomb++;
+			}
+		}
+
+		__proto.resetNumBomb=function(){
+			this.mNumBomb=3;
+		}
+
+		__proto.setFire=function(f){
+			this.mFiring=f;
+		}
+
+		__proto.changeToShiftMode=function(sft){
+			this.mShiftMode=sft;
+		}
+
+		__proto.die=function(){}
+		__proto.upgrade=function(){
+			if (this.mLevel==5){
 				return false;
 			}
-			if (!this.destroyed){
-				this.mASpeed+=this.mAcceleration;
-				if (this.mASpeed < 0){
-					this.mASpeed=0;
+			this.mLevel++;
+			return true;
+		}
+
+		__proto.bomb=function(){
+			if (! this.mWorking){
+				return false;
+			}
+			if (this.mNumBomb==0){
+				return false;
+			}
+			this.mNumBomb--;
+			Manager.getManager().refreshUINumBomb();
+			return true;
+		}
+
+		/*wrapper */
+		__proto.checkCollision=function(obc){
+			return this.mColliCircle.checkCollision(obc);
+		}
+
+		__proto.laterInit=function(){
+			_super.prototype.laterInit.call(this);
+			this.mColliCircle=new GameObjectCollision();
+			this.mColliCircle.mCollisionBody=new ColliCircle();
+			this.mColliCircle.mAutoSize=true;
+			this.mColliCircle.drawTexture(Laya.loader.getRes("my_res/img/player_colli.png"));
+			this.addChild(this.mColliCircle);
+		}
+
+		__proto.updateSelf=function(delta){
+			_super.prototype.updateSelf.call(this,delta);
+			if (! this.mWorking){
+				this.mFiring=false;
+				this.mShiftMode=false;
+				return;
+			}
+			this.mController.update(delta);
+			if (this.mShiftMode){
+				this.mController.setSpeed(0.2);
+			}
+			else{
+				this.mController.setSpeed(0.5);
+			}
+		}
+
+		return Player;
+	})(GameObject)
+
+
+	//class STG.Player.SubTangMen extends STG.GameObject.GameObject
+	var SubTangMen=(function(_super){
+		function SubTangMen(){
+			this.mRootNode=null;
+			this.mGenerators=[];
+			this.mSubs=[];
+			this.mLevel=0;
+			SubTangMen.__super.call(this);
+			this.mRootNode=new GameObject();
+			this.mRootNode.mIsEmpty=true;
+			this.upgrade(false);
+			this.mLevel=0;
+		}
+
+		__class(SubTangMen,'STG.Player.SubTangMen',_super);
+		var __proto=SubTangMen.prototype;
+		//throw new Error("d");
+		__proto.setGenerating=function(fire){
+			for (var i=0;i < this.mGenerators.length;i++){
+				this.mGenerators[i].setGenerating(fire);
+			}
+		}
+
+		__proto.upgrade=function(shift){
+			this.mLevel++;
+			var newSub=new GameObject();
+			newSub.drawTexture(Laya.loader.getRes("my_res/img/sub_4.png"));
+			this.mSubs.push(newSub);
+			this.mRootNode.addChild(newSub);
+			var itv=shift ? 100 :500;
+			var newG=new BulletGenerator("player",this.normalModeGenerator,itv,-1);
+			newSub.addChild(newG);
+			this.mGenerators.push(newG);
+			this.refreshSubsPos(shift);
+		}
+
+		__proto.changeToShiftMode=function(shift){
+			for (var i=0;i < this.mGenerators.length;i++){
+				if (shift){
+					this.mGenerators[i].setGenerator(this.shiftModeGenerator);
+					this.mGenerators[i].setInterval(100);
 				}
-				this.mAge+=delta;
-				this.mNDirection=this.mDirection-MyMath.HALF_PI;
-				var deltaX=this.calculateDeltaX(delta);
-				var deltaY=this.calculateDeltaY(delta);
-				this.x+=deltaX;
-				this.y-=deltaY;
-				if (this.mIsRotbyDir){
-					if (! this.mIsEmpty){
-						if (this.mNSpeed==0){
-							this.rotation=-this.mDirection / Math.PI *180;
-						}
-						else{
-							var cDir=Math.cos(this.mDirection);
-							var sDir=Math.sin(this.mDirection);
-							var realDir=Math.atan2(
-							(this.mNSpeed *cDir+this.mASpeed *sDir)
-							,(this.mASpeed *cDir+this.mNSpeed *sDir));
-							this.rotation=-realDir / Math.PI *180;
-						}
+				else{
+					this.mGenerators[i].setGenerator(this.normalModeGenerator);
+					this.mGenerators[i].setInterval(500);
+				}
+			};
+			var poss=this.getPositions(shift);
+			if (shift){
+				for (var i=0;i < poss.length;i++){
+					Tween.to(this.mSubs[i],{x :poss[i].x,y :poss[i].y,},100);
+				}
+			}
+			else{
+				for (var i=0;i < poss.length;i++){
+					this.mSubs[i].x=poss[i].x;
+					this.mSubs[i].y=poss[i].y;
+				}
+			}
+		}
+
+		__proto.refreshSubsPos=function(shift){
+			var poss=this.getPositions(shift);
+			for (var i=0;i < poss.length;i++){
+				this.mSubs[i].x=poss[i].x;
+				this.mSubs[i].y=poss[i].y;
+			}
+		}
+
+		__proto.getPositions=function(shift){
+			var poss=[];
+			var dAngle=Math.PI / (1+this.mSubs.length);
+			for (var i=0;i < this.mSubs.length;i++){
+				var angle=-(i+1)*dAngle;
+				if (shift){
+					poss.push(new Point (80 *Math.cos(angle),
+					-80 *Math.sin(angle)));
+				}
+				else{
+					poss.push(new Point (120 *Math.cos(angle),
+					-120 *Math.sin(angle)));
+				}
+			}
+			return poss;
+		}
+
+		__proto.normalModeGenerator=function(){
+			var b=new GuidedBullet();
+			b.mASpeed=12;
+			b.mDirection=Math.PI / 2;
+			b.mIsRotbyDir=true;
+			b.drawTexture(Laya.loader.getRes("my_res/img/sub_bullet_4.png"));
+			b.mCollisionBody=new ColliEllipse();
+			b.mAutoSize=true;
+			b.mAtackPower=20;
+			return b;
+		}
+
+		__proto.shiftModeGenerator=function(){
+			var b=new PlayerBullet();
+			b.mASpeed=10;
+			b.mDirection=Math.PI / 2;
+			b.mIsRotbyDir=true;
+			b.drawTexture(Laya.loader.getRes("my_res/img/sub_bullet_4.png"));
+			b.mCollisionBody=new ColliEllipse();
+			b.mAutoSize=true;
+			b.mAtackPower=50;
+			return b;
+		}
+
+		SubTangMen.NORMAL_DIS_SUB=120;
+		SubTangMen.SHIFT_DIS_SUB=80;
+		SubTangMen.NORMAL_INTERVAL=500;
+		SubTangMen.SHIFT_INTERVAL=100;
+		return SubTangMen;
+	})(GameObject)
+
+
+	//class STG.Scene.GameScene extends STG.GameObject.GameObject
+	var GameScene=(function(_super){
+		function GameScene(typeP){
+			this.mGameUI=null;
+			this.mLayerRoot=null;
+			this.mBGs=null;
+			this.mPlayer=null;
+			this.mColliChecker=null;
+			this.mDeletor=null;
+			this.mScore=0;
+			this.mEnemyGen=null;
+			this.mConfigParser=null;
+			this.mReboundManager=null;
+			GameScene.__super.call(this);
+			this.mNumPlayer=3;
+			this.mLayerRoot=new Layer(5);
+			this.addChild(this.mLayerRoot);
+			this.mGameUI=new GameUI();
+			this.mGameUI.alpha=0.3;
+			this.addToLayer(this.mGameUI,4);
+			this.mBGs=new BG(2);
+			for (var i=0;i < 3;i++){
+				this.mBGs.addBG("my_res/img/bg_"+i.toString()+".png");
+			}
+			this.addToLayer(this.mBGs,0);
+			this.mBGs.start();
+			this.initPlayer(typeP);
+			this.mNumPlayer=3;
+			this.mGameUI.setNumPlayer(this.mNumPlayer);
+			this.mColliChecker=new GameCollisionChecker();
+			this.mColliChecker.setPlayer(this.mPlayer);
+			this.mDeletor=new OutSpriteDeletor();
+			this.mDeletor.setRange(
+			0-50,
+			0,
+			1080+50,
+			1920);
+			this.mReboundManager=new RebounceManager();
+			this.mScore=0;
+			this.mEnemyGen=new EnemyRandomGen(1000,100);
+			this.mConfigParser=new ConfigParser();
+			this.parseEnemiesXml();
+		}
+
+		__class(GameScene,'STG.Scene.GameScene',_super);
+		var __proto=GameScene.prototype;
+		__proto.updateSelf=function(delta){
+			this.mDeletor.update(delta);
+			this.mReboundManager.update(delta);
+			this.mEnemyGen.update(delta);
+			this.checkColli();
+		}
+
+		__proto.addEnemy=function(obc){
+			this.mColliChecker.addEnemy(obc);
+			this.addToLayer(obc,1);
+		}
+
+		__proto.addPlayerBullet=function(obc){
+			this.addToLayer(obc,2);
+			this.autoDelete(obc);
+			this.mColliChecker.addPlayerBullet(obc);
+			this.addToRebounce(obc);
+		}
+
+		__proto.addEnemyBullet=function(obc){
+			this.addToLayer(obc,3);
+			this.autoDelete(obc);
+			this.mColliChecker.addEnemyBullet(obc);
+			this.addToRebounce(obc);
+		}
+
+		__proto.addOther=function(ob){
+			this.addToLayer(ob,1);
+		}
+
+		__proto.getTargetForGB=function(){
+			for (var i=0;i < this.mColliChecker.mEnemies.length;i++){
+				var aEnm=this.mColliChecker.mEnemies[i];
+				if (aEnm && (! aEnm.destroyed)
+					&& this.inField(aEnm)){
+					return aEnm;
+				}
+			}
+			return null;
+		}
+
+		__proto.inField=function(ob){
+			var hw=ob.mBound.width / 2;
+			var hh=ob.mBound.height / 2;
+			return (
+			ob.x > 0+hw
+			&& ob.x < 1080-hw
+			&& ob.y > hh
+			&& ob.y < 1920-hh);
+		}
+
+		__proto.refreshUINumBomb=function(){
+			this.mGameUI.setNumBomb(this.mPlayer.mNumBomb);
+		}
+
+		__proto.destroyRange=function(range,dmg2Enm){
+			var blts=this.mColliChecker.mEnemyBullets;
+			var enms=this.mColliChecker.mEnemies;
+			for (var i=0;i < blts.length;i++){
+				if (ColliChecker.isCollision(range,blts[i].mCollisionBody)){
+					blts[i].destroy();
+				}
+			}
+			for (var i=0;i < enms.length;i++){
+				if (ColliChecker.isCollision(range,enms[i].mCollisionBody)){
+					enms[i].attacked(dmg2Enm);
+				}
+			}
+		}
+
+		__proto.autoDelete=function(s){
+			this.mDeletor.registerSprite(s);
+			for (var i=0;i < s.numChildren;i++){
+				this.mDeletor.registerSprite(s.getChildAt(i));
+			}
+		}
+
+		__proto.aimToPlayer=function(ob){
+			MyMath.aimA2B(ob,this.mPlayer);
+		}
+
+		__proto.enemyDie=function(enm){
+			this.mScore+=enm.mScore;
+			this.mGameUI.setScore(this.mScore);
+			var x=enm.x;
+			var y=enm.y;
+			enm.destroy();
+			if (Math.random()< 1){
+				this.spawnDrop(x,y);
+			}
+		}
+
+		/*private */
+		__proto.addToLayer=function(s,nl){
+			this.mLayerRoot.addSpriteToLayer(s,nl);
+		}
+
+		__proto.initPlayer=function(type){
+			switch(type){
+				case "EPlayerType_ZhenWu":{
+						throw new Error("unfinished");
+					}break ;
+				case "EPlayerType_GaiBang":{
+						throw new Error("unfinished");
+					}break ;
+				case "EPlayerType_ShenWei":{
+						throw new Error("unfinished");
+					}break ;
+				case "EPlayerType_TaiBai":{
+						throw new Error("unfinished");
+					}break ;
+				case "EPlayerType_TangMen":
+					{this.mPlayer=this.mPlayer|| new PlayerTangMen();
+					}break ;
+				case "EPlayerType_TianXiang":{
+						throw new Error("unfinished");
+					}break ;
+				case "EPlayerType_WuDu":{
+						throw new Error("unfinished");
+					}break ;
+				case "EPlayerType_ShenDao":{
+						throw new Error("unfinished");
+					}break ;
+				default :{
+						throw new Error("unknown type");
+					}break ;
+				}
+			this.initPlayerPos();
+			this.mPlayer.resetNumBomb();
+			this.addToLayer(this.mPlayer,1);
+		}
+
+		__proto.initPlayerPos=function(){
+			this.mPlayer.x=1080 / 2;
+			this.mPlayer.y=1920-100;
+		}
+
+		__proto.parseEnemiesXml=function(){
+			var xml=Laya.loader.getRes("my_res/config/enemies.xml").firstChild;
+			var enemyXmls=this.mConfigParser.getAllChildrenXml(xml,"enemy");
+			for (var i=0;i < enemyXmls.length;i++){
+				this.mEnemyGen.addEnemyGen(this.mConfigParser.parseEnemy(enemyXmls[i]));
+			}
+		}
+
+		__proto.checkColli=function(){
+			this.ccPlayer2Drop();
+			this.ccPlayer2Bullet();
+			this.ccEnemy2Bullet();
+		}
+
+		__proto.ccPlayer2Bullet=function(){
+			var enmBlt=this.mColliChecker.checkPlayerCollisionBullet();
+			if (enmBlt){
+				enmBlt.destroy();
+				if (! this.mPlayer.mInvincible){
+					this.playerDie();
+				}
+			}
+		}
+
+		__proto.ccPlayer2Drop=function(){
+			var drop=this.mColliChecker.checkPlayerCollisionDrop();
+			if (drop){
+				var type=drop.mType;
+				drop.destroy();
+				switch(type){
+					case "EDropType_LevelUp" :{
+							this.mPlayer.upgrade();
+						}break ;
+					case "EDropType_BombUp" :{
+							this.mPlayer.incNumBomb();
+							this.refreshUINumBomb();
+						}break ;
+					case "EDropType_PlayerUp" :{
+							this.mNumPlayer++;
+							this.mGameUI.setNumPlayer(this.mNumPlayer);
+						}break ;
+					default :break ;
 					}
-				}
-				else{
-					this.rotation-=this.mRSpeed *delta;
-				}
-				this.excuteTask();
-				return true;
-			}
-			return false;
-		}
-
-		__proto.excuteTask=function(){
-			while (this.mIdxTask < this.mTasks.length){
-				var nowTask=this.mTasks[this.mIdxTask];
-				if (this.evalCondition(nowTask)){
-					this.evalTaskAction(nowTask);
-					this.mIdxTask++;
-				}
-				else{
-					return;
-				}
 			}
 		}
 
-		return GameObject;
-	})(MyNode)
+		__proto.ccEnemy2Bullet=function(){
+			var ecRes=this.mColliChecker.checkEnmyCollision();
+			if (ecRes){
+				var enmHit=ecRes.enm;
+				var bltHit=ecRes.blt;
+				enmHit.attacked(bltHit.mAtackPower);
+				bltHit.destroy();
+			}
+		}
+
+		__proto.playerDie=function(){
+			this.mPlayer.visible=false;
+			this.mPlayer.mWorking=false;
+			this.mNumPlayer--;
+			if (this.mNumPlayer < 0){
+				Manager.getManager().gameOver();
+				return;
+			}
+			this.mGameUI.setNumPlayer(this.mNumPlayer);
+			Laya.timer.once(500,this,this.reSpawnPlayer);
+		}
+
+		__proto.reSpawnPlayer=function(){
+			this.mPlayer.visible=true;
+			this.mPlayer.mWorking=true;
+			this.mPlayer.mInvincible=true;
+			this.mPlayer.resetNumBomb();
+			this.refreshUINumBomb();
+			this.initPlayerPos();
+			Laya.timer.once(1000,this,this.endInvincible);
+		}
+
+		__proto.endInvincible=function(){
+			this.mPlayer.mInvincible=false;
+		}
+
+		__proto.addToRebounce=function(obc){
+			if (obc.mRebound){
+				this.mReboundManager.addItem(obc);
+			}
+			else{
+				for (var i=0;i < obc.numChildren;i++){
+					this.addToRebounce(obc.getChildAt(i));
+				}
+			}
+		}
+
+		__proto.spawnDrop=function(x,y){
+			var randomType=this.getRandomDropType();
+			var newDp=new Drop(randomType,x,y);
+			this.addToLayer(newDp,1);
+			this.mColliChecker.addDrop(newDp);
+			this.addToRebounce(newDp);
+		}
+
+		__proto.getRandomDropType=function(){
+			var r=Math.random();
+			if (r < 0.3){
+				return "EDropType_LevelUp";
+			}
+			else if (r < 0.6){
+				return "EDropType_BombUp";
+			}
+			else{
+				return "EDropType_PlayerUp";
+			}
+		}
+
+		GameScene.NUM_LAYERS=5;
+		GameScene.NUM_BG=3;
+		GameScene.BG_SPEED=2;
+		return GameScene;
+	})(GameObject)
 
 
-	/**
-	*<code>Box</code> 类是一个控件容器类。
-	*/
 	//class laya.ui.Box extends laya.ui.Component
 	var Box=(function(_super){
 		function Box(){Box.__super.call(this);;
@@ -27990,79 +27479,239 @@ var Laya=window.Laya=(function(window,document){
 	})(Component)
 
 
-	/**
-	*<code>Button</code> 组件用来表示常用的多态按钮。 <code>Button</code> 组件可显示文本标签、图标或同时显示两者。 *
-	*<p>可以是单态，两态和三态，默认三态(up,over,down)。</p>
-	*
-	*@example <caption>以下示例代码，创建了一个 <code>Button</code> 实例。</caption>
-	*package
-	*{
-		*import laya.ui.Button;
-		*import laya.utils.Handler;
-		*public class Button_Example
-		*{
-			*public function Button_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*Laya.loader.load("resource/ui/button.png",Handler.create(this,onLoadComplete));//加载资源。
-				*}
-			*private function onLoadComplete():void
-			*{
-				*trace("资源加载完成！");
-				*var button:Button=new Button("resource/ui/button.png","label");//创建一个 Button 类的实例对象 button ,并传入它的皮肤。
-				*button.x=100;//设置 button 对象的属性 x 的值，用于控制 button 对象的显示位置。
-				*button.y=100;//设置 button 对象的属性 y 的值，用于控制 button 对象的显示位置。
-				*button.clickHandler=new Handler(this,onClickButton,[button]);//设置 button 的点击事件处理器。
-				*Laya.stage.addChild(button);//将此 button 对象添加到显示列表。
-				*}
-			*private function onClickButton(button:Button):void
-			*{
-				*trace("按钮button被点击了！");
-				*}
-			*}
-		*}
-	*@example
-	*Laya.init(640,800);//设置游戏画布宽高、渲染模式。
-	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-	*Laya.loader.load("resource/ui/button.png",laya.utils.Handler.create(this,loadComplete));//加载资源
-	*function loadComplete()
-	*{
-		*console.log("资源加载完成！");
-		*var button=new laya.ui.Button("resource/ui/button.png","label");//创建一个 Button 类的实例对象 button ,传入它的皮肤skin和标签label。
-		*button.x=100;//设置 button 对象的属性 x 的值，用于控制 button 对象的显示位置。
-		*button.y=100;//设置 button 对象的属性 y 的值，用于控制 button 对象的显示位置。
-		*button.clickHandler=laya.utils.Handler.create(this,onClickButton,[button],false);//设置 button 的点击事件处理函数。
-		*Laya.stage.addChild(button);//将此 button 对象添加到显示列表。
-		*}
-	*function onClickButton(button)
-	*{
-		*console.log("按钮被点击了。",button);
-		*}
-	*@example
-	*import Button=laya.ui.Button;
-	*import Handler=laya.utils.Handler;
-	*class Button_Example{
-		*constructor()
-		*{
-			*Laya.init(640,800);
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*Laya.loader.load("resource/ui/button.png",laya.utils.Handler.create(this,this.onLoadComplete));//加载资源。
-			*}
-		*private onLoadComplete()
-		*{
-			*var button:Button=new Button("resource/ui/button.png","label");//创建一个 Button 类的实例对象 button ,并传入它的皮肤。
-			*button.x=100;//设置 button 对象的属性 x 的值，用于控制 button 对象的显示位置。
-			*button.y=100;//设置 button 对象的属性 y 的值，用于控制 button 对象的显示位置。
-			*button.clickHandler=new Handler(this,this.onClickButton,[button]);//设置 button 的点击事件处理器。
-			*Laya.stage.addChild(button);//将此 button 对象添加到显示列表。
-			*}
-		*private onClickButton(button:Button):void
-		*{
-			*console.log("按钮button被点击了！")
-			*}
-		*}
-	*/
+	//class laya.display.FrameAnimation extends laya.display.AnimationPlayerBase
+	var FrameAnimation=(function(_super){
+		function FrameAnimation(){
+			this._targetDic=null;
+			this._animationData=null;
+			this._animationNewFrames=null;
+			FrameAnimation.__super.call(this);
+			if (FrameAnimation._sortIndexFun==null){
+				FrameAnimation._sortIndexFun=MathUtil.sortByKey("index",false,true);
+			}
+		}
+
+		__class(FrameAnimation,'laya.display.FrameAnimation',_super);
+		var __proto=FrameAnimation.prototype;
+		/**
+		*@private
+		*初始化动画数据
+		*@param targetDic 对象表
+		*@param animationData 动画数据
+		*
+		*/
+		__proto._setUp=function(targetDic,animationData){
+			this._labels=null;
+			this._animationNewFrames=null;
+			this._targetDic=targetDic;
+			this._animationData=animationData;
+			this.interval=1000 / animationData.frameRate;
+			if (animationData.parsed){
+				this._count=animationData.count;
+				this._labels=animationData.labels;
+				this._animationNewFrames=animationData.animationNewFrames;
+				}else {
+				this._animationNewFrames=[];
+				this._calculateDatas();
+			}
+			animationData.parsed=true;
+			animationData.labels=this._labels;
+			animationData.count=this._count;
+			animationData.animationNewFrames=this._animationNewFrames;
+		}
+
+		/**@inheritDoc */
+		__proto.clear=function(){
+			_super.prototype.clear.call(this);
+			this._targetDic=null;
+			this._animationData=null;
+		}
+
+		/**@inheritDoc */
+		__proto._displayToIndex=function(value){
+			if (!this._animationData)return;
+			if (value < 0)value=0;
+			if (value > this._count)value=this._count;
+			var nodes=this._animationData.nodes,i=0,len=nodes.length;
+			for (i=0;i < len;i++){
+				this._displayNodeToFrame(nodes[i],value);
+			}
+		}
+
+		/**
+		*@private
+		*将节点设置到某一帧的状态
+		*@param node 节点ID
+		*@param frame
+		*@param targetDic 节点表
+		*
+		*/
+		__proto._displayNodeToFrame=function(node,frame,targetDic){
+			if (!targetDic)targetDic=this._targetDic;
+			var target=targetDic[node.target];
+			if (!target){
+				return;
+			};
+			var frames=node.frames,key,propFrames,value;
+			var keys=node.keys,i=0,len=keys.length;
+			for (i=0;i < len;i++){
+				key=keys[i];
+				propFrames=frames[key];
+				if (propFrames.length > frame){
+					value=propFrames[frame];
+					}else {
+					value=propFrames[propFrames.length-1];
+				}
+				target[key]=value;
+			}
+		}
+
+		/**
+		*@private
+		*计算帧数据
+		*
+		*/
+		__proto._calculateDatas=function(){
+			if (!this._animationData)return;
+			var nodes=this._animationData.nodes,i=0,len=nodes.length,tNode;
+			this._count=0;
+			for (i=0;i < len;i++){
+				tNode=nodes[i];
+				this._calculateNodeKeyFrames(tNode);
+			}
+			this._count+=1;
+		}
+
+		/**
+		*@private
+		*计算某个节点的帧数据
+		*@param node
+		*
+		*/
+		__proto._calculateNodeKeyFrames=function(node){
+			var keyFrames=node.keyframes,key,tKeyFrames,target=node.target;
+			if (!node.frames){
+				node.frames={};
+			}
+			if (!node.keys){
+				node.keys=[];
+				}else {
+				node.keys.length=0;
+			}
+			if (!node.initValues){
+				node.initValues={};
+			}
+			for (key in keyFrames){
+				tKeyFrames=keyFrames[key];
+				if (!node.frames[key]){
+					node.frames[key]=[];
+				}
+				if (this._targetDic && this._targetDic[target]){
+					node.initValues[key]=this._targetDic[target][key];
+				}
+				tKeyFrames.sort(FrameAnimation._sortIndexFun);
+				node.keys.push(key);
+				this._calculateNodePropFrames(tKeyFrames,node.frames[key],key,target);
+			}
+		}
+
+		/**
+		*将动画控制对象还原到动画控制之前的状态
+		*/
+		__proto.resetToInitState=function(){
+			if (!this._targetDic)return;
+			if (!this._animationData)return;
+			var nodes=this._animationData.nodes,i=0,len=nodes.length;
+			var tNode;
+			var initValues;
+			for (i=0;i < len;i++){
+				tNode=nodes[i];
+				initValues=tNode.initValues;
+				if (!initValues)continue ;
+				var target=this._targetDic[tNode.target];
+				if (!target)continue ;
+				var key;
+				for (key in initValues){
+					target[key]=initValues[key];
+				}
+			}
+		}
+
+		/**
+		*@private
+		*计算节点某个属性的帧数据
+		*@param keyframes
+		*@param frames
+		*@param key
+		*@param target
+		*
+		*/
+		__proto._calculateNodePropFrames=function(keyframes,frames,key,target){
+			var i=0,len=keyframes.length-1;
+			frames.length=keyframes[len].index+1;
+			for (i=0;i < len;i++){
+				this._dealKeyFrame(keyframes[i]);
+				this._calculateFrameValues(keyframes[i],keyframes[i+1],frames);
+			}
+			if (len==0){
+				frames[0]=keyframes[0].value;
+				if (this._animationNewFrames)
+					this._animationNewFrames[keyframes[0].index]=true;
+			}
+			this._dealKeyFrame(keyframes[i]);
+		}
+
+		/**
+		*@private
+		*
+		*/
+		__proto._dealKeyFrame=function(keyFrame){
+			if (keyFrame.label && keyFrame.label !="")this.addLabel(keyFrame.label,keyFrame.index);
+		}
+
+		/**
+		*@private
+		*计算两个关键帧直接的帧数据
+		*@param startFrame
+		*@param endFrame
+		*@param result
+		*
+		*/
+		__proto._calculateFrameValues=function(startFrame,endFrame,result){
+			var i=0,easeFun;
+			var start=startFrame.index,end=endFrame.index;
+			var startValue=startFrame.value;
+			var dValue=endFrame.value-startFrame.value;
+			var dLen=end-start;
+			if (end > this._count)this._count=end;
+			if (startFrame.tween){
+				easeFun=Ease[startFrame.tweenMethod];
+				if (easeFun==null){
+					easeFun=Ease.linearNone;
+				}
+				for (i=start;i < end;i++){
+					result[i]=easeFun(i-start,startValue,dValue,dLen);
+					if (this._animationNewFrames){
+						this._animationNewFrames[i]=true;
+					}
+				}
+				}else {
+				for (i=start;i < end;i++){
+					result[i]=startValue;
+				}
+			}
+			if (this._animationNewFrames){
+				this._animationNewFrames[startFrame.index]=true;
+				this._animationNewFrames[endFrame.index]=true;
+			}
+			result[endFrame.index]=endFrame.value;
+		}
+
+		FrameAnimation._sortIndexFun=null
+		return FrameAnimation;
+	})(AnimationPlayerBase)
+
+
 	//class laya.ui.Button extends laya.ui.Component
 	var Button=(function(_super){
 		function Button(skin,label){
@@ -28480,103 +28129,318 @@ var Laya=window.Laya=(function(window,document){
 	})(Component)
 
 
-	/**
-	*<p> <code>Clip</code> 类是位图切片动画。</p>
-	*<p> <code>Clip</code> 可将一张图片，按横向分割数量 <code>clipX</code> 、竖向分割数量 <code>clipY</code> ，
-	*或横向分割每个切片的宽度 <code>clipWidth</code> 、竖向分割每个切片的高度 <code>clipHeight</code> ，
-	*从左向右，从上到下，分割组合为一个切片动画。</p>
-	*Image和Clip组件是唯一支持异步加载的两个组件，比如clip.skin="abc/xxx.png"，其他UI组件均不支持异步加载。
-	*
-	*@example <caption>以下示例代码，创建了一个 <code>Clip</code> 实例。</caption>
-	*package
-	*{
-		*import laya.ui.Clip;
-		*public class Clip_Example
-		*{
-			*private var clip:Clip;
-			*public function Clip_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*onInit();
-				*}
-			*private function onInit():void
-			*{
-				*clip=new Clip("resource/ui/clip_num.png",10,1);//创建一个 Clip 类的实例对象 clip ,传入它的皮肤skin和横向分割数量、竖向分割数量。
-				*clip.autoPlay=true;//设置 clip 动画自动播放。
-				*clip.interval=100;//设置 clip 动画的播放时间间隔。
-				*clip.x=100;//设置 clip 对象的属性 x 的值，用于控制 clip 对象的显示位置。
-				*clip.y=100;//设置 clip 对象的属性 y 的值，用于控制 clip 对象的显示位置。
-				*clip.on(Event.CLICK,this,onClick);//给 clip 添加点击事件函数侦听。
-				*Laya.stage.addChild(clip);//将此 clip 对象添加到显示列表。
-				*}
-			*private function onClick():void
-			*{
-				*trace("clip 的点击事件侦听处理函数。clip.total="+clip.total);
-				*if (clip.isPlaying==true)
-				*{
-					*clip.stop();//停止动画。
-					*}else {
-					*clip.play();//播放动画。
-					*}
-				*}
-			*}
-		*}
-	*@example
-	*Laya.init(640,800);//设置游戏画布宽高
-	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色
-	*var clip;
-	*Laya.loader.load("resource/ui/clip_num.png",laya.utils.Handler.create(this,loadComplete));//加载资源
-	*function loadComplete(){
-		*console.log("资源加载完成！");
-		*clip=new laya.ui.Clip("resource/ui/clip_num.png",10,1);//创建一个 Clip 类的实例对象 clip ,传入它的皮肤skin和横向分割数量、竖向分割数量。
-		*clip.autoPlay=true;//设置 clip 动画自动播放。
-		*clip.interval=100;//设置 clip 动画的播放时间间隔。
-		*clip.x=100;//设置 clip 对象的属性 x 的值，用于控制 clip 对象的显示位置。
-		*clip.y=100;//设置 clip 对象的属性 y 的值，用于控制 clip 对象的显示位置。
-		*clip.on(Event.CLICK,this,onClick);//给 clip 添加点击事件函数侦听。
-		*Laya.stage.addChild(clip);//将此 clip 对象添加到显示列表。
-		*}
-	*function onClick()
-	*{
-		*console.log("clip 的点击事件侦听处理函数。");
-		*if(clip.isPlaying==true)
-		*{
-			*clip.stop();
-			*}else {
-			*clip.play();
-			*}
-		*}
-	*@example
-	*import Clip=laya.ui.Clip;
-	*import Handler=laya.utils.Handler;
-	*class Clip_Example {
-		*private clip:Clip;
-		*constructor(){
-			*Laya.init(640,800);//设置游戏画布宽高。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*this.onInit();
-			*}
-		*private onInit():void {
-			*this.clip=new Clip("resource/ui/clip_num.png",10,1);//创建一个 Clip 类的实例对象 clip ,传入它的皮肤skin和横向分割数量、竖向分割数量。
-			*this.clip.autoPlay=true;//设置 clip 动画自动播放。
-			*this.clip.interval=100;//设置 clip 动画的播放时间间隔。
-			*this.clip.x=100;//设置 clip 对象的属性 x 的值，用于控制 clip 对象的显示位置。
-			*this.clip.y=100;//设置 clip 对象的属性 y 的值，用于控制 clip 对象的显示位置。
-			*this.clip.on(laya.events.Event.CLICK,this,this.onClick);//给 clip 添加点击事件函数侦听。
-			*Laya.stage.addChild(this.clip);//将此 clip 对象添加到显示列表。
-			*}
-		*private onClick():void {
-			*console.log("clip 的点击事件侦听处理函数。clip.total="+this.clip.total);
-			*if (this.clip.isPlaying==true){
-				*this.clip.stop();//停止动画。
-				*}else {
-				*this.clip.play();//播放动画。
-				*}
-			*}
-		*}
-	*
-	*/
+	//class laya.display.Animation extends laya.display.AnimationPlayerBase
+	var Animation$1=(function(_super){
+		function Animation(){
+			this._frames=null;
+			this._url=null;
+			Animation.__super.call(this);
+			this._setControlNode(this);
+		}
+
+		__class(Animation,'laya.display.Animation',_super,'Animation$1');
+		var __proto=Animation.prototype;
+		/**@inheritDoc */
+		__proto.destroy=function(destroyChild){
+			(destroyChild===void 0)&& (destroyChild=true);
+			this.stop();
+			laya.display.Sprite.prototype.destroy.call(this,destroyChild);
+			this._frames=null;
+			this._labels=null;
+		}
+
+		/**
+		*<p>开始播放动画。会在动画模版缓存池中查找key值为name的动画模版，存在则用此动画模版初始化当前序列帧， 如果不存在，则使用当前序列帧。</p>
+		*<p>play(...)方法被设计为在创建实例后的任何时候都可以被调用，调用后就处于播放状态，当相应的资源加载完毕、调用动画帧填充方法(set frames)或者将实例显示在舞台上时，会判断是否处于播放状态，如果是，则开始播放。</p>
+		*<p>配合wrapMode属性，可设置动画播放顺序类型。</p>
+		*@param start （可选）指定动画播放开始的索引(int)或帧标签(String)。帧标签可以通过addLabel(...)和removeLabel(...)进行添加和删除。
+		*@param loop （可选）是否循环播放。
+		*@param name （可选）动画模板在动画模版缓存池中的key，也可认为是动画名称。如果name为空，则播放当前动画序列帧；如果不为空，则在动画模版缓存池中寻找key值为name的动画模版，如果存在则用此动画模版初始化当前序列帧并播放，如果不存在，则仍然播放当前动画序列帧；如果没有当前动画的帧数据，则不播放，但该实例仍然处于播放状态。
+		*/
+		__proto.play=function(start,loop,name){
+			(start===void 0)&& (start=0);
+			(loop===void 0)&& (loop=true);
+			(name===void 0)&& (name="");
+			if (name)this._setFramesFromCache(name);
+			this._isPlaying=true;
+			this.index=((typeof start=='string'))? this._getFrameByLabel(start):start;
+			this.loop=loop;
+			this._actionName=name;
+			this._isReverse=this.wrapMode==1;
+			if (this._frames && this.interval > 0){
+				this.timerLoop(this.interval,this,this._frameLoop,null,true);
+			}
+		}
+
+		/**@private */
+		__proto._setFramesFromCache=function(name){
+			var showWarn=name !="";
+			if (this._url)name=this._url+"#"+name;
+			if (name && Animation.framesMap[name]){
+				var tAniO;
+				tAniO=Animation.framesMap[name];
+				if ((tAniO instanceof Array)){
+					this._frames=Animation.framesMap[name];
+					this._count=this._frames.length;
+					}else {
+					if (tAniO.nodeRoot){
+						Animation.framesMap[name]=this._parseGraphicAnimationByData(tAniO);
+						tAniO=Animation.framesMap[name];
+					}
+					this._frames=tAniO.frames;
+					this._count=this._frames.length;
+					if (!this._frameRateChanged)this._interval=tAniO.interval;
+					this._labels=this._copyLabels(tAniO.labels);
+				}
+				return true;
+				}else {
+				if (showWarn)console.log("ani not found:",name);
+			}
+			return false;
+		}
+
+		/**@private */
+		__proto._copyLabels=function(labels){
+			if (!labels)return null;
+			var rst;
+			rst={};
+			var key;
+			for (key in labels){
+				rst[key]=Utils.copyArray([],labels[key]);
+			}
+			return rst;
+		}
+
+		/**@private */
+		__proto._frameLoop=function(){
+			if (this._style.visible && this._style.alpha > 0.01){
+				_super.prototype._frameLoop.call(this);
+			}
+		}
+
+		/**@private */
+		__proto._displayToIndex=function(value){
+			if (this._frames)this.graphics=this._frames[value];
+		}
+
+		/**
+		*停止动画播放，并清理对象属性。之后可存入对象池，方便对象复用。
+		*/
+		__proto.clear=function(){
+			this.stop();
+			this.graphics=null;
+			this._frames=null;
+			this._labels=null;
+		}
+
+		/**
+		*<p>根据指定的动画模版初始化当前动画序列帧。选择动画模版的过程如下：1. 动画模版缓存池中key为cacheName的动画模版；2. 如果不存在，则加载指定的图片集合并创建动画模版。注意：只有指定不为空的cacheName，才能将创建好的动画模版以此为key缓存到动画模版缓存池，否则不进行缓存。<p/>
+		*<p>动画模版缓存池是以一定的内存开销来节省CPU开销，当相同的动画模版被多次使用时，相比于每次都创建新的动画模版，使用动画模版缓存池，只需创建一次，缓存之后多次复用，从而节省了动画模版创建的开销。</p>
+		*<p>因为返回值为Animation对象本身，所以可以使用如下语法：loadImages(...).loadImages(...).play(...);。</p>
+		*@param urls 图片路径集合。需要创建动画模版时，会以此为数据源。参数形如：[url1,url2,url3,...]。
+		*@param cacheName （可选）动画模板在动画模版缓存池中的key。如果此参数不为空，表示使用动画模版缓存池。如果动画模版缓存池中存在key为cacheName的动画模版，则使用此模版。否则，创建新的动画模版，如果cacheName不为空，则以cacheName为key缓存到动画模版缓存池中，如果cacheName为空，不进行缓存。
+		*@return 返回Animation对象本身。
+		*/
+		__proto.loadImages=function(urls,cacheName){
+			(cacheName===void 0)&& (cacheName="");
+			this._url="";
+			if (!this._setFramesFromCache(cacheName)){
+				this.frames=Animation.framesMap[cacheName] ? Animation.framesMap[cacheName] :Animation.createFrames(urls,cacheName);
+			}
+			return this;
+		}
+
+		/**
+		*<p>根据指定的动画模版初始化当前动画序列帧。选择动画模版的过程如下：1. 动画模版缓存池中key为cacheName的动画模版；2. 如果不存在，则加载指定的图集并创建动画模版。</p>
+		*<p>注意：只有指定不为空的cacheName，才能将创建好的动画模版以此为key缓存到动画模版缓存池，否则不进行缓存。<p/>
+		*<p>动画模版缓存池是以一定的内存开销来节省CPU开销，当相同的动画模版被多次使用时，相比于每次都创建新的动画模版，使用动画模版缓存池，只需创建一次，缓存之后多次复用，从而节省了动画模版创建的开销。</p>
+		*<p>因为返回值为Animation对象本身，所以可以使用如下语法：loadAtlas(...).loadAtlas(...).play(...);。</p>
+		*@param url 图集路径。需要创建动画模版时，会以此为数据源。
+		*@param loaded （可选）使用指定图集初始化动画完毕的回调。
+		*@param cacheName （可选）动画模板在动画模版缓存池中的key。如果此参数不为空，表示使用动画模版缓存池。如果动画模版缓存池中存在key为cacheName的动画模版，则使用此模版。否则，创建新的动画模版，如果cacheName不为空，则以cacheName为key缓存到动画模版缓存池中，如果cacheName为空，不进行缓存。
+		*@return 返回动画本身。
+		*/
+		__proto.loadAtlas=function(url,loaded,cacheName){
+			(cacheName===void 0)&& (cacheName="");
+			this._url="";
+			var _this=this;
+			if (!_this._setFramesFromCache(cacheName)){
+				function onLoaded (loadUrl){
+					if (url===loadUrl){
+						_this.frames=Animation.framesMap[cacheName] ? Animation.framesMap[cacheName] :Animation.createFrames(url,cacheName);
+						if (loaded)loaded.run();
+					}
+				}
+				if (Loader.getAtlas(url))onLoaded(url);
+				else Laya.loader.load(url,Handler.create(null,onLoaded,[url]),null,"atlas");
+			}
+			return this;
+		}
+
+		/**
+		*<p>加载并解析由LayaAir IDE制作的动画文件，此文件中可能包含多个动画。默认帧率为在IDE中设计的帧率，如果调用过set interval，则使用此帧间隔对应的帧率。加载后创建动画模版，并缓存到动画模版缓存池，key "url#动画名称" 对应相应动画名称的动画模板，key "url#" 对应动画模版集合的默认动画模版。</p>
+		*<p>注意：如果调用本方法前，还没有预加载动画使用的图集，请将atlas参数指定为对应的图集路径，否则会导致动画创建失败。</p>
+		*<p>动画模版缓存池是以一定的内存开销来节省CPU开销，当相同的动画模版被多次使用时，相比于每次都创建新的动画模版，使用动画模版缓存池，只需创建一次，缓存之后多次复用，从而节省了动画模版创建的开销。</p>
+		*<p>因为返回值为Animation对象本身，所以可以使用如下语法：loadAnimation(...).loadAnimation(...).play(...);。</p>
+		*@param url 动画文件路径。可由LayaAir IDE创建并发布。
+		*@param loaded （可选）使用指定动画资源初始化动画完毕的回调。
+		*@param atlas （可选）动画用到的图集地址（可选）。
+		*@return 返回动画本身。
+		*/
+		__proto.loadAnimation=function(url,loaded,atlas){
+			this._url=url;
+			var _this=this;
+			if (!this._actionName)this._actionName="";
+			if (!_this._setFramesFromCache("")){
+				if (!atlas || Loader.getAtlas(atlas)){
+					this._loadAnimationData(url,loaded,atlas);
+					}else {
+					Laya.loader.load(atlas,Handler.create(this,this._loadAnimationData,[url,loaded,atlas]),null,"atlas")
+				}
+				}else {
+				_this._setFramesFromCache(this._actionName);
+				if (loaded)loaded.run();
+			}
+			return this;
+		}
+
+		/**@private */
+		__proto._loadAnimationData=function(url,loaded,atlas){
+			var _$this=this;
+			if (atlas && !Loader.getAtlas(atlas)){
+				console.warn("atlas load fail:"+atlas);
+				return;
+			};
+			var _this=this;
+			function onLoaded (loadUrl){
+				if (!Loader.getRes(loadUrl))return;
+				if (url===loadUrl){
+					var tAniO;
+					if (!Animation.framesMap[url+"#"]){
+						var aniData=_this._parseGraphicAnimation(Loader.getRes(url));
+						if (!aniData)return;
+						var aniList=aniData.animationList;
+						var i=0,len=aniList.length;
+						var defaultO;
+						for (i=0;i < len;i++){
+							tAniO=aniList[i];
+							Animation.framesMap[url+"#"+tAniO.name]=tAniO;
+							if (!defaultO)defaultO=tAniO;
+						}
+						if (defaultO){
+							Animation.framesMap[url+"#"]=defaultO;
+							_this._setFramesFromCache(_$this._actionName);
+							_$this.index=0;
+						}
+						_$this._checkResumePlaying();
+						}else {
+						_this._setFramesFromCache(_$this._actionName);
+						_$this.index=0;
+						_$this._checkResumePlaying();
+					}
+					if (loaded)loaded.run();
+				}
+			}
+			if (Loader.getRes(url))onLoaded(url);
+			else Laya.loader.load(url,Handler.create(null,onLoaded,[url]),null,"json");
+			Loader.clearRes(url);
+		}
+
+		/**@private */
+		__proto._parseGraphicAnimation=function(animationData){
+			return GraphicAnimation.parseAnimationData(animationData)
+		}
+
+		/**@private */
+		__proto._parseGraphicAnimationByData=function(animationObject){
+			return GraphicAnimation.parseAnimationByData(animationObject);
+		}
+
+		/**
+		*当前动画的帧图像数组。本类中，每个帧图像是一个Graphics对象，而动画播放就是定时切换Graphics对象的过程。
+		*/
+		__getset(0,__proto,'frames',function(){
+			return this._frames;
+			},function(value){
+			this._frames=value;
+			if (value){
+				this._count=value.length;
+				if (this._isPlaying)this.play(this._index,this.loop,this._actionName);
+				else this.index=this._index;
+			}
+		});
+
+		/**
+		*是否自动播放，默认为false。如果设置为true，则动画被创建并添加到舞台后自动播放。
+		*/
+		__getset(0,__proto,'autoPlay',null,function(value){
+			if (value)this.play();
+			else this.stop();
+		});
+
+		/**
+		*<p>动画数据源。</p>
+		*<p>
+		*类型如下：<br/>
+		*1. LayaAir IDE动画文件路径：使用此类型需要预加载所需的图集资源，否则会创建失败，如果不想预加载或者需要创建完毕的回调，请使用loadAnimation(...)方法；<br/>
+		*2. 图集路径：使用此类型创建的动画模版不会被缓存到动画模版缓存池中，如果需要缓存或者创建完毕的回调，请使用loadAtlas(...)方法；<br/>
+		*3. 图片路径集合：使用此类型创建的动画模版不会被缓存到动画模版缓存池中，如果需要缓存，请使用loadImages(...)方法。
+		*</p>
+		*@param value 数据源。比如：图集："xx/a1.atlas"；图片集合："a1.png,a2.png,a3.png"；LayaAir IDE动画"xx/a1.ani"。
+		*/
+		__getset(0,__proto,'source',null,function(value){
+			if (value.indexOf(".ani")>-1)this.loadAnimation(value);
+			else if (value.indexOf(".json")>-1 || value.indexOf("als")>-1 || value.indexOf("atlas")>-1)this.loadAtlas(value);
+			else this.loadImages(value.split(","));
+		});
+
+		/**
+		*设置自动播放的动画名称，在LayaAir IDE中可以创建的多个动画组成的动画集合，选择其中一个动画名称进行播放。
+		*/
+		__getset(0,__proto,'autoAnimation',null,function(value){
+			this.play(0,true,value);
+		});
+
+		Animation.createFrames=function(url,name){
+			var arr;
+			if ((typeof url=='string')){
+				var atlas=Loader.getAtlas(url);
+				if (atlas && atlas.length){
+					arr=[];
+					for (var i=0,n=atlas.length;i < n;i++){
+						var g=new Graphics();
+						g.drawTexture(Loader.getRes(atlas[i]),0,0);
+						arr.push(g);
+					}
+				}
+				}else if ((url instanceof Array)){
+				arr=[];
+				for (i=0,n=url.length;i < n;i++){
+					g=new Graphics();
+					g.loadImage(url[i],0,0);
+					arr.push(g);
+				}
+			}
+			if (name)Animation.framesMap[name]=arr;
+			return arr;
+		}
+
+		Animation.clearCache=function(key){
+			var cache=Animation.framesMap;
+			var val;
+			var key2=key+"#";
+			for (val in cache){
+				if (val===key || val.indexOf(key2)==0){
+					delete Animation.framesMap[val];
+				}
+			}
+		}
+
+		Animation.framesMap={};
+		return Animation;
+	})(AnimationPlayerBase)
+
+
 	//class laya.ui.Clip extends laya.ui.Component
 	var Clip=(function(_super){
 		function Clip(url,clipX,clipY){
@@ -28899,79 +28763,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Component)
 
 
-	/**
-	*<code>ColorPicker</code> 组件将显示包含多个颜色样本的列表，用户可以从中选择颜色。
-	*
-	*@example <caption>以下示例代码，创建了一个 <code>ColorPicker</code> 实例。</caption>
-	*package
-	*{
-		*import laya.ui.ColorPicker;
-		*import laya.utils.Handler;
-		*public class ColorPicker_Example
-		*{
-			*public function ColorPicker_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*Laya.loader.load("resource/ui/color.png",Handler.create(this,onLoadComplete));//加载资源。
-				*}
-			*private function onLoadComplete():void
-			*{
-				*trace("资源加载完成！");
-				*var colorPicket:ColorPicker=new ColorPicker();//创建一个 ColorPicker 类的实例对象 colorPicket 。
-				*colorPicket.skin="resource/ui/color.png";//设置 colorPicket 的皮肤。
-				*colorPicket.x=100;//设置 colorPicket 对象的属性 x 的值，用于控制 colorPicket 对象的显示位置。
-				*colorPicket.y=100;//设置 colorPicket 对象的属性 y 的值，用于控制 colorPicket 对象的显示位置。
-				*colorPicket.changeHandler=new Handler(this,onChangeColor,[colorPicket]);//设置 colorPicket 的颜色改变回调函数。
-				*Laya.stage.addChild(colorPicket);//将此 colorPicket 对象添加到显示列表。
-				*}
-			*private function onChangeColor(colorPicket:ColorPicker):void
-			*{
-				*trace("当前选择的颜色： "+colorPicket.selectedColor);
-				*}
-			*}
-		*}
-	*@example
-	*Laya.init(640,800);//设置游戏画布宽高
-	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色
-	*Laya.loader.load("resource/ui/color.png",laya.utils.Handler.create(this,loadComplete));//加载资源
-	*function loadComplete()
-	*{
-		*console.log("资源加载完成！");
-		*var colorPicket=new laya.ui.ColorPicker();//创建一个 ColorPicker 类的实例对象 colorPicket 。
-		*colorPicket.skin="resource/ui/color.png";//设置 colorPicket 的皮肤。
-		*colorPicket.x=100;//设置 colorPicket 对象的属性 x 的值，用于控制 colorPicket 对象的显示位置。
-		*colorPicket.y=100;//设置 colorPicket 对象的属性 y 的值，用于控制 colorPicket 对象的显示位置。
-		*colorPicket.changeHandler=laya.utils.Handler.create(this,onChangeColor,[colorPicket],false);//设置 colorPicket 的颜色改变回调函数。
-		*Laya.stage.addChild(colorPicket);//将此 colorPicket 对象添加到显示列表。
-		*}
-	*function onChangeColor(colorPicket)
-	*{
-		*console.log("当前选择的颜色： "+colorPicket.selectedColor);
-		*}
-	*@example
-	*import ColorPicker=laya.ui.ColorPicker;
-	*import Handler=laya.utils.Handler;
-	*class ColorPicker_Example {
-		*constructor(){
-			*Laya.init(640,800);//设置游戏画布宽高。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*Laya.loader.load("resource/ui/color.png",Handler.create(this,this.onLoadComplete));//加载资源。
-			*}
-		*private onLoadComplete():void {
-			*console.log("资源加载完成！");
-			*var colorPicket:ColorPicker=new ColorPicker();//创建一个 ColorPicker 类的实例对象 colorPicket 。
-			*colorPicket.skin="resource/ui/color.png";//设置 colorPicket 的皮肤。
-			*colorPicket.x=100;//设置 colorPicket 对象的属性 x 的值，用于控制 colorPicket 对象的显示位置。
-			*colorPicket.y=100;//设置 colorPicket 对象的属性 y 的值，用于控制 colorPicket 对象的显示位置。
-			*colorPicket.changeHandler=new Handler(this,this.onChangeColor,[colorPicket]);//设置 colorPicket 的颜色改变回调函数。
-			*Laya.stage.addChild(colorPicket);//将此 colorPicket 对象添加到显示列表。
-			*}
-		*private onChangeColor(colorPicket:ColorPicker):void {
-			*console.log("当前选择的颜色： "+colorPicket.selectedColor);
-			*}
-		*}
-	*/
 	//class laya.ui.ColorPicker extends laya.ui.Component
 	var ColorPicker=(function(_super){
 		function ColorPicker(){
@@ -29254,76 +29045,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Component)
 
 
-	/**
-	*<code>ComboBox</code> 组件包含一个下拉列表，用户可以从该列表中选择单个值。
-	*
-	*@example <caption>以下示例代码，创建了一个 <code>ComboBox</code> 实例。</caption>
-	*package
-	*{
-		*import laya.ui.ComboBox;
-		*import laya.utils.Handler;
-		*public class ComboBox_Example
-		*{
-			*public function ComboBox_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*Laya.loader.load("resource/ui/button.png",Handler.create(this,onLoadComplete));//加载资源。
-				*}
-			*private function onLoadComplete():void
-			*{
-				*trace("资源加载完成！");
-				*var comboBox:ComboBox=new ComboBox("resource/ui/button.png","item0,item1,item2,item3,item4,item5");//创建一个 ComboBox 类的实例对象 comboBox ,传入它的皮肤和标签集。
-				*comboBox.x=100;//设置 comboBox 对象的属性 x 的值，用于控制 comboBox 对象的显示位置。
-				*comboBox.y=100;//设置 comboBox 对象的属性 x 的值，用于控制 comboBox 对象的显示位置。
-				*comboBox.selectHandler=new Handler(this,onSelect);//设置 comboBox 选择项改变时执行的处理器。
-				*Laya.stage.addChild(comboBox);//将此 comboBox 对象添加到显示列表。
-				*}
-			*private function onSelect(index:int):void
-			*{
-				*trace("当前选中的项对象索引： ",index);
-				*}
-			*}
-		*}
-	*@example
-	*Laya.init(640,800);//设置游戏画布宽高。
-	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-	*Laya.loader.load("resource/ui/button.png",laya.utils.Handler.create(this,loadComplete));//加载资源
-	*function loadComplete(){
-		*console.log("资源加载完成！");
-		*var comboBox=new laya.ui.ComboBox("resource/ui/button.png","item0,item1,item2,item3,item4,item5");//创建一个 ComboBox 类的实例对象 comboBox ,传入它的皮肤和标签集。
-		*comboBox.x=100;//设置 comboBox 对象的属性 x 的值，用于控制 comboBox 对象的显示位置。
-		*comboBox.y=100;//设置 comboBox 对象的属性 x 的值，用于控制 comboBox 对象的显示位置。
-		*comboBox.selectHandler=new laya.utils.Handler(this,onSelect);//设置 comboBox 选择项改变时执行的处理器。
-		*Laya.stage.addChild(comboBox);//将此 comboBox 对象添加到显示列表。
-		*}
-	*function onSelect(index)
-	*{
-		*console.log("当前选中的项对象索引： ",index);
-		*}
-	*@example
-	*import ComboBox=laya.ui.ComboBox;
-	*import Handler=laya.utils.Handler;
-	*class ComboBox_Example {
-		*constructor(){
-			*Laya.init(640,800);//设置游戏画布宽高。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*Laya.loader.load("resource/ui/button.png",Handler.create(this,this.onLoadComplete));//加载资源。
-			*}
-		*private onLoadComplete():void {
-			*console.log("资源加载完成！");
-			*var comboBox:ComboBox=new ComboBox("resource/ui/button.png","item0,item1,item2,item3,item4,item5");//创建一个 ComboBox 类的实例对象 comboBox ,传入它的皮肤和标签集。
-			*comboBox.x=100;//设置 comboBox 对象的属性 x 的值，用于控制 comboBox 对象的显示位置。
-			*comboBox.y=100;//设置 comboBox 对象的属性 x 的值，用于控制 comboBox 对象的显示位置。
-			*comboBox.selectHandler=new Handler(this,this.onSelect);//设置 comboBox 选择项改变时执行的处理器。
-			*Laya.stage.addChild(comboBox);//将此 comboBox 对象添加到显示列表。
-			*}
-		*private onSelect(index:number):void {
-			*console.log("当前选中的项对象索引： ",index);
-			*}
-		*}
-	*
-	*/
 	//class laya.ui.ComboBox extends laya.ui.Component
 	var ComboBox=(function(_super){
 		function ComboBox(skin,labels){
@@ -29746,14 +29467,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Component)
 
 
-	/**
-	*<code>ScrollBar</code> 组件是一个滚动条组件。
-	*<p>当数据太多以至于显示区域无法容纳时，最终用户可以使用 <code>ScrollBar</code> 组件控制所显示的数据部分。</p>
-	*<p> 滚动条由四部分组成：两个箭头按钮、一个轨道和一个滑块。 </p> *
-	*
-	*@see laya.ui.VScrollBar
-	*@see laya.ui.HScrollBar
-	*/
 	//class laya.ui.ScrollBar extends laya.ui.Component
 	var ScrollBar=(function(_super){
 		function ScrollBar(skin){
@@ -30234,14 +29947,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Component)
 
 
-	/**
-	*使用 <code>Slider</code> 控件，用户可以通过在滑块轨道的终点之间移动滑块来选择值。
-	*<p>滑块的当前值由滑块端点（对应于滑块的最小值和最大值）之间滑块的相对位置确定。</p>
-	*<p>滑块允许最小值和最大值之间特定间隔内的值。滑块还可以使用数据提示显示其当前值。</p>
-	*
-	*@see laya.ui.HSlider
-	*@see laya.ui.VSlider
-	*/
 	//class laya.ui.Slider extends laya.ui.Component
 	var Slider=(function(_super){
 		function Slider(skin){
@@ -30578,78 +30283,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Component)
 
 
-	/**
-	*<code>Image</code> 类是用于表示位图图像或绘制图形的显示对象。
-	*Image和Clip组件是唯一支持异步加载的两个组件，比如img.skin="abc/xxx.png"，其他UI组件均不支持异步加载。
-	*
-	*@example <caption>以下示例代码，创建了一个新的 <code>Image</code> 实例，设置了它的皮肤、位置信息，并添加到舞台上。</caption>
-	*package
-	*{
-		*import laya.ui.Image;
-		*public class Image_Example
-		*{
-			*public function Image_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*onInit();
-				*}
-			*private function onInit():void
-			*{
-				*var bg:Image=new Image("resource/ui/bg.png");//创建一个 Image 类的实例对象 bg ,并传入它的皮肤。
-				*bg.x=100;//设置 bg 对象的属性 x 的值，用于控制 bg 对象的显示位置。
-				*bg.y=100;//设置 bg 对象的属性 y 的值，用于控制 bg 对象的显示位置。
-				*bg.sizeGrid="40,10,5,10";//设置 bg 对象的网格信息。
-				*bg.width=150;//设置 bg 对象的宽度。
-				*bg.height=250;//设置 bg 对象的高度。
-				*Laya.stage.addChild(bg);//将此 bg 对象添加到显示列表。
-				*var image:Image=new Image("resource/ui/image.png");//创建一个 Image 类的实例对象 image ,并传入它的皮肤。
-				*image.x=100;//设置 image 对象的属性 x 的值，用于控制 image 对象的显示位置。
-				*image.y=100;//设置 image 对象的属性 y 的值，用于控制 image 对象的显示位置。
-				*Laya.stage.addChild(image);//将此 image 对象添加到显示列表。
-				*}
-			*}
-		*}
-	*@example
-	*Laya.init(640,800);//设置游戏画布宽高
-	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色
-	*onInit();
-	*function onInit(){
-		*var bg=new laya.ui.Image("resource/ui/bg.png");//创建一个 Image 类的实例对象 bg ,并传入它的皮肤。
-		*bg.x=100;//设置 bg 对象的属性 x 的值，用于控制 bg 对象的显示位置。
-		*bg.y=100;//设置 bg 对象的属性 y 的值，用于控制 bg 对象的显示位置。
-		*bg.sizeGrid="40,10,5,10";//设置 bg 对象的网格信息。
-		*bg.width=150;//设置 bg 对象的宽度。
-		*bg.height=250;//设置 bg 对象的高度。
-		*Laya.stage.addChild(bg);//将此 bg 对象添加到显示列表。
-		*var image=new laya.ui.Image("resource/ui/image.png");//创建一个 Image 类的实例对象 image ,并传入它的皮肤。
-		*image.x=100;//设置 image 对象的属性 x 的值，用于控制 image 对象的显示位置。
-		*image.y=100;//设置 image 对象的属性 y 的值，用于控制 image 对象的显示位置。
-		*Laya.stage.addChild(image);//将此 image 对象添加到显示列表。
-		*}
-	*@example
-	*class Image_Example {
-		*constructor(){
-			*Laya.init(640,800);//设置游戏画布宽高。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*this.onInit();
-			*}
-		*private onInit():void {
-			*var bg:laya.ui.Image=new laya.ui.Image("resource/ui/bg.png");//创建一个 Image 类的实例对象 bg ,并传入它的皮肤。
-			*bg.x=100;//设置 bg 对象的属性 x 的值，用于控制 bg 对象的显示位置。
-			*bg.y=100;//设置 bg 对象的属性 y 的值，用于控制 bg 对象的显示位置。
-			*bg.sizeGrid="40,10,5,10";//设置 bg 对象的网格信息。
-			*bg.width=150;//设置 bg 对象的宽度。
-			*bg.height=250;//设置 bg 对象的高度。
-			*Laya.stage.addChild(bg);//将此 bg 对象添加到显示列表。
-			*var image:laya.ui.Image=new laya.ui.Image("resource/ui/image.png");//创建一个 Image 类的实例对象 image ,并传入它的皮肤。
-			*image.x=100;//设置 image 对象的属性 x 的值，用于控制 image 对象的显示位置。
-			*image.y=100;//设置 image 对象的属性 y 的值，用于控制 image 对象的显示位置。
-			*Laya.stage.addChild(image);//将此 image 对象添加到显示列表。
-			*}
-		*}
-	*@see laya.ui.AutoBitmap
-	*/
 	//class laya.ui.Image extends laya.ui.Component
 	var Image=(function(_super){
 		function Image(skin){
@@ -30785,111 +30418,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Component)
 
 
-	/**
-	*<p> <code>Label</code> 类用于创建显示对象以显示文本。</p>
-	*
-	*@example <caption>以下示例代码，创建了一个 <code>Label</code> 实例。</caption>
-	*package
-	*{
-		*import laya.ui.Label;
-		*public class Label_Example
-		*{
-			*public function Label_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高、渲染模式。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*onInit();
-				*}
-			*private function onInit():void
-			*{
-				*var label:Label=new Label();//创建一个 Label 类的实例对象 label 。
-				*label.font="Arial";//设置 label 的字体。
-				*label.bold=true;//设置 label 显示为粗体。
-				*label.leading=4;//设置 label 的行间距。
-				*label.wordWrap=true;//设置 label 自动换行。
-				*label.padding="10,10,10,10";//设置 label 的边距。
-				*label.color="#ff00ff";//设置 label 的颜色。
-				*label.text="Hello everyone,我是一个可爱的文本！";//设置 label 的文本内容。
-				*label.x=100;//设置 label 对象的属性 x 的值，用于控制 label 对象的显示位置。
-				*label.y=100;//设置 label 对象的属性 y 的值，用于控制 label 对象的显示位置。
-				*label.width=300;//设置 label 的宽度。
-				*label.height=200;//设置 label 的高度。
-				*Laya.stage.addChild(label);//将 label 添加到显示列表。
-				*var passwordLabel:Label=new Label("请原谅我，我不想被人看到我心里话。");//创建一个 Label 类的实例对象 passwordLabel 。
-				*passwordLabel.asPassword=true;//设置 passwordLabel 的显示反式为密码显示。
-				*passwordLabel.x=100;//设置 passwordLabel 对象的属性 x 的值，用于控制 passwordLabel 对象的显示位置。
-				*passwordLabel.y=350;//设置 passwordLabel 对象的属性 y 的值，用于控制 passwordLabel 对象的显示位置。
-				*passwordLabel.width=300;//设置 passwordLabel 的宽度。
-				*passwordLabel.color="#000000";//设置 passwordLabel 的文本颜色。
-				*passwordLabel.bgColor="#ccffff";//设置 passwordLabel 的背景颜色。
-				*passwordLabel.fontSize=20;//设置 passwordLabel 的文本字体大小。
-				*Laya.stage.addChild(passwordLabel);//将 passwordLabel 添加到显示列表。
-				*}
-			*}
-		*}
-	*@example
-	*Laya.init(640,800);//设置游戏画布宽高
-	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色
-	*onInit();
-	*function onInit(){
-		*var label=new laya.ui.Label();//创建一个 Label 类的实例对象 label 。
-		*label.font="Arial";//设置 label 的字体。
-		*label.bold=true;//设置 label 显示为粗体。
-		*label.leading=4;//设置 label 的行间距。
-		*label.wordWrap=true;//设置 label 自动换行。
-		*label.padding="10,10,10,10";//设置 label 的边距。
-		*label.color="#ff00ff";//设置 label 的颜色。
-		*label.text="Hello everyone,我是一个可爱的文本！";//设置 label 的文本内容。
-		*label.x=100;//设置 label 对象的属性 x 的值，用于控制 label 对象的显示位置。
-		*label.y=100;//设置 label 对象的属性 y 的值，用于控制 label 对象的显示位置。
-		*label.width=300;//设置 label 的宽度。
-		*label.height=200;//设置 label 的高度。
-		*Laya.stage.addChild(label);//将 label 添加到显示列表。
-		*var passwordLabel=new laya.ui.Label("请原谅我，我不想被人看到我心里话。");//创建一个 Label 类的实例对象 passwordLabel 。
-		*passwordLabel.asPassword=true;//设置 passwordLabel 的显示反式为密码显示。
-		*passwordLabel.x=100;//设置 passwordLabel 对象的属性 x 的值，用于控制 passwordLabel 对象的显示位置。
-		*passwordLabel.y=350;//设置 passwordLabel 对象的属性 y 的值，用于控制 passwordLabel 对象的显示位置。
-		*passwordLabel.width=300;//设置 passwordLabel 的宽度。
-		*passwordLabel.color="#000000";//设置 passwordLabel 的文本颜色。
-		*passwordLabel.bgColor="#ccffff";//设置 passwordLabel 的背景颜色。
-		*passwordLabel.fontSize=20;//设置 passwordLabel 的文本字体大小。
-		*Laya.stage.addChild(passwordLabel);//将 passwordLabel 添加到显示列表。
-		*}
-	*@example
-	*import Label=laya.ui.Label;
-	*class Label_Example {
-		*constructor(){
-			*Laya.init(640,800);//设置游戏画布宽高。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*this.onInit();
-			*}
-		*private onInit():void {
-			*var label:Label=new Label();//创建一个 Label 类的实例对象 label 。
-			*label.font="Arial";//设置 label 的字体。
-			*label.bold=true;//设置 label 显示为粗体。
-			*label.leading=4;//设置 label 的行间距。
-			*label.wordWrap=true;//设置 label 自动换行。
-			*label.padding="10,10,10,10";//设置 label 的边距。
-			*label.color="#ff00ff";//设置 label 的颜色。
-			*label.text="Hello everyone,我是一个可爱的文本！";//设置 label 的文本内容。
-			*label.x=100;//设置 label 对象的属性 x 的值，用于控制 label 对象的显示位置。
-			*label.y=100;//设置 label 对象的属性 y 的值，用于控制 label 对象的显示位置。
-			*label.width=300;//设置 label 的宽度。
-			*label.height=200;//设置 label 的高度。
-			*Laya.stage.addChild(label);//将 label 添加到显示列表。
-			*var passwordLabel:Label=new Label("请原谅我，我不想被人看到我心里话。");//创建一个 Label 类的实例对象 passwordLabel 。
-			*passwordLabel.asPassword=true;//设置 passwordLabel 的显示反式为密码显示。
-			*passwordLabel.x=100;//设置 passwordLabel 对象的属性 x 的值，用于控制 passwordLabel 对象的显示位置。
-			*passwordLabel.y=350;//设置 passwordLabel 对象的属性 y 的值，用于控制 passwordLabel 对象的显示位置。
-			*passwordLabel.width=300;//设置 passwordLabel 的宽度。
-			*passwordLabel.color="#000000";//设置 passwordLabel 的文本颜色。
-			*passwordLabel.bgColor="#ccffff";//设置 passwordLabel 的背景颜色。
-			*passwordLabel.fontSize=20;//设置 passwordLabel 的文本字体大小。
-			*Laya.stage.addChild(passwordLabel);//将 passwordLabel 添加到显示列表。
-			*}
-		*}
-	*@see laya.display.Text
-	*/
 	//class laya.ui.Label extends laya.ui.Component
 	var Label=(function(_super){
 		function Label(text){
@@ -31162,104 +30690,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Component)
 
 
-	/**
-	*<code>ProgressBar</code> 组件显示内容的加载进度。
-	*@example <caption>以下示例代码，创建了一个新的 <code>ProgressBar</code> 实例，设置了它的皮肤、位置、宽高、网格等信息，并添加到舞台上。</caption>
-	*package
-	*{
-		*import laya.ui.ProgressBar;
-		*import laya.utils.Handler;
-		*public class ProgressBar_Example
-		*{
-			*private var progressBar:ProgressBar;
-			*public function ProgressBar_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*Laya.loader.load(["resource/ui/progress.png","resource/ui/progress$bar.png"],Handler.create(this,onLoadComplete));//加载资源。
-				*}
-			*private function onLoadComplete():void
-			*{
-				*progressBar=new ProgressBar("resource/ui/progress.png");//创建一个 ProgressBar 类的实例对象 progressBar 。
-				*progressBar.x=100;//设置 progressBar 对象的属性 x 的值，用于控制 progressBar 对象的显示位置。
-				*progressBar.y=100;//设置 progressBar 对象的属性 y 的值，用于控制 progressBar 对象的显示位置。
-				*progressBar.value=0.3;//设置 progressBar 的进度值。
-				*progressBar.width=200;//设置 progressBar 的宽度。
-				*progressBar.height=50;//设置 progressBar 的高度。
-				*progressBar.sizeGrid="5,10,5,10";//设置 progressBar 的网格信息。
-				*progressBar.changeHandler=new Handler(this,onChange);//设置 progressBar 的value值改变时执行的处理器。
-				*Laya.stage.addChild(progressBar);//将 progressBar 添加到显示列表。
-				*Laya.timer.once(3000,this,changeValue);//设定 3000ms（毫秒）后，执行函数changeValue。
-				*}
-			*private function changeValue():void
-			*{
-				*trace("改变进度条的进度值。");
-				*progressBar.value=0.6;
-				*}
-			*private function onChange(value:Number):void
-			*{
-				*trace("进度发生改变： value=" ,value);
-				*}
-			*}
-		*}
-	*@example
-	*Laya.init(640,800);//设置游戏画布宽高
-	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色
-	*var res=["resource/ui/progress.png","resource/ui/progress$bar.png"];
-	*Laya.loader.load(res,laya.utils.Handler.create(this,onLoadComplete));//加载资源。
-	*function onLoadComplete()
-	*{
-		*progressBar=new laya.ui.ProgressBar("resource/ui/progress.png");//创建一个 ProgressBar 类的实例对象 progressBar 。
-		*progressBar.x=100;//设置 progressBar 对象的属性 x 的值，用于控制 progressBar 对象的显示位置。
-		*progressBar.y=100;//设置 progressBar 对象的属性 y 的值，用于控制 progressBar 对象的显示位置。
-		*progressBar.value=0.3;//设置 progressBar 的进度值。
-		*progressBar.width=200;//设置 progressBar 的宽度。
-		*progressBar.height=50;//设置 progressBar 的高度。
-		*progressBar.sizeGrid="10,5,10,5";//设置 progressBar 的网格信息。
-		*progressBar.changeHandler=new laya.utils.Handler(this,onChange);//设置 progressBar 的value值改变时执行的处理器。
-		*Laya.stage.addChild(progressBar);//将 progressBar 添加到显示列表。
-		*Laya.timer.once(3000,this,changeValue);//设定 3000ms（毫秒）后，执行函数changeValue。
-		*}
-	*function changeValue()
-	*{
-		*console.log("改变进度条的进度值。");
-		*progressBar.value=0.6;
-		*}
-	*function onChange(value)
-	*{
-		*console.log("进度发生改变： value=" ,value);
-		*}
-	*@example
-	*import ProgressBar=laya.ui.ProgressBar;
-	*import Handler=laya.utils.Handler;
-	*class ProgressBar_Example {
-		*private progressBar:ProgressBar;
-		*public ProgressBar_Example(){
-			*Laya.init(640,800);//设置游戏画布宽高。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*Laya.loader.load(["resource/ui/progress.png","resource/ui/progress$bar.png"],Handler.create(this,this.onLoadComplete));//加载资源。
-			*}
-		*private onLoadComplete():void {
-			*this.progressBar=new ProgressBar("resource/ui/progress.png");//创建一个 ProgressBar 类的实例对象 progressBar 。
-			*this.progressBar.x=100;//设置 progressBar 对象的属性 x 的值，用于控制 progressBar 对象的显示位置。
-			*this.progressBar.y=100;//设置 progressBar 对象的属性 y 的值，用于控制 progressBar 对象的显示位置。
-			*this.progressBar.value=0.3;//设置 progressBar 的进度值。
-			*this.progressBar.width=200;//设置 progressBar 的宽度。
-			*this.progressBar.height=50;//设置 progressBar 的高度。
-			*this.progressBar.sizeGrid="5,10,5,10";//设置 progressBar 的网格信息。
-			*this.progressBar.changeHandler=new Handler(this,this.onChange);//设置 progressBar 的value值改变时执行的处理器。
-			*Laya.stage.addChild(this.progressBar);//将 progressBar 添加到显示列表。
-			*Laya.timer.once(3000,this,this.changeValue);//设定 3000ms（毫秒）后，执行函数changeValue。
-			*}
-		*private changeValue():void {
-			*console.log("改变进度条的进度值。");
-			*this.progressBar.value=0.6;
-			*}
-		*private onChange(value:number):void {
-			*console.log("进度发生改变： value=",value);
-			*}
-		*}
-	*/
 	//class laya.ui.ProgressBar extends laya.ui.Component
 	var ProgressBar=(function(_super){
 		function ProgressBar(skin){
@@ -31400,10 +30830,139 @@ var Laya=window.Laya=(function(window,document){
 	})(Component)
 
 
-	/**
-	*<p><code>Input</code> 类用于创建显示对象以显示和输入文本。</p>
-	*<p>Input 类封装了原生的文本输入框，由于不同浏览器的差异，会导致此对象的默认文本的位置与用户点击输入时的文本的位置有少许的偏差。</p>
-	*/
+	//class laya.ui.TipManager extends laya.ui.Component
+	var TipManager=(function(_super){
+		function TipManager(){
+			this._tipBox=null;
+			this._tipText=null;
+			this._defaultTipHandler=null;
+			TipManager.__super.call(this);
+			this._tipBox=new Component();
+			this._tipBox.addChild(this._tipText=new Text());
+			this._tipText.x=this._tipText.y=5;
+			this._tipText.color=TipManager.tipTextColor;
+			this._defaultTipHandler=this._showDefaultTip;
+			Laya.stage.on("showtip",this,this._onStageShowTip);
+			Laya.stage.on("hidetip",this,this._onStageHideTip);
+			this.zOrder=1100
+		}
+
+		__class(TipManager,'laya.ui.TipManager',_super);
+		var __proto=TipManager.prototype;
+		/**
+		*@private
+		*/
+		__proto._onStageHideTip=function(e){
+			Laya.timer.clear(this,this._showTip);
+			this.closeAll();
+			this.removeSelf();
+		}
+
+		/**
+		*@private
+		*/
+		__proto._onStageShowTip=function(data){
+			Laya.timer.once(TipManager.tipDelay,this,this._showTip,[data],true);
+		}
+
+		/**
+		*@private
+		*/
+		__proto._showTip=function(tip){
+			if ((typeof tip=='string')){
+				var text=String(tip);
+				if (Boolean(text)){
+					this._defaultTipHandler(text);
+				}
+				}else if ((tip instanceof laya.utils.Handler )){
+				(tip).run();
+				}else if ((typeof tip=='function')){
+				(tip).apply();
+			}
+			if (true){
+				Laya.stage.on("mousemove",this,this._onStageMouseMove);
+				Laya.stage.on("mousedown",this,this._onStageMouseDown);
+			}
+			this._onStageMouseMove(null);
+		}
+
+		/**
+		*@private
+		*/
+		__proto._onStageMouseDown=function(e){
+			this.closeAll();
+		}
+
+		/**
+		*@private
+		*/
+		__proto._onStageMouseMove=function(e){
+			this._showToStage(this,TipManager.offsetX,TipManager.offsetY);
+		}
+
+		/**
+		*@private
+		*/
+		__proto._showToStage=function(dis,offX,offY){
+			(offX===void 0)&& (offX=0);
+			(offY===void 0)&& (offY=0);
+			var rec=dis.getBounds();
+			dis.x=Laya.stage.mouseX+offX;
+			dis.y=Laya.stage.mouseY+offY;
+			if (dis.x+rec.width > Laya.stage.width){
+				dis.x-=rec.width+offX;
+			}
+			if (dis.y+rec.height > Laya.stage.height){
+				dis.y-=rec.height+offY;
+			}
+		}
+
+		/**关闭所有鼠标提示*/
+		__proto.closeAll=function(){
+			Laya.timer.clear(this,this._showTip);
+			Laya.stage.off("mousemove",this,this._onStageMouseMove);
+			Laya.stage.off("mousedown",this,this._onStageMouseDown);
+			this.removeChildren();
+		}
+
+		/**
+		*显示显示对象类型的tip
+		*/
+		__proto.showDislayTip=function(tip){
+			this.addChild(tip);
+			this._showToStage(this);
+			Laya._currentStage.addChild(this);
+		}
+
+		/**
+		*@private
+		*/
+		__proto._showDefaultTip=function(text){
+			this._tipText.text=text;
+			var g=this._tipBox.graphics;
+			g.clear();
+			g.drawRect(0,0,this._tipText.width+10,this._tipText.height+10,TipManager.tipBackColor);
+			this.addChild(this._tipBox);
+			this._showToStage(this);
+			Laya._currentStage.addChild(this);
+		}
+
+		/**默认鼠标提示函数*/
+		__getset(0,__proto,'defaultTipHandler',function(){
+			return this._defaultTipHandler;
+			},function(value){
+			this._defaultTipHandler=value;
+		});
+
+		TipManager.offsetX=10;
+		TipManager.offsetY=15;
+		TipManager.tipTextColor="#ffffff";
+		TipManager.tipBackColor="#111111";
+		TipManager.tipDelay=200;
+		return TipManager;
+	})(Component)
+
+
 	//class laya.display.Input extends laya.display.Text
 	var Input=(function(_super){
 		function Input(){
@@ -31866,624 +31425,6 @@ var Laya=window.Laya=(function(window,document){
 
 
 	/**
-	*<p> <code>Animation</code> 是Graphics动画类。实现了基于Graphics的动画创建、播放、控制接口。</p>
-	*<p>本类使用了动画模版缓存池，它以一定的内存开销来节省CPU开销，当相同的动画模版被多次使用时，相比于每次都创建新的动画模版，使用动画模版缓存池，只需创建一次，缓存之后多次复用，从而节省了动画模版创建的开销。</p>
-	*<p>动画模版缓存池，以key-value键值对存储，key可以自定义，也可以从指定的配置文件中读取，value为对应的动画模版，是一个Graphics对象数组，每个Graphics对象对应一个帧图像，动画的播放实质就是定时切换Graphics对象。</p>
-	*<p>使用set source、loadImages(...)、loadAtlas(...)、loadAnimation(...)方法可以创建动画模版。使用play(...)可以播放指定动画。</p>
-	*@example <caption>以下示例代码，创建了一个 <code>Text</code> 实例。</caption>
-	*package
-	*{
-		*import laya.display.Animation;
-		*import laya.net.Loader;
-		*import laya.utils.Handler;
-		*public class Animation_Example
-		*{
-			*public function Animation_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高、渲染模式。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*init();//初始化
-				*}
-			*private function init():void
-			*{
-				*var animation:Animation=new Animation();//创建一个 Animation 类的实例对象 animation 。
-				*animation.loadAtlas("resource/ani/fighter.json");//加载图集并播放
-				*animation.x=200;//设置 animation 对象的属性 x 的值，用于控制 animation 对象的显示位置。
-				*animation.y=200;//设置 animation 对象的属性 x 的值，用于控制 animation 对象的显示位置。
-				*animation.interval=50;//设置 animation 对象的动画播放间隔时间，单位：毫秒。
-				*animation.play();//播放动画。
-				*Laya.stage.addChild(animation);//将 animation 对象添加到显示列表。
-				*}
-			*}
-		*}
-	*
-	*@example
-	*Animation_Example();
-	*function Animation_Example(){
-		*Laya.init(640,800);//设置游戏画布宽高、渲染模式。
-		*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-		*init();//初始化
-		*}
-	*function init()
-	*{
-		*var animation=new Laya.Animation();//创建一个 Animation 类的实例对象 animation 。
-		*animation.loadAtlas("resource/ani/fighter.json");//加载图集并播放
-		*animation.x=200;//设置 animation 对象的属性 x 的值，用于控制 animation 对象的显示位置。
-		*animation.y=200;//设置 animation 对象的属性 x 的值，用于控制 animation 对象的显示位置。
-		*animation.interval=50;//设置 animation 对象的动画播放间隔时间，单位：毫秒。
-		*animation.play();//播放动画。
-		*Laya.stage.addChild(animation);//将 animation 对象添加到显示列表。
-		*}
-	*
-	*@example
-	*import Animation=laya.display.Animation;
-	*class Animation_Example {
-		*constructor(){
-			*Laya.init(640,800);//设置游戏画布宽高、渲染模式。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*this.init();
-			*}
-		*private init():void {
-			*var animation:Animation=new Laya.Animation();//创建一个 Animation 类的实例对象 animation 。
-			*animation.loadAtlas("resource/ani/fighter.json");//加载图集并播放
-			*animation.x=200;//设置 animation 对象的属性 x 的值，用于控制 animation 对象的显示位置。
-			*animation.y=200;//设置 animation 对象的属性 x 的值，用于控制 animation 对象的显示位置。
-			*animation.interval=50;//设置 animation 对象的动画播放间隔时间，单位：毫秒。
-			*animation.play();//播放动画。
-			*Laya.stage.addChild(animation);//将 animation 对象添加到显示列表。
-			*}
-		*}
-	*new Animation_Example();
-	*/
-	//class laya.display.Animation extends laya.display.AnimationPlayerBase
-	var Animation1=(function(_super){
-		function Animation(){
-			this._frames=null;
-			this._url=null;
-			Animation.__super.call(this);
-			this._setControlNode(this);
-		}
-
-		__class(Animation,'laya.display.Animation',_super,'Animation1');
-		var __proto=Animation.prototype;
-		/**@inheritDoc */
-		__proto.destroy=function(destroyChild){
-			(destroyChild===void 0)&& (destroyChild=true);
-			this.stop();
-			laya.display.Sprite.prototype.destroy.call(this,destroyChild);
-			this._frames=null;
-			this._labels=null;
-		}
-
-		/**
-		*<p>开始播放动画。会在动画模版缓存池中查找key值为name的动画模版，存在则用此动画模版初始化当前序列帧， 如果不存在，则使用当前序列帧。</p>
-		*<p>play(...)方法被设计为在创建实例后的任何时候都可以被调用，调用后就处于播放状态，当相应的资源加载完毕、调用动画帧填充方法(set frames)或者将实例显示在舞台上时，会判断是否处于播放状态，如果是，则开始播放。</p>
-		*<p>配合wrapMode属性，可设置动画播放顺序类型。</p>
-		*@param start （可选）指定动画播放开始的索引(int)或帧标签(String)。帧标签可以通过addLabel(...)和removeLabel(...)进行添加和删除。
-		*@param loop （可选）是否循环播放。
-		*@param name （可选）动画模板在动画模版缓存池中的key，也可认为是动画名称。如果name为空，则播放当前动画序列帧；如果不为空，则在动画模版缓存池中寻找key值为name的动画模版，如果存在则用此动画模版初始化当前序列帧并播放，如果不存在，则仍然播放当前动画序列帧；如果没有当前动画的帧数据，则不播放，但该实例仍然处于播放状态。
-		*/
-		__proto.play=function(start,loop,name){
-			(start===void 0)&& (start=0);
-			(loop===void 0)&& (loop=true);
-			(name===void 0)&& (name="");
-			if (name)this._setFramesFromCache(name);
-			this._isPlaying=true;
-			this.index=((typeof start=='string'))? this._getFrameByLabel(start):start;
-			this.loop=loop;
-			this._actionName=name;
-			this._isReverse=this.wrapMode==1;
-			if (this._frames && this.interval > 0){
-				this.timerLoop(this.interval,this,this._frameLoop,null,true);
-			}
-		}
-
-		/**@private */
-		__proto._setFramesFromCache=function(name){
-			var showWarn=name !="";
-			if (this._url)name=this._url+"#"+name;
-			if (name && Animation.framesMap[name]){
-				var tAniO;
-				tAniO=Animation.framesMap[name];
-				if ((tAniO instanceof Array)){
-					this._frames=Animation.framesMap[name];
-					this._count=this._frames.length;
-					}else {
-					if (tAniO.nodeRoot){
-						Animation.framesMap[name]=this._parseGraphicAnimationByData(tAniO);
-						tAniO=Animation.framesMap[name];
-					}
-					this._frames=tAniO.frames;
-					this._count=this._frames.length;
-					if (!this._frameRateChanged)this._interval=tAniO.interval;
-					this._labels=this._copyLabels(tAniO.labels);
-				}
-				return true;
-				}else {
-				if (showWarn)console.log("ani not found:",name);
-			}
-			return false;
-		}
-
-		/**@private */
-		__proto._copyLabels=function(labels){
-			if (!labels)return null;
-			var rst;
-			rst={};
-			var key;
-			for (key in labels){
-				rst[key]=Utils.copyArray([],labels[key]);
-			}
-			return rst;
-		}
-
-		/**@private */
-		__proto._frameLoop=function(){
-			if (this._style.visible && this._style.alpha > 0.01){
-				_super.prototype._frameLoop.call(this);
-			}
-		}
-
-		/**@private */
-		__proto._displayToIndex=function(value){
-			if (this._frames)this.graphics=this._frames[value];
-		}
-
-		/**
-		*停止动画播放，并清理对象属性。之后可存入对象池，方便对象复用。
-		*/
-		__proto.clear=function(){
-			this.stop();
-			this.graphics=null;
-			this._frames=null;
-			this._labels=null;
-		}
-
-		/**
-		*<p>根据指定的动画模版初始化当前动画序列帧。选择动画模版的过程如下：1. 动画模版缓存池中key为cacheName的动画模版；2. 如果不存在，则加载指定的图片集合并创建动画模版。注意：只有指定不为空的cacheName，才能将创建好的动画模版以此为key缓存到动画模版缓存池，否则不进行缓存。<p/>
-		*<p>动画模版缓存池是以一定的内存开销来节省CPU开销，当相同的动画模版被多次使用时，相比于每次都创建新的动画模版，使用动画模版缓存池，只需创建一次，缓存之后多次复用，从而节省了动画模版创建的开销。</p>
-		*<p>因为返回值为Animation对象本身，所以可以使用如下语法：loadImages(...).loadImages(...).play(...);。</p>
-		*@param urls 图片路径集合。需要创建动画模版时，会以此为数据源。参数形如：[url1,url2,url3,...]。
-		*@param cacheName （可选）动画模板在动画模版缓存池中的key。如果此参数不为空，表示使用动画模版缓存池。如果动画模版缓存池中存在key为cacheName的动画模版，则使用此模版。否则，创建新的动画模版，如果cacheName不为空，则以cacheName为key缓存到动画模版缓存池中，如果cacheName为空，不进行缓存。
-		*@return 返回Animation对象本身。
-		*/
-		__proto.loadImages=function(urls,cacheName){
-			(cacheName===void 0)&& (cacheName="");
-			this._url="";
-			if (!this._setFramesFromCache(cacheName)){
-				this.frames=Animation.framesMap[cacheName] ? Animation.framesMap[cacheName] :Animation.createFrames(urls,cacheName);
-			}
-			return this;
-		}
-
-		/**
-		*<p>根据指定的动画模版初始化当前动画序列帧。选择动画模版的过程如下：1. 动画模版缓存池中key为cacheName的动画模版；2. 如果不存在，则加载指定的图集并创建动画模版。</p>
-		*<p>注意：只有指定不为空的cacheName，才能将创建好的动画模版以此为key缓存到动画模版缓存池，否则不进行缓存。<p/>
-		*<p>动画模版缓存池是以一定的内存开销来节省CPU开销，当相同的动画模版被多次使用时，相比于每次都创建新的动画模版，使用动画模版缓存池，只需创建一次，缓存之后多次复用，从而节省了动画模版创建的开销。</p>
-		*<p>因为返回值为Animation对象本身，所以可以使用如下语法：loadAtlas(...).loadAtlas(...).play(...);。</p>
-		*@param url 图集路径。需要创建动画模版时，会以此为数据源。
-		*@param loaded （可选）使用指定图集初始化动画完毕的回调。
-		*@param cacheName （可选）动画模板在动画模版缓存池中的key。如果此参数不为空，表示使用动画模版缓存池。如果动画模版缓存池中存在key为cacheName的动画模版，则使用此模版。否则，创建新的动画模版，如果cacheName不为空，则以cacheName为key缓存到动画模版缓存池中，如果cacheName为空，不进行缓存。
-		*@return 返回动画本身。
-		*/
-		__proto.loadAtlas=function(url,loaded,cacheName){
-			(cacheName===void 0)&& (cacheName="");
-			this._url="";
-			var _this=this;
-			if (!_this._setFramesFromCache(cacheName)){
-				function onLoaded (loadUrl){
-					if (url===loadUrl){
-						_this.frames=Animation.framesMap[cacheName] ? Animation.framesMap[cacheName] :Animation.createFrames(url,cacheName);
-						if (loaded)loaded.run();
-					}
-				}
-				if (Loader.getAtlas(url))onLoaded(url);
-				else Laya.loader.load(url,Handler.create(null,onLoaded,[url]),null,"atlas");
-			}
-			return this;
-		}
-
-		/**
-		*<p>加载并解析由LayaAir IDE制作的动画文件，此文件中可能包含多个动画。默认帧率为在IDE中设计的帧率，如果调用过set interval，则使用此帧间隔对应的帧率。加载后创建动画模版，并缓存到动画模版缓存池，key "url#动画名称" 对应相应动画名称的动画模板，key "url#" 对应动画模版集合的默认动画模版。</p>
-		*<p>注意：如果调用本方法前，还没有预加载动画使用的图集，请将atlas参数指定为对应的图集路径，否则会导致动画创建失败。</p>
-		*<p>动画模版缓存池是以一定的内存开销来节省CPU开销，当相同的动画模版被多次使用时，相比于每次都创建新的动画模版，使用动画模版缓存池，只需创建一次，缓存之后多次复用，从而节省了动画模版创建的开销。</p>
-		*<p>因为返回值为Animation对象本身，所以可以使用如下语法：loadAnimation(...).loadAnimation(...).play(...);。</p>
-		*@param url 动画文件路径。可由LayaAir IDE创建并发布。
-		*@param loaded （可选）使用指定动画资源初始化动画完毕的回调。
-		*@param atlas （可选）动画用到的图集地址（可选）。
-		*@return 返回动画本身。
-		*/
-		__proto.loadAnimation=function(url,loaded,atlas){
-			this._url=url;
-			var _this=this;
-			if (!this._actionName)this._actionName="";
-			if (!_this._setFramesFromCache("")){
-				if (!atlas || Loader.getAtlas(atlas)){
-					this._loadAnimationData(url,loaded,atlas);
-					}else {
-					Laya.loader.load(atlas,Handler.create(this,this._loadAnimationData,[url,loaded,atlas]),null,"atlas")
-				}
-				}else {
-				_this._setFramesFromCache(this._actionName);
-				if (loaded)loaded.run();
-			}
-			return this;
-		}
-
-		/**@private */
-		__proto._loadAnimationData=function(url,loaded,atlas){
-			var _$this=this;
-			if (atlas && !Loader.getAtlas(atlas)){
-				console.warn("atlas load fail:"+atlas);
-				return;
-			};
-			var _this=this;
-			function onLoaded (loadUrl){
-				if (!Loader.getRes(loadUrl))return;
-				if (url===loadUrl){
-					var tAniO;
-					if (!Animation.framesMap[url+"#"]){
-						var aniData=_this._parseGraphicAnimation(Loader.getRes(url));
-						if (!aniData)return;
-						var aniList=aniData.animationList;
-						var i=0,len=aniList.length;
-						var defaultO;
-						for (i=0;i < len;i++){
-							tAniO=aniList[i];
-							Animation.framesMap[url+"#"+tAniO.name]=tAniO;
-							if (!defaultO)defaultO=tAniO;
-						}
-						if (defaultO){
-							Animation.framesMap[url+"#"]=defaultO;
-							_this._setFramesFromCache(_$this._actionName);
-							_$this.index=0;
-						}
-						_$this._checkResumePlaying();
-						}else {
-						_this._setFramesFromCache(_$this._actionName);
-						_$this.index=0;
-						_$this._checkResumePlaying();
-					}
-					if (loaded)loaded.run();
-				}
-			}
-			if (Loader.getRes(url))onLoaded(url);
-			else Laya.loader.load(url,Handler.create(null,onLoaded,[url]),null,"json");
-			Loader.clearRes(url);
-		}
-
-		/**@private */
-		__proto._parseGraphicAnimation=function(animationData){
-			return GraphicAnimation.parseAnimationData(animationData)
-		}
-
-		/**@private */
-		__proto._parseGraphicAnimationByData=function(animationObject){
-			return GraphicAnimation.parseAnimationByData(animationObject);
-		}
-
-		/**
-		*当前动画的帧图像数组。本类中，每个帧图像是一个Graphics对象，而动画播放就是定时切换Graphics对象的过程。
-		*/
-		__getset(0,__proto,'frames',function(){
-			return this._frames;
-			},function(value){
-			this._frames=value;
-			if (value){
-				this._count=value.length;
-				if (this._isPlaying)this.play(this._index,this.loop,this._actionName);
-				else this.index=this._index;
-			}
-		});
-
-		/**
-		*是否自动播放，默认为false。如果设置为true，则动画被创建并添加到舞台后自动播放。
-		*/
-		__getset(0,__proto,'autoPlay',null,function(value){
-			if (value)this.play();
-			else this.stop();
-		});
-
-		/**
-		*<p>动画数据源。</p>
-		*<p>
-		*类型如下：<br/>
-		*1. LayaAir IDE动画文件路径：使用此类型需要预加载所需的图集资源，否则会创建失败，如果不想预加载或者需要创建完毕的回调，请使用loadAnimation(...)方法；<br/>
-		*2. 图集路径：使用此类型创建的动画模版不会被缓存到动画模版缓存池中，如果需要缓存或者创建完毕的回调，请使用loadAtlas(...)方法；<br/>
-		*3. 图片路径集合：使用此类型创建的动画模版不会被缓存到动画模版缓存池中，如果需要缓存，请使用loadImages(...)方法。
-		*</p>
-		*@param value 数据源。比如：图集："xx/a1.atlas"；图片集合："a1.png,a2.png,a3.png"；LayaAir IDE动画"xx/a1.ani"。
-		*/
-		__getset(0,__proto,'source',null,function(value){
-			if (value.indexOf(".ani")>-1)this.loadAnimation(value);
-			else if (value.indexOf(".json")>-1 || value.indexOf("als")>-1 || value.indexOf("atlas")>-1)this.loadAtlas(value);
-			else this.loadImages(value.split(","));
-		});
-
-		/**
-		*设置自动播放的动画名称，在LayaAir IDE中可以创建的多个动画组成的动画集合，选择其中一个动画名称进行播放。
-		*/
-		__getset(0,__proto,'autoAnimation',null,function(value){
-			this.play(0,true,value);
-		});
-
-		Animation.createFrames=function(url,name){
-			var arr;
-			if ((typeof url=='string')){
-				var atlas=Loader.getAtlas(url);
-				if (atlas && atlas.length){
-					arr=[];
-					for (var i=0,n=atlas.length;i < n;i++){
-						var g=new Graphics();
-						g.drawTexture(Loader.getRes(atlas[i]),0,0);
-						arr.push(g);
-					}
-				}
-				}else if ((url instanceof Array)){
-				arr=[];
-				for (i=0,n=url.length;i < n;i++){
-					g=new Graphics();
-					g.loadImage(url[i],0,0);
-					arr.push(g);
-				}
-			}
-			if (name)Animation.framesMap[name]=arr;
-			return arr;
-		}
-
-		Animation.clearCache=function(key){
-			var cache=Animation.framesMap;
-			var val;
-			var key2=key+"#";
-			for (val in cache){
-				if (val===key || val.indexOf(key2)==0){
-					delete Animation.framesMap[val];
-				}
-			}
-		}
-
-		Animation.framesMap={};
-		return Animation;
-	})(AnimationPlayerBase)
-
-
-	/**
-	*关键帧动画播放类。
-	*/
-	//class laya.display.FrameAnimation extends laya.display.AnimationPlayerBase
-	var FrameAnimation=(function(_super){
-		function FrameAnimation(){
-			this._targetDic=null;
-			this._animationData=null;
-			this._animationNewFrames=null;
-			FrameAnimation.__super.call(this);
-			if (FrameAnimation._sortIndexFun==null){
-				FrameAnimation._sortIndexFun=MathUtil.sortByKey("index",false,true);
-			}
-		}
-
-		__class(FrameAnimation,'laya.display.FrameAnimation',_super);
-		var __proto=FrameAnimation.prototype;
-		/**
-		*@private
-		*初始化动画数据
-		*@param targetDic 对象表
-		*@param animationData 动画数据
-		*
-		*/
-		__proto._setUp=function(targetDic,animationData){
-			this._labels=null;
-			this._animationNewFrames=null;
-			this._targetDic=targetDic;
-			this._animationData=animationData;
-			this.interval=1000 / animationData.frameRate;
-			if (animationData.parsed){
-				this._count=animationData.count;
-				this._labels=animationData.labels;
-				this._animationNewFrames=animationData.animationNewFrames;
-				}else {
-				this._animationNewFrames=[];
-				this._calculateDatas();
-			}
-			animationData.parsed=true;
-			animationData.labels=this._labels;
-			animationData.count=this._count;
-			animationData.animationNewFrames=this._animationNewFrames;
-		}
-
-		/**@inheritDoc */
-		__proto.clear=function(){
-			_super.prototype.clear.call(this);
-			this._targetDic=null;
-			this._animationData=null;
-		}
-
-		/**@inheritDoc */
-		__proto._displayToIndex=function(value){
-			if (!this._animationData)return;
-			if (value < 0)value=0;
-			if (value > this._count)value=this._count;
-			var nodes=this._animationData.nodes,i=0,len=nodes.length;
-			for (i=0;i < len;i++){
-				this._displayNodeToFrame(nodes[i],value);
-			}
-		}
-
-		/**
-		*@private
-		*将节点设置到某一帧的状态
-		*@param node 节点ID
-		*@param frame
-		*@param targetDic 节点表
-		*
-		*/
-		__proto._displayNodeToFrame=function(node,frame,targetDic){
-			if (!targetDic)targetDic=this._targetDic;
-			var target=targetDic[node.target];
-			if (!target){
-				return;
-			};
-			var frames=node.frames,key,propFrames,value;
-			var keys=node.keys,i=0,len=keys.length;
-			for (i=0;i < len;i++){
-				key=keys[i];
-				propFrames=frames[key];
-				if (propFrames.length > frame){
-					value=propFrames[frame];
-					}else {
-					value=propFrames[propFrames.length-1];
-				}
-				target[key]=value;
-			}
-		}
-
-		/**
-		*@private
-		*计算帧数据
-		*
-		*/
-		__proto._calculateDatas=function(){
-			if (!this._animationData)return;
-			var nodes=this._animationData.nodes,i=0,len=nodes.length,tNode;
-			this._count=0;
-			for (i=0;i < len;i++){
-				tNode=nodes[i];
-				this._calculateNodeKeyFrames(tNode);
-			}
-			this._count+=1;
-		}
-
-		/**
-		*@private
-		*计算某个节点的帧数据
-		*@param node
-		*
-		*/
-		__proto._calculateNodeKeyFrames=function(node){
-			var keyFrames=node.keyframes,key,tKeyFrames,target=node.target;
-			if (!node.frames){
-				node.frames={};
-			}
-			if (!node.keys){
-				node.keys=[];
-				}else {
-				node.keys.length=0;
-			}
-			if (!node.initValues){
-				node.initValues={};
-			}
-			for (key in keyFrames){
-				tKeyFrames=keyFrames[key];
-				if (!node.frames[key]){
-					node.frames[key]=[];
-				}
-				if (this._targetDic && this._targetDic[target]){
-					node.initValues[key]=this._targetDic[target][key];
-				}
-				tKeyFrames.sort(FrameAnimation._sortIndexFun);
-				node.keys.push(key);
-				this._calculateNodePropFrames(tKeyFrames,node.frames[key],key,target);
-			}
-		}
-
-		/**
-		*将动画控制对象还原到动画控制之前的状态
-		*/
-		__proto.resetToInitState=function(){
-			if (!this._targetDic)return;
-			if (!this._animationData)return;
-			var nodes=this._animationData.nodes,i=0,len=nodes.length;
-			var tNode;
-			var initValues;
-			for (i=0;i < len;i++){
-				tNode=nodes[i];
-				initValues=tNode.initValues;
-				if (!initValues)continue ;
-				var target=this._targetDic[tNode.target];
-				if (!target)continue ;
-				var key;
-				for (key in initValues){
-					target[key]=initValues[key];
-				}
-			}
-		}
-
-		/**
-		*@private
-		*计算节点某个属性的帧数据
-		*@param keyframes
-		*@param frames
-		*@param key
-		*@param target
-		*
-		*/
-		__proto._calculateNodePropFrames=function(keyframes,frames,key,target){
-			var i=0,len=keyframes.length-1;
-			frames.length=keyframes[len].index+1;
-			for (i=0;i < len;i++){
-				this._dealKeyFrame(keyframes[i]);
-				this._calculateFrameValues(keyframes[i],keyframes[i+1],frames);
-			}
-			if (len==0){
-				frames[0]=keyframes[0].value;
-				if (this._animationNewFrames)
-					this._animationNewFrames[keyframes[0].index]=true;
-			}
-			this._dealKeyFrame(keyframes[i]);
-		}
-
-		/**
-		*@private
-		*
-		*/
-		__proto._dealKeyFrame=function(keyFrame){
-			if (keyFrame.label && keyFrame.label !="")this.addLabel(keyFrame.label,keyFrame.index);
-		}
-
-		/**
-		*@private
-		*计算两个关键帧直接的帧数据
-		*@param startFrame
-		*@param endFrame
-		*@param result
-		*
-		*/
-		__proto._calculateFrameValues=function(startFrame,endFrame,result){
-			var i=0,easeFun;
-			var start=startFrame.index,end=endFrame.index;
-			var startValue=startFrame.value;
-			var dValue=endFrame.value-startFrame.value;
-			var dLen=end-start;
-			if (end > this._count)this._count=end;
-			if (startFrame.tween){
-				easeFun=Ease[startFrame.tweenMethod];
-				if (easeFun==null){
-					easeFun=Ease.linearNone;
-				}
-				for (i=start;i < end;i++){
-					result[i]=easeFun(i-start,startValue,dValue,dLen);
-					if (this._animationNewFrames){
-						this._animationNewFrames[i]=true;
-					}
-				}
-				}else {
-				for (i=start;i < end;i++){
-					result[i]=startValue;
-				}
-			}
-			if (this._animationNewFrames){
-				this._animationNewFrames[startFrame.index]=true;
-				this._animationNewFrames[endFrame.index]=true;
-			}
-			result[endFrame.index]=endFrame.value;
-		}
-
-		FrameAnimation._sortIndexFun=null
-		return FrameAnimation;
-	})(AnimationPlayerBase)
-
-
-	/**
 	*@private
 	*/
 	//class laya.particle.shader.ParticleShader extends laya.webgl.shader.Shader
@@ -32562,10 +31503,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Shader)
 
 
-	/**
-	*<code>HTMLImage</code> 用于创建 HTML Image 元素。
-	*@private
-	*/
 	//class laya.resource.HTMLImage extends laya.resource.FileBitmap
 	var HTMLImage=(function(_super){
 		function HTMLImage(src,def){
@@ -32767,883 +31704,264 @@ var Laya=window.Laya=(function(window,document){
 	})(Buffer2D)
 
 
-	//class STG.Bullet.BulletGenerator extends STG.GameObject.GameObject
-	var BulletGenerator=(function(_super){
-		function BulletGenerator(type,f,interval,n,complete){
-			this.mGenerationInterval=null;
-			this.mGenerationTotalTimes=1;
-			this.mGeneratorFunction=null;
-			this.mLastGenerationAge=0;
-			this.mGenerationCounter=0;
-			this.mIsGenerating=true;
-			this.mType="player";
-			this.mCompleteCallback=null;
-			this.mBulletDir=NaN;
-			this.mFluctuationBulletDir=0;
-			BulletGenerator.__super.call(this);
-			(f===void 0)&& (f=undefined);
-			(interval===void 0)&& (interval=1000);
-			(n===void 0)&& (n=1);
+	//class STG.Bullet.PlayerBullet extends STG.GameObject.GameObjectCollision
+	var PlayerBullet=(function(_super){
+		function PlayerBullet(){
+			this.mAtackPower=0;
+			PlayerBullet.__super.call(this);
+		}
+
+		__class(PlayerBullet,'STG.Bullet.PlayerBullet',_super);
+		return PlayerBullet;
+	})(GameObjectCollision)
+
+
+	//class STG.GameObject.Drop extends STG.GameObject.GameObjectCollision
+	var Drop=(function(_super){
+		function Drop(type,xx,yy){
+			this.mType=null;
+			Drop.__super.call(this);
 			this.mType=type;
-			this.mGenerationInterval=interval;
-			this.mGenerationTotalTimes=n;
-			this.mGeneratorFunction=f;
-			this.mLastGenerationAge=0;
-			this.mCompleteCallback=complete;
-			this.mIsEmpty=true;
+			this.mRebound=true;
+			this.mASpeed=7;
+			this.mDirection=-Math.PI / 4;
+			this.mCollisionBody=new ColliCircle();
+			this.mCollisionBody.r=50;
+			this.x=xx;
+			this.y=yy;
+			this.drawTexture(Laya.loader.getRes(this.type2TexturePath(this.mType)));
 		}
 
-		__class(BulletGenerator,'STG.Bullet.BulletGenerator',_super);
-		var __proto=BulletGenerator.prototype;
-		__proto.setBulletDir=function(dir){
-			this.mBulletDir=dir;
-		}
-
-		__proto.setFluctuationBulletDir=function(flt){
-			this.mFluctuationBulletDir=flt;
-		}
-
-		__proto.setGenerating=function(g){
-			this.mIsGenerating=g;
-		}
-
-		__proto.setInterval=function(itv){
-			this.mGenerationInterval=itv;
-		}
-
-		__proto.setGenerator=function(f){
-			this.mGeneratorFunction=f;
-		}
-
+		__class(Drop,'STG.GameObject.Drop',_super);
+		var __proto=Drop.prototype;
+		/*protected */
 		__proto.updateSelf=function(delta){
 			_super.prototype.updateSelf.call(this,delta);
-			if (this.mGenerationTotalTimes==-1){
-				this.checkAndGenerate()
-				return;
-			}
-			else{
-				if (this.mGenerationCounter < this.mGenerationTotalTimes){
-					this.checkAndGenerate();
-				}
-				else{
-					if (! this.destroyed){
-						Manager.getManager().getGameScene().autoDelete(this);
-					}
-					if (this.mCompleteCallback){
-						this.mCompleteCallback.run();
-					}
-				}
-			}
-		}
-
-		__proto.checkAndGenerate=function(){
-			if (! this.mIsGenerating){
-				return;
-			}
-			if (this.mAge-this.mLastGenerationAge > this.mGenerationInterval){
-				this.mLastGenerationAge=this.mAge;
-				var bullet=this.mGeneratorFunction();
-				if (this.mBulletDir){
-					bullet.mDirection=MyMath.fluctuate(this.mBulletDir,this.mFluctuationBulletDir);
-				}
-				bullet.x=this.getGlobalX(0);
-				bullet.y=this.getGlobalY(0);
-				if (this.mType=="player"){
-					Manager.getManager().getGameScene().addPlayerBullet(bullet);
-				}
-				else if (this.mType=="enemy"){
-					Manager.getManager().getGameScene().addEnemyBullet(bullet);
-				}
-				this.mGenerationCounter++;
-			}
-		}
-
-		return BulletGenerator;
-	})(GameObject)
-
-
-	//class STG.GameObject.GameObjectCollision extends STG.GameObject.GameObject
-	var GameObjectCollision=(function(_super){
-		function GameObjectCollision(){
-			this.mCollisionBody=null;
-			this.mAutoSize=false;
-			this.mRebound=false;
-			this.mHaveInPool=false;
-			GameObjectCollision.__super.call(this);
-		}
-
-		__class(GameObjectCollision,'STG.GameObject.GameObjectCollision',_super);
-		var __proto=GameObjectCollision.prototype;
-		__proto.checkCollision=function(other){
-			return ColliChecker.isCollision(this.mCollisionBody,other.mCollisionBody);
-		}
-
-		/*
-		override public function destroy(destroyChild :Boolean=true):void{
-			mCollisionBody=null;
-			super.destroy(destroyChild);
-		}
-
-		*/
-		__proto.evalTaskAction=function(tsk){
-			_super.prototype.evalTaskAction.call(this,tsk);
-		}
-
-		__proto.updateSelf=function(delta){
-			_super.prototype.updateSelf.call(this,delta);
-			if (this.mIsEmpty){
-				return;
-			};
-			var globalX=this.getGlobalX(this.pivotX);
-			var globalY=this.getGlobalY(this.pivotY);
-			var theta=-this.rotation / 180 *Math.PI;
-			this.mCollisionBody.x=globalX;
-			this.mCollisionBody.y=-globalY;
-			if ((this.mCollisionBody instanceof STG.GameObject.Collision.ColliCircle )){
-				if (this.mAutoSize)
-				{this.mCollisionBody.r=this.mCollisionBody.r|| this.mBound.width / 2 *this.scaleX;
-				}
-			}
-			if ((this.mCollisionBody instanceof STG.GameObject.Collision.ColliEllipse )){
-				this.mCollisionBody.dir=theta;
-				if (this.mAutoSize)
-				{this.mCollisionBody.a=this.mCollisionBody.a|| this.mBound.width / 2;this.mCollisionBody.b=this.mCollisionBody.b|| this.mBound.height / 2;
-				}
-			}
-		}
-
-		return GameObjectCollision;
-	})(GameObject)
-
-
-	//class STG.Player.Player extends STG.GameObject.GameObject
-	var Player=(function(_super){
-		function Player(){
-			this.mColliCircle=null;
-			this.mAttackColliCircle=null;
-			this.mFiring=true;
-			this.mShiftMode=false;
-			this.mLevel=0;
-			this.mWorking=true;
-			this.mInvincible=false;
-			this.mBombEnable=true;
-			this.mTouchLeftBorder=false;
-			this.mTouchRightBorder=false;
-			this.mTouchUpBorder=false;
-			this.mTouchDownBorder=false;
-			this.mControlSpeed=0;
-			this.mNumBomb=2;
-			Player.__super.call(this);
-			this.mAttackColliCircle=new GameObjectCollision();
-			this.mAttackColliCircle.mCollisionBody=new ColliCircle();
-			this.mAttackColliCircle.mCollisionBody.r=75;
-			this.addChild(this.mAttackColliCircle);
-			this.mFiring=true;
-		}
-
-		__class(Player,'STG.Player.Player',_super);
-		var __proto=Player.prototype;
-		__proto.drawTexture=function(tex,x,y,width,height,m,alpha){
-			(x===void 0)&& (x=0);
-			(y===void 0)&& (y=0);
-			(width===void 0)&& (width=0);
-			(height===void 0)&& (height=0);
-			(alpha===void 0)&& (alpha=1);
-			_super.prototype.drawTexture.call(this,tex,x,y,width,height,m,alpha);
-			this.addDefenseColli();
-		}
-
-		__proto.invincibleFor=function(time){
-			(time===void 0)&& (time=3000);
-			this.mInvincible=true;
-			var glowFilter=new GlowFilter("#ffff00",10,0,0);
-			this.filters=[glowFilter];
-			Laya.timer.once(time ,this,this.endInvincible);
-		}
-
-		__proto.endInvincible=function(){
-			if (this && (!this.destroyed)){
-				this.filters=[];
-				this.mInvincible=false;
-			}
-		}
-
-		__proto.getLevel=function(){
-			return this.mLevel;
-		}
-
-		__proto.resetLevel=function(){
-			this.mLevel=0;
-		}
-
-		__proto.getNumBomb=function(){
-			return this.mNumBomb;
-		}
-
-		__proto.incNumBomb=function(){
-			if (this.mNumBomb < 5){
-				this.mNumBomb++;
-			}
-		}
-
-		__proto.resetNumBomb=function(){
-			this.mNumBomb=2;
-		}
-
-		__proto.setFire=function(f){
-			this.mFiring=f;
-		}
-
-		__proto.changeToShiftMode=function(sft){
-			this.mShiftMode=sft;
-		}
-
-		__proto.upgrade=function(){
-			if (this.mLevel==4){
-				return false;
-			}
-			this.mLevel++;
-			return true;
-		}
-
-		__proto.bomb=function(){
-			if ((!this.mWorking)
-				|| (this.mNumBomb==0)
-			|| (!this.mBombEnable)){
-				return false;
-			}
-			this.invincibleFor(5 *1000);
-			this.mBombEnable=false;
-			Laya.timer.once(1 *1000,this,this.enableBomb);
-			this.mNumBomb--;
-			Manager.getManager().getGameScene().refreshUINumBomb();
-			return true;
-		}
-
-		/*wrapper */
-		__proto.checkDefenseCollision=function(obc){
-			return this.mColliCircle.checkCollision(obc);
-		}
-
-		__proto.checkAttackCollision=function(obc){
-			return this.mAttackColliCircle.checkCollision(obc);
-		}
-
-		__proto.addDefenseColli=function(){
-			this.mColliCircle=new GameObjectCollision();
-			this.mColliCircle.mCollisionBody=new ColliCircle();
-			this.mColliCircle.mAutoSize=true;
-			this.mColliCircle.drawTexture(Laya.loader.getRes("my_res/img/player_colli.png"));
-			this.addChild(this.mColliCircle);
-		}
-
-		__proto.updateSelf=function(delta){
-			if (_super.prototype.updateSelf.call(this,delta)){
-				if (! this.mWorking){
-					this.mFiring=false;
-					this.mShiftMode=false;
-					return;
-				}
-				if (!this.mShiftMode){
-					if (this.mControlSpeed < 6){
-						this.changeToShiftMode(true);
-					}
-				}
-				else{
-					if (this.mControlSpeed > 20){
-						this.mShiftMode=false;
-						this.changeToShiftMode(false);
-					}
-				}
-				return true;
-			}
-			else{
-				return false;
-			}
-		}
-
-		__proto.enableBomb=function(){
-			this.mBombEnable=true;
-		}
-
-		return Player;
-	})(GameObject)
-
-
-	//class STG.Player.SubTangMen extends STG.GameObject.GameObject
-	var SubTangMen=(function(_super){
-		function SubTangMen(){
-			this.mRootNode=null;
-			this.mGenerators=[];
-			this.mSubs=[];
-			this.mLevel=0;
-			SubTangMen.__super.call(this);
-			this.mRootNode=new GameObject();
-			this.mRootNode.mIsEmpty=true;
-			this.upgrade(false);
-			this.mLevel=0;
-		}
-
-		__class(SubTangMen,'STG.Player.SubTangMen',_super);
-		var __proto=SubTangMen.prototype;
-		__proto.setGenerating=function(fire){
-			for (var i=0;i < this.mGenerators.length;i++){
-				this.mGenerators[i].setGenerating(fire);
-			}
-		}
-
-		__proto.upgrade=function(shift){
-			this.mLevel++;
-			var newSub=new GameObject();
-			newSub.drawTexture(Laya.loader.getRes("my_res/img/sub_4.png"));
-			this.mSubs.push(newSub);
-			this.mRootNode.addChild(newSub);
-			var itv=shift ? 0.1 :1;
-			var newG=new BulletGenerator("player",this.normalModeGenerator,itv,-1);
-			newSub.addChild(newG);
-			this.mGenerators.push(newG);
-			this.refreshSubsPos(shift);
-		}
-
-		__proto.changeToShiftMode=function(shift){
-			for (var i=0;i < this.mGenerators.length;i++){
-				if (shift){
-					this.mGenerators[i].setGenerator(this.shiftModeGenerator);
-					this.mGenerators[i].setInterval(0.1);
-				}
-				else{
-					this.mGenerators[i].setGenerator(this.normalModeGenerator);
-					this.mGenerators[i].setInterval(1);
-				}
-			};
-			var poss=this.getPositions(shift);
-			if (shift){
-				for (var i=0;i < poss.length;i++){
-					Tween.to(this.mSubs[i],{x :poss[i].x,y :poss[i].y,},100);
-				}
-			}
-			else{
-				for (var i=0;i < poss.length;i++){
-					this.mSubs[i].x=poss[i].x;
-					this.mSubs[i].y=poss[i].y;
-				}
-			}
-		}
-
-		__proto.refreshSubsPos=function(shift){
-			var poss=this.getPositions(shift);
-			for (var i=0;i < poss.length;i++){
-				this.mSubs[i].x=poss[i].x;
-				this.mSubs[i].y=poss[i].y;
-			}
-		}
-
-		__proto.getPositions=function(shift){
-			var poss=[];
-			var dAngle=Math.PI / (1+this.mSubs.length);
-			for (var i=0;i < this.mSubs.length;i++){
-				var angle=-(i+1)*dAngle;
-				if (shift){
-					poss.push(new Point (80 *Math.cos(angle),
-					-80 *Math.sin(angle)));
-				}
-				else{
-					poss.push(new Point (120 *Math.cos(angle),
-					-120 *Math.sin(angle)));
-				}
-			}
-			return poss;
-		}
-
-		__proto.normalModeGenerator=function(){
-			var b=new GuidedBullet(0.1);
-			b.mASpeed=600;
-			b.mDirection=-1.57;
-			b.mIsRotbyDir=true;
-			b.drawTexture(Laya.loader.getRes("my_res/img/sub_bullet_4.png"));
-			b.mCollisionBody=new ColliEllipse();
-			b.mAutoSize=true;
-			b.mAtackPower=120;
-			return b;
-		}
-
-		__proto.shiftModeGenerator=function(){
-			var b=new PlayerBullet();
-			b.mASpeed=1800;
-			b.mDirection=Math.PI / 2;
-			b.mIsRotbyDir=true;
-			b.mCollisionBody=new ColliEllipse();
-			b.mAutoSize=true;
-			b.mAtackPower=50;
-			b.drawTexture(Laya.loader.getRes("my_res/img/sub_bullet_4.png"));
-			return b;
-		}
-
-		SubTangMen.NORMAL_DIS_SUB=120;
-		SubTangMen.SHIFT_DIS_SUB=80;
-		SubTangMen.NORMAL_INTERVAL=1;
-		SubTangMen.SHIFT_INTERVAL=0.1;
-		return SubTangMen;
-	})(GameObject)
-
-
-	//class STG.BG extends STG.GameObject.GameObject
-	var BG=(function(_super){
-		function BG(s){
-			this.mSpeed=1;
-			this.mBGs=[];
-			this.mIndexNowBG=0;
-			BG.__super.call(this);
-			this.mSpeed=s;
-		}
-
-		__class(BG,'STG.BG',_super);
-		var __proto=BG.prototype;
-		__proto.addBG=function(strRes){
-			var newBG=new GameObject();
-			newBG.drawTexture(Laya.loader.getRes(strRes));
-			newBG.x=1080 / 2;
-			newBG.mDirection=-Math.PI / 2;
-			this.stopMoving(newBG);
-			this.mBGs.push(newBG);
-			this.addChild(newBG);
-		}
-
-		__proto.start=function(){
-			this.mBGs[this.mIndexNowBG].y=1920 / 2;
-			this.startMoving(this.mBGs[this.mIndexNowBG]);
-			var idxNext=(this.mIndexNowBG+1)% this.mBGs.length;
-			this.startMoving(this.mBGs[idxNext]);
-		}
-
-		__proto.startMoving=function(bg){
-			bg.mASpeed=this.mSpeed;
-			bg.visible=true;
-		}
-
-		/*move bg to the top of screen in this function */
-		__proto.stopMoving=function(bg){
-			bg.y=-1920 / 2;
-			bg.mASpeed=0;
-			bg.visible=false;
-		}
-
-		__proto.updateSelf=function(delta){
-			var nowBG=this.mBGs[this.mIndexNowBG];
-			var len=this.mBGs.length;
-			if (nowBG.y >=1920 / 2 *3){
-				this.stopMoving(nowBG);
-				var nextNextBG=this.mBGs[(this.mIndexNowBG+2)% len];
-				this.startMoving(nextNextBG);
-				this.mIndexNowBG=(this.mIndexNowBG+1)% len;
-			}
-		}
-
-		return BG;
-	})(GameObject)
-
-
-	/*extends gameobject,because it should have update */
-	//class STG.Layer extends STG.GameObject.GameObject
-	var Layer=(function(_super){
-		function Layer(n){
-			this.mN=0;
-			Layer.__super.call(this);
-			this.mN=n;
-			this.mIsEmpty=true;
-		}
-
-		__class(Layer,'STG.Layer',_super);
-		var __proto=Layer.prototype;
-		/*without layers */
-		__proto.clear=function(){
-			for (var i=0;i < this.mN;i++){
-				this.destroyChildren();
-			}
-		}
-
-		__proto.addSpriteToLayer=function(s,l){
-			if (l >=this.mN){
-				throw new Error("only "+this.numChildren+" layers available");
-			}
-			this.addChild(s);
-			s.zOrder=l;
-		}
-
-		return Layer;
-	})(GameObject)
-
-
-	//class STG.Scene.GameScene extends STG.GameObject.GameObject
-	var GameScene=(function(_super){
-		function GameScene(typeP){
-			this.mGameUI=null;
-			this.mLayerRoot=null;
-			this.mBGs=null;
-			this.mTypePlayer=null;
-			this.mPlayer=null;
-			this.mColliChecker=null;
-			this.mDeletor=null;
-			this.mScore=0;
-			this.mEnemyGen=null;
-			this.mConfigParser=null;
-			this.mReboundManager=null;
-			this.mController=null;
-			this.mRunning=true;
-			this.mObjFactory=null;
-			GameScene.__super.call(this);
-			this.mNumPlayer=3;
-			this.mTypePlayer=typeP;
-			this.mLayerRoot=new Layer(5);
-			this.addChild(this.mLayerRoot);
-			this.mGameUI=new GameUI();
-			this.addToLayer(this.mGameUI,4);
-			this.mBGs=new BG(120);
-			for (var i=0;i < 3;i++){
-				this.mBGs.addBG("my_res/img/bg_"+i.toString()+".png");
-			}
-			this.addToLayer(this.mBGs,0);
-			this.mBGs.start();
-			this.initPlayer(typeP);
-			this.addToLayer(this.mPlayer,1);
-			this.mNumPlayer=9999999;
-			this.mColliChecker=new GameCollisionChecker();
-			this.mColliChecker.setPlayer(this.mPlayer);
-			this.mDeletor=new OutMyNodeDeletor();
-			this.mDeletor.setRange(
-			0-50,
-			0,
-			Const.PLAY_FILED_RIGHT+50,
-			1920);
-			this.mReboundManager=new RebounceManager();
-			this.mScore=0;
-			this.mEnemyGen=new EnemyGen(10,0.1,0);
-			this.mObjFactory=new ObjectFactory();
-			this.mConfigParser=new ConfigParser(this.mObjFactory);
-			this.parseEnemiesXml();
-			this.mController=new Controller();
-			this.mController.setTarget(this.mPlayer);
-			this.mController.setTouchValidField(this.mGameUI);
-			this.refreshUINumBomb();
-			this.refreshUINumPlayer();
-		}
-
-		__class(GameScene,'STG.Scene.GameScene',_super);
-		var __proto=GameScene.prototype;
-		__proto.pause=function(){
-			this.mRunning=false;
-			this.mGameUI.disableBomb();
-		}
-
-		__proto.showDieDialog=function(){
-			var dieD=new DieDialog(this.mScore);
-			dieD.x=1080 / 2;
-			dieD.y=1920 / 2;
-			this.addToLayer(dieD,4);
-		}
-
-		__proto.shootBullet=function(name){
-			return this.mObjFactory.getBullet(name);
-		}
-
-		__proto.newEnemy=function(name){
-			return this.mObjFactory.getEnemy(name);
-		}
-
-		__proto.updateSelf=function(delta){
-			if (this.mRunning){
-				_super.prototype.updateSelf.call(this,delta);
-				this.mDeletor.update(delta);
-				this.mReboundManager.update(delta);
-				this.mEnemyGen.update(delta);
-				this.checkColli();
-			}
-		}
-
-		__proto.addEnemy=function(obc){
-			this.addToLayer(obc,1);
-			this.autoDelete(obc);
-			this.mColliChecker.addEnemy(obc);
-		}
-
-		__proto.addPlayerBullet=function(obc){
-			this.addToLayer(obc,2);
-			this.addToRebounce(obc);
-			this.autoDelete(obc);
-			this.mColliChecker.addPlayerBullet(obc);
-		}
-
-		__proto.addEnemyBullet=function(obc){
-			this.addToLayer(obc,3);
-			this.addToRebounce(obc);
-			this.autoDelete(obc);
-			this.mColliChecker.addEnemyBullet(obc);
-		}
-
-		__proto.addOther=function(ob){
-			this.addToLayer(ob,1);
-		}
-
-		__proto.onBtnBombDown=function(){
-			this.mPlayer.bomb();
-		}
-
-		__proto.getTargetForGB=function(){
-			for (var i=0;i < this.mColliChecker.mEnemies.length;i++){
-				var aEnm=this.mColliChecker.mEnemies[i];
-				if (aEnm && (! aEnm.destroyed)&& (aEnm.visible)
-					&& this.inField(aEnm)){
-					return aEnm;
-				}
-			}
-			return null;
-		}
-
-		__proto.inField=function(ob){
-			var hw=ob.mBound.width / 2;
-			var hh=ob.mBound.height / 2;
-			return (
-			ob.x > 0+hw
-			&& ob.x < Const.PLAY_FILED_RIGHT-hw
-			&& ob.y > hh
-			&& ob.y < 1920-hh);
-		}
-
-		__proto.refreshUINumPlayer=function(){
-			this.mGameUI.setNumPlayer(this.mNumPlayer);
-		}
-
-		__proto.refreshUINumBomb=function(){
-			this.mGameUI.setNumBomb(this.mPlayer.mNumBomb);
-		}
-
-		__proto.destroyRange=function(range,dmg2Enm){
-			var blts=this.mColliChecker.mEnemyBullets;
-			var enms=this.mColliChecker.mEnemies;
-			for (var i=0;i < blts.length;i++){
-				if (ColliChecker.isCollision(range,blts[i].mCollisionBody)){
-					PoolWrapper.recover(blts[i]);
-				}
-			}
-			for (var i=0;i < enms.length;i++){
-				if (ColliChecker.isCollision(range,enms[i].mCollisionBody)){
-					enms[i].attacked(dmg2Enm);
-				}
-			}
-		}
-
-		__proto.autoDelete=function(nd){
-			this.mDeletor.registerMyNode(nd);
-			for (var i=0;i < nd.numChildren;i++){
-				this.mDeletor.registerMyNode(nd.getChildAt(i));
-			}
-		}
-
-		__proto.aimToPlayer=function(ob){
-			if (this.mPlayer && (! this.mPlayer.destroyed)){
-				MyMath.aimA2B(ob,this.mPlayer);
-			}
-		}
-
-		__proto.enemyDie=function(enm){
-			this.mScore+=enm.mScore;
-			this.mGameUI.setScore(this.mScore);
-			var x=enm.x;
-			var y=enm.y;
-			PoolWrapper.recover(enm);
-			if (Math.random()< 0.03){
-				this.spawnRandomDrop(x,y);
+			if (this.mAge > 15000){
+				this.destroy();
 			}
 		}
 
 		/*private */
-		__proto.addToLayer=function(s,nl){
-			this.mLayerRoot.addSpriteToLayer(s,nl);
-		}
-
-		__proto.initPlayer=function(type){
+		__proto.type2TexturePath=function(type){
 			switch(type){
-				case "EPlayerType_ZhenWu":{
-						throw new Error("unfinished");
-					}break ;
-				case "EPlayerType_GaiBang":{
-						throw new Error("unfinished");
-					}break ;
-				case "EPlayerType_ShenWei":{
-						throw new Error("unfinished");
-					}break ;
-				case "EPlayerType_TaiBai":{
-						throw new Error("unfinished");
-					}break ;
-				case "EPlayerType_TangMen":{
-						this.mPlayer=new PlayerTangMen();
-					}break ;
-				case "EPlayerType_TianXiang":{
-						this.mPlayer=new PlayerTianXiang();
-					}break ;
-				case "EPlayerType_WuDu":{
-						throw new Error("unfinished");
-					}break ;
-				case "EPlayerType_ShenDao":{
-						throw new Error("unfinished");
-					}break ;
-				default :{
-						throw new Error("unknown type");
-					}break ;
+				case "EDropType_LevelUp" :
+					return "my_res/img/drop_level.png";
+				case "EDropType_BombUp":
+					return "my_res/img/drop_bomb.png";
+				case "EDropType_PlayerUp":
+					return "my_res/img/drop_player.png";
+				default :
+					return "this is a invalid path for drop";
 				}
-			this.initPlayerPos();
-			this.mPlayer.resetNumBomb();
-			this.mPlayer.mFiring=true;
-			this.mPlayer.invincibleFor(5 *1000);
 		}
 
-		__proto.initPlayerPos=function(){
-			this.mPlayer.x=1080 / 2;
-			this.mPlayer.y=1920-100;
+		return Drop;
+	})(GameObjectCollision)
+
+
+	//class STG.GameObject.Enemy extends STG.GameObject.GameObjectCollision
+	var Enemy=(function(_super){
+		function Enemy(){
+			this.mBullets=[];
+			this.mScore=0;
+			this.mHealth=1;
+			this.mNowIndexBullet=0;
+			Enemy.__super.call(this);
 		}
 
-		__proto.parseEnemiesXml=function(){
-			var xml=Laya.loader.getRes("my_res/config/enemies.xml").firstChild;
-			var enemyXmls=this.mConfigParser.getAllChildrenXml(xml,"enemy");
-			for (var i=0;i < enemyXmls.length;i++){
-				this.mEnemyGen.addEnemy(this.mConfigParser.parseEnemy(enemyXmls[i]));
+		__class(Enemy,'STG.GameObject.Enemy',_super);
+		var __proto=Enemy.prototype;
+		__proto.attacked=function(dmg){
+			this.mHealth-=dmg;
+			if (this.mHealth <=0){
+				Manager.getManager().enemyDie(this);
 			}
 		}
 
-		__proto.checkColli=function(){
-			this.ccPlayer2Drop();
-			this.ccPlayer2Bullet();
-			this.ccEnemy2Bullet();
-			this.ccPlayer2Enemy();
-		}
-
-		__proto.ccPlayer2Bullet=function(){
-			var enmBlt=this.mColliChecker.checkPlayerCollisionBullet();
-			if (enmBlt){
-				PoolWrapper.recover(enmBlt);
-				if (! this.mPlayer.mInvincible){
-					this.playerDie();
-				}
+		__proto.evalTaskAction=function(tsk){
+			if (tsk.mAction.mActionOp=="shoot"){
+				this.shoot();
+			}
+			else{
+				_super.prototype.evalTaskAction.call(this,tsk);
 			}
 		}
 
-		__proto.ccPlayer2Drop=function(){
-			var drop=this.mColliChecker.checkPlayerCollisionDrop();
-			if (drop){
-				var type=drop.mType;
-				drop.destroy();
-				switch(type){
-					case "EDropType_LevelUp" :{
-							this.mPlayer.upgrade();
-						}break ;
-					case "EDropType_BombUp" :{
-							this.mPlayer.incNumBomb();
-							this.refreshUINumBomb();
-						}break ;
-					case "EDropType_PlayerUp" :{
-							this.mNumPlayer++;
-							this.refreshUINumPlayer();
-						}break ;
-					default :break ;
-					}
-			}
-		}
-
-		__proto.ccEnemy2Bullet=function(){
-			var ecRes=this.mColliChecker.checkEnemyCollision();
-			if (ecRes){
-				var enmHit=ecRes.enm;
-				var bltHit=ecRes.blt;
-				enmHit.attacked(bltHit.mAtackPower);
-				if (!bltHit.mInvincible){
-					PoolWrapper.recover(bltHit);
-				}
-			}
-		}
-
-		__proto.ccPlayer2Enemy=function(){
-			var enmHit=this.mColliChecker.checkPlayerCollisionEnemy();
-			if (enmHit){
-				enmHit.attacked(5);
-			}
-		}
-
-		__proto.playerDie=function(){
-			this.mGameUI.disableBomb();
-			this.spawnPlayerDieDrop();
-			this.mPlayer.destroy();
-			this.mNumPlayer--;
-			if (this.mNumPlayer < 0){
-				Manager.getManager().gameOver();
+		__proto.shoot=function(){
+			if (! Manager.getManager().inField(this)){
 				return;
-			}
-			this.refreshUINumPlayer();
-			this.mController.stopMove();
-			Laya.timer.once(0.3 *1000,this,this.reSpawnPlayer);
+			};
+			var nowFunc=this.mBullets[this.mNowIndexBullet];
+			var newBullet=nowFunc();
+			var pos=this.localToGlobal(new Point(0,0));
+			newBullet.x=pos.x;
+			newBullet.y=pos.y;
+			Manager.getManager().addEnemyBullet(newBullet);
+			this.mNowIndexBullet=(this.mNowIndexBullet+1)% this.mBullets.length;
 		}
 
-		__proto.reSpawnPlayer=function(){
-			this.initPlayer(this.mTypePlayer);
-			this.mColliChecker.setPlayer(this.mPlayer);
-			this.mController.setTarget(this.mPlayer);
-			this.addToLayer(this.mPlayer,1);
-			this.refreshUINumBomb();
-			this.mGameUI.enableBomb();
+		return Enemy;
+	})(GameObjectCollision)
+
+
+	//class STG.Player.PlayerTangMen extends STG.Player.Player
+	var PlayerTangMen=(function(_super){
+		function PlayerTangMen(){
+			this.mGenerators=[];
+			this.mBombGenerator=null;
+			this.mSub=null;
+			PlayerTangMen.__super.call(this);
+			this.drawTexture(Laya.loader.getRes("my_res/img/player.png"));
+			this.addNewGenerator();
+			this.mSub=new SubTangMen();
+			console.log("newed sub");
+			console.log(this.mSub);
+			this.addChild(this.mSub.mRootNode);
 		}
 
-		__proto.addToRebounce=function(obc){
-			if (obc.mRebound){
-				this.mReboundManager.addItem(obc);
+		__class(PlayerTangMen,'STG.Player.PlayerTangMen',_super);
+		var __proto=PlayerTangMen.prototype;
+		//throw new Error("d");
+		__proto.changeToShiftMode=function(shift){
+			_super.prototype.changeToShiftMode.call(this,shift);
+			this.mSub.changeToShiftMode(shift);
+			this.rePosGenerators();
+		}
+
+		__proto.bomb=function(){
+			if (! _super.prototype.bomb.call(this)){
+				return false;
+			};
+			var bomb=new GameObject();
+			bomb.drawTexture(Laya.loader.getRes("my_res/img/sub_4.png"));
+			bomb.x=this.x;
+			bomb.y=this.y;
+			Manager.getManager().addOther(bomb);
+			Tween.to(bomb,{
+				x :1080 / 2,
+				y :1920 / 2,
+			},
+			500,
+			null,
+			Handler.create(this,this.afterBombTween,[bomb]));
+			return true;
+		}
+
+		__proto.upgrade=function(){
+			if (! _super.prototype.upgrade.call(this)){
+				return false;
 			}
-			else{
-				for (var i=0;i < obc.numChildren;i++){
-					this.addToRebounce(obc.getChildAt(i));
-				}
+			this.addNewGenerator();
+			this.mSub.upgrade();
+		}
+
+		__proto.updateSelf=function(delta){
+			_super.prototype.updateSelf.call(this,delta);
+			for (var i=0;i < this.mGenerators.length;i++){
+				this.mGenerators[i].setGenerating(this.mFiring);
+				this.mSub.setGenerating(this.mFiring);
+			}
+			if (! this.mShiftMode){
+				this.mSub.refreshSubsPos(false);
 			}
 		}
 
-		__proto.spawnRandomDrop=function(x,y){
-			this.spawnDrop(x,y,this.getRandomDropType());
+		/*private */
+		__proto.afterBombTween=function(bomb){
+			this.destroyRange(bomb);
+			this.genBullet(bomb);
 		}
 
-		__proto.spawnPlayerDieDrop=function(){
-			var baseX=this.mPlayer.x-this.mPlayer.getLevel()*40;
-			for (var i=0;i < this.mPlayer.getLevel();i++){
-				this.spawnDrop(baseX+i *40,this.mPlayer.y+30,"EDropType_LevelUp");
+		__proto.destroyRange=function(bomb){
+			var bombRange=new ColliCircle(bomb.x,-bomb.y,500);
+			Manager.getManager().destroyRange(bombRange,200);
+		}
+
+		__proto.genBullet=function(bomb){
+			var gen=new BulletGenerator("player",this.genOfBomb,50,50,
+			Handler.create(this,this.complete,[bomb]));
+			bomb.addChild(gen);
+			gen.setGenerating(true);
+		}
+
+		__proto.complete=function(bomb){
+			Laya.timer.frameOnce(1,bomb,this.destroy);
+			this.mBombGenerator=null;
+		}
+
+		__proto.rePosGenerators=function(){
+			var xs=this.levelToGenXs();
+			for (var i=0;i < xs.length;i++){
+				this.mGenerators[i].x=xs[i];
+				this.mGenerators[i].x+=this.mBound.width / 2;
 			}
 		}
 
-		__proto.spawnDrop=function(x,y,type){
-			var newDp=new Drop(type,x,y);
-			this.addToLayer(newDp,1);
-			this.addToRebounce(newDp);
-			this.mColliChecker.addDrop(newDp);
+		__proto.addNewGenerator=function(){
+			var newG=new BulletGenerator("player",this.generator,50,-1);
+			newG.y=-60;
+			newG.setGenerating(false);
+			this.addChild(newG);
+			this.mGenerators.push(newG);
+			this.rePosGenerators();
+			return newG;
 		}
 
-		__proto.getRandomDropType=function(){
-			var r=Math.random();
-			if (r < 0.5){
-				return "EDropType_LevelUp";
+		__proto.genOfBomb=function(){
+			var bRoot=new PlayerBullet;
+			bRoot.mIsEmpty=true;
+			var numLine=80;
+			for (var i=0;i < numLine;i++){
+				if (Math.random()< 0.5){
+					continue ;
+				};
+				var b=new PlayerBullet();
+				b.mASpeed=7;
+				b.mAcceleration=0.03;
+				var dDir=0.06 *(Math.random()-0.5);
+				b.mDirection=i *Math.PI *2 / numLine+dDir;
+				b.drawTexture(Laya.loader.getRes("my_res/img/sub_bullet_4.png"));
+				b.mIsRotbyDir=true;
+				b.mCollisionBody=new ColliEllipse();
+				b.mAutoSize=true;
+				b.mAtackPower=50;
+				bRoot.addChild(b);
 			}
-			else if (r < 0.9){
-				return "EDropType_BombUp";
-			}
-			else{
-				return "EDropType_PlayerUp";
-			}
+			return bRoot;
 		}
 
-		GameScene.NUM_LAYERS=5;
-		GameScene.NUM_BG=3;
-		GameScene.BG_SPEED=120;
-		return GameScene;
-	})(GameObject)
+		__proto.generator=function(){
+			var b=new GameObjectCollision();
+			b.mASpeed=7;
+			b.mAcceleration=0.01;
+			b.mDirection=Math.PI / 2;
+			b.drawTexture(Laya.loader.getRes("my_res/img/player_bullet_4.png"));
+			b.mIsRotbyDir=true;
+			b.mCollisionBody=new ColliEllipse();
+			b.mAutoSize=true;
+			b.mAtackPower=50;
+			return b;
+		}
+
+		__proto.levelToGenXs=function(){
+			var spacing=this.mShiftMode ? 20 :40;
+			var minX=-this.mLevel *spacing / 2;
+			var xs=[];
+			for (var i=0;i < this.mLevel+1;i++){
+				xs.push(minX);
+				minX+=spacing;
+			}
+			return xs;
+		}
+
+		PlayerTangMen.GENERATOR_Y=60;
+		PlayerTangMen.GENERATOR_SPACING_X_NORMAL=40;
+		PlayerTangMen.GENERATOR_SPACING_X_SHIFT=20;
+		return PlayerTangMen;
+	})(Player)
 
 
-	/**
-	*<code>View</code> 是一个视图类。
-	*@internal <p><code>View</code></p>
-	*/
 	//class laya.ui.View extends laya.ui.Box
 	var View=(function(_super){
 		function View(){
@@ -33790,7 +32108,7 @@ var Laya=window.Laya=(function(window,document){
 		View.uiMap={};
 		View.viewClassMap={};
 		__static(View,
-		['uiClassMap',function(){return this.uiClassMap={"ViewStack":ViewStack,"LinkButton":Button,"TextArea":TextArea,"ColorPicker":ColorPicker,"Box":Box,"Button":Button,"CheckBox":CheckBox,"Clip":Clip,"ComboBox":ComboBox,"Component":Component,"HScrollBar":HScrollBar,"HSlider":HSlider,"Image":Image,"Label":Label,"List":List,"Panel":Panel,"ProgressBar":ProgressBar,"Radio":Radio,"RadioGroup":RadioGroup,"ScrollBar":ScrollBar,"Slider":Slider,"Tab":Tab,"TextInput":TextInput,"View":View,"VScrollBar":VScrollBar,"VSlider":VSlider,"Tree":Tree,"HBox":HBox,"VBox":VBox,"Sprite":Sprite,"Animation":Animation1,"Text":Text,"FontClip":FontClip};}
+		['uiClassMap',function(){return this.uiClassMap={"ViewStack":ViewStack,"LinkButton":Button,"TextArea":TextArea,"ColorPicker":ColorPicker,"Box":Box,"Button":Button,"CheckBox":CheckBox,"Clip":Clip,"ComboBox":ComboBox,"Component":Component,"HScrollBar":HScrollBar,"HSlider":HSlider,"Image":Image,"Label":Label,"List":List,"Panel":Panel,"ProgressBar":ProgressBar,"Radio":Radio,"RadioGroup":RadioGroup,"ScrollBar":ScrollBar,"Slider":Slider,"Tab":Tab,"TextInput":TextInput,"View":View,"VScrollBar":VScrollBar,"VSlider":VSlider,"Tree":Tree,"HBox":HBox,"VBox":VBox,"Sprite":Sprite,"Animation":Animation$1,"Text":Text,"FontClip":FontClip};}
 		]);
 		View.__init$=function(){
 			View._regs()
@@ -33800,141 +32118,207 @@ var Laya=window.Laya=(function(window,document){
 	})(Box)
 
 
-	/**
-	*<code>List</code> 控件可显示项目列表。默认为垂直方向列表。可通过UI编辑器自定义列表。
-	*
-	*@example <caption>以下示例代码，创建了一个 <code>List</code> 实例。</caption>
-	*package
-	*{
-		*import laya.ui.List;
-		*import laya.utils.Handler;
-		*public class List_Example
-		*{
-			*public function List_Example()
-			*{
-				*Laya.init(640,800,"false");//设置游戏画布宽高、渲染模式。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*Laya.loader.load(["resource/ui/vscroll.png","resource/ui/vscroll$bar.png","resource/ui/vscroll$down.png","resource/ui/vscroll$up.png"],Handler.create(this,onLoadComplete));
-				*}
-			*private function onLoadComplete():void
-			*{
-				*var arr:Array=[];//创建一个数组，用于存贮列表的数据信息。
-				*for (var i:int=0;i &lt;20;i++)
-				*{
-					*arr.push({label:"item"+i});
-					*}
-				*var list:List=new List();//创建一个 List 类的实例对象 list 。
-				*list.itemRender=Item;//设置 list 的单元格渲染器。
-				*list.repeatX=1;//设置 list 的水平方向单元格数量。
-				*list.repeatY=10;//设置 list 的垂直方向单元格数量。
-				*list.vScrollBarSkin="resource/ui/vscroll.png";//设置 list 的垂直方向滚动条皮肤。
-				*list.array=arr;//设置 list 的列表数据源。
-				*list.pos(100,100);//设置 list 的位置。
-				*list.selectEnable=true;//设置 list 可选。
-				*list.selectHandler=new Handler(this,onSelect);//设置 list 改变选择项执行的处理器。
-				*Laya.stage.addChild(list);//将 list 添加到显示列表。
-				*}
-			*private function onSelect(index:int):void
-			*{
-				*trace("当前选择的项目索引： index= ",index);
-				*}
-			*}
-		*}
-	*import laya.ui.Box;
-	*import laya.ui.Label;
-	*class Item extends Box
-	*{
-		*public function Item()
-		*{
-			*graphics.drawRect(0,0,100,20,null,"#ff0000");
-			*var label:Label=new Label();
-			*label.text="100000";
-			*label.name="label";//设置 label 的name属性值。
-			*label.size(100,20);
-			*addChild(label);
-			*}
-		*}
-	*@example
-	*(function (_super){
-		*function Item(){
-			*Item.__super.call(this);//初始化父类
-			*this.graphics.drawRect(0,0,100,20,"#ff0000");
-			*var label=new laya.ui.Label();//创建一个 Label 类的实例对象 label 。
-			*label.text="100000";//设置 label 的文本内容。
-			*label.name="label";//设置 label 的name属性值。
-			*label.size(100,20);//设置 label 的宽度、高度。
-			*this.addChild(label);//将 label 添加到显示列表。
-			*};
-		*Laya.class(Item,"mypackage.listExample.Item",_super);//注册类 Item 。
-		*})(laya.ui.Box);
-	*Laya.init(640,800);//设置游戏画布宽高、渲染模式。
-	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-	*var res=["resource/ui/vscroll.png","resource/ui/vscroll$bar.png","resource/ui/vscroll$down.png","resource/ui/vscroll$up.png"];
-	*Laya.loader.load(res,new laya.utils.Handler(this,onLoadComplete));//加载资源。
-	*function onLoadComplete(){
-		*var arr=[];//创建一个数组，用于存贮列表的数据信息。
-		*for (var i=0;i &lt;20;i++){
-			*arr.push({label:"item"+i});
-			*}
-		*var list=new laya.ui.List();//创建一个 List 类的实例对象 list 。
-		*list.itemRender=mypackage.listExample.Item;//设置 list 的单元格渲染器。
-		*list.repeatX=1;//设置 list 的水平方向单元格数量。
-		*list.repeatY=10;//设置 list 的垂直方向单元格数量。
-		*list.vScrollBarSkin="resource/ui/vscroll.png";//设置 list 的垂直方向滚动条皮肤。
-		*list.array=arr;//设置 list 的列表数据源。
-		*list.pos(100,100);//设置 list 的位置。
-		*list.selectEnable=true;//设置 list 可选。
-		*list.selectHandler=new laya.utils.Handler(this,onSelect);//设置 list 改变选择项执行的处理器。
-		*Laya.stage.addChild(list);//将 list 添加到显示列表。
-		*}
-	*function onSelect(index)
-	*{
-		*console.log("当前选择的项目索引： index= ",index);
-		*}
-	*
-	*@example
-	*import List=laya.ui.List;
-	*import Handler=laya.utils.Handler;
-	*public class List_Example {
-		*public List_Example(){
-			*Laya.init(640,800);//设置游戏画布宽高。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*Laya.loader.load(["resource/ui/vscroll.png","resource/ui/vscroll$bar.png","resource/ui/vscroll$down.png","resource/ui/vscroll$up.png"],Handler.create(this,this.onLoadComplete));
-			*}
-		*private onLoadComplete():void {
-			*var arr=[];//创建一个数组，用于存贮列表的数据信息。
-			*for (var i:number=0;i &lt;20;i++)
-			*{
-				*arr.push({label:"item"+i });
-				*}
-			*var list:List=new List();//创建一个 List 类的实例对象 list 。
-			*list.itemRender=Item;//设置 list 的单元格渲染器。
-			*list.repeatX=1;//设置 list 的水平方向单元格数量。
-			*list.repeatY=10;//设置 list 的垂直方向单元格数量。
-			*list.vScrollBarSkin="resource/ui/vscroll.png";//设置 list 的垂直方向滚动条皮肤。
-			*list.array=arr;//设置 list 的列表数据源。
-			*list.pos(100,100);//设置 list 的位置。
-			*list.selectEnable=true;//设置 list 可选。
-			*list.selectHandler=new Handler(this,this.onSelect);//设置 list 改变选择项执行的处理器。
-			*Laya.stage.addChild(list);//将 list 添加到显示列表。
-			*}
-		*private onSelect(index:number):void {
-			*console.log("当前选择的项目索引： index= ",index);
-			*}
-		*}
-	*import Box=laya.ui.Box;
-	*import Label=laya.ui.Label;
-	*class Item extends Box {
-		*constructor(){
-			*this.graphics.drawRect(0,0,100,20,null,"#ff0000");
-			*var label:Label=new Label();
-			*label.text="100000";
-			*label.name="label";//设置 label 的name属性值。
-			*label.size(100,20);
-			*this.addChild(label);
-			*}
-		*}
-	*/
+	//class laya.display.EffectAnimation extends laya.display.FrameAnimation
+	var EffectAnimation=(function(_super){
+		function EffectAnimation(){
+			this._target=null;
+			this._playEvents=null;
+			this._initData={};
+			this._aniKeys=null;
+			this._effectClass=null;
+			EffectAnimation.__super.call(this);
+		}
+
+		__class(EffectAnimation,'laya.display.EffectAnimation',_super);
+		var __proto=EffectAnimation.prototype;
+		/**@private */
+		__proto._onOtherBegin=function(effect){
+			if (effect==this)
+				return;
+			this.stop();
+		}
+
+		/**@private */
+		__proto.addEvent=function(){
+			if (!this._target || !this._playEvents)
+				return;
+			this._setControlNode(this._target);
+			this._target.on(this._playEvents,this,this._onPlayAction);
+		}
+
+		/**@private */
+		__proto._onPlayAction=function(){
+			if (!this._target)
+				return;
+			this._target.event("effectanimationbegin",[this]);
+			this._recordInitData();
+			this.play(0,false);
+		}
+
+		/**@private */
+		__proto._recordInitData=function(){
+			if (!this._aniKeys)
+				return;
+			var i=0,len=0;
+			len=this._aniKeys.length;
+			var key;
+			for (i=0;i < len;i++){
+				key=this._aniKeys[i];
+				this._initData[key]=this._target[key];
+			}
+		}
+
+		/**@private */
+		__proto._displayToIndex=function(value){
+			if (!this._animationData)
+				return;
+			if (value < 0)
+				value=0;
+			if (value > this._count)
+				value=this._count;
+			var nodes=this._animationData.nodes,i=0,len=nodes.length;
+			len=len > 1 ? 1 :len;
+			for (i=0;i < len;i++){
+				this._displayNodeToFrame(nodes[i],value);
+			}
+		}
+
+		/**@private */
+		__proto._displayNodeToFrame=function(node,frame,targetDic){
+			if (!this._target)
+				return;
+			var target;
+			target=this._target;
+			var frames=node.frames,key,propFrames,value;
+			var keys=node.keys,i=0,len=keys.length;
+			var secondFrames;
+			secondFrames=node.secondFrames;
+			var tSecondFrame=0;
+			var easeFun;
+			var tKeyFrames;
+			var startFrame;
+			var endFrame;
+			for (i=0;i < len;i++){
+				key=keys[i];
+				propFrames=frames[key];
+				tSecondFrame=secondFrames[key];
+				if (tSecondFrame==-1){
+					value=this._initData[key];
+					}else {
+					if (frame < tSecondFrame){
+						tKeyFrames=node.keyframes[key];
+						startFrame=tKeyFrames[0];
+						if (startFrame.tween){
+							easeFun=Ease[startFrame.tweenMethod];
+							if (easeFun==null){
+								easeFun=Ease.linearNone;
+							}
+							endFrame=tKeyFrames[1];
+							value=easeFun(frame,this._initData[key],endFrame.value-this._initData[key],endFrame.index);
+							}else {
+							value=this._initData[key];
+						}
+						}else {
+						if (propFrames.length > frame){
+							value=propFrames[frame];
+							}else {
+							value=propFrames[propFrames.length-1];
+						}
+					}
+				}
+				target[key]=value;
+			}
+		}
+
+		/**@private */
+		__proto._calculateNodeKeyFrames=function(node){
+			_super.prototype._calculateNodeKeyFrames.call(this,node);
+			var keyFrames=node.keyframes,key,tKeyFrames,target=node.target;
+			var secondFrames;
+			secondFrames={};
+			node.secondFrames=secondFrames;
+			for (key in keyFrames){
+				tKeyFrames=keyFrames[key];
+				if (tKeyFrames.length <=1){
+					secondFrames[key]=-1;
+					}else {
+					secondFrames[key]=tKeyFrames[1].index;
+				}
+			}
+		}
+
+		/**
+		*本实例的目标对象。通过本实例控制目标对象的属性变化。
+		*@param v 指定的目标对象。
+		*/
+		__getset(0,__proto,'target',function(){
+			return this._target;
+			},function(v){
+			if (this._target){
+				this._target.off("effectanimationbegin",this,this._onOtherBegin);
+			}
+			this._target=v;
+			if (this._target){
+				this._target.on("effectanimationbegin",this,this._onOtherBegin);
+			}
+			this.addEvent();
+		});
+
+		/**
+		*设置开始播放的事件。本实例会侦听目标对象的指定事件，触发后播放相应动画效果。
+		*@param event
+		*/
+		__getset(0,__proto,'playEvent',null,function(event){
+			this._playEvents=event;
+			if (!event)
+				return;
+			this.addEvent();
+		});
+
+		/**
+		*设置动画数据。
+		*@param uiData
+		*/
+		__getset(0,__proto,'effectData',null,function(uiData){
+			if (uiData){
+				var aniData;
+				aniData=uiData["animations"];
+				if (aniData && aniData[0]){
+					this._setUp({},aniData[0]);
+					if (aniData[0].nodes && aniData[0].nodes[0]){
+						this._aniKeys=aniData[0].nodes[0].keys;
+					}
+				}
+			}
+		});
+
+		/**
+		*设置提供数据的类。
+		*@param classStr 类路径
+		*/
+		__getset(0,__proto,'effectClass',null,function(classStr){
+			this._effectClass=ClassUtils.getClass(classStr);
+			if (this._effectClass){
+				var uiData;
+				uiData=this._effectClass["uiView"];
+				if (uiData){
+					var aniData;
+					aniData=uiData["animations"];
+					if (aniData && aniData[0]){
+						this._setUp({},aniData[0]);
+						if (aniData[0].nodes && aniData[0].nodes[0]){
+							this._aniKeys=aniData[0].nodes[0].keys;
+						}
+					}
+				}
+			}
+		});
+
+		EffectAnimation.EffectAnimationBegin="effectanimationbegin";
+		return EffectAnimation;
+	})(FrameAnimation)
+
+
 	//class laya.ui.List extends laya.ui.Box
 	var List=(function(_super){
 		function List(){
@@ -34673,200 +33057,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Box)
 
 
-	/**
-	*<code>Tree</code> 控件使用户可以查看排列为可扩展树的层次结构数据。
-	*
-	*@example
-	*package
-	*{
-		*import laya.ui.Tree;
-		*import laya.utils.Browser;
-		*import laya.utils.Handler;
-		*public class Tree_Example
-		*{
-			*public function Tree_Example()
-			*{
-				*Laya.init(640,800);
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*Laya.loader.load(["resource/ui/vscroll.png","resource/ui/vscroll$bar.png","resource/ui/vscroll$down.png","resource/ui/vscroll$up.png","resource/ui/clip_selectBox.png","resource/ui/clip_tree_folder.png","resource/ui/clip_tree_arrow.png"],Handler.create(this,onLoadComplete));
-				*}
-			*private function onLoadComplete():void
-			*{
-				*var xmlString:String;//创建一个xml字符串，用于存储树结构数据。
-				*xmlString="&lt;root&gt;&lt;item label='box1'&gt;&lt;abc label='child1'/&gt;&lt;abc label='child2'/&gt;&lt;abc label='child3'/&gt;&lt;abc label='child4'/&gt;&lt;abc label='child5'/&gt;&lt;/item&gt;&lt;item label='box2'&gt;&lt;abc label='child1'/&gt;&lt;abc label='child2'/&gt;&lt;abc label='child3'/&gt;&lt;abc label='child4'/&gt;&lt;/item&gt;&lt;/root&gt;";
-				*var domParser:*=new Browser.window.DOMParser();//创建一个DOMParser实例domParser。
-				*var xml:*=domParser.parseFromString(xmlString,"text/xml");//解析xml字符。
-				*var tree:Tree=new Tree();//创建一个 Tree 类的实例对象 tree 。
-				*tree.scrollBarSkin="resource/ui/vscroll.png";//设置 tree 的皮肤。
-				*tree.itemRender=Item;//设置 tree 的项渲染器。
-				*tree.xml=xml;//设置 tree 的树结构数据。
-				*tree.x=100;//设置 tree 对象的属性 x 的值，用于控制 tree 对象的显示位置。
-				*tree.y=100;//设置 tree 对象的属性 y 的值，用于控制 tree 对象的显示位置。
-				*tree.width=200;//设置 tree 的宽度。
-				*tree.height=100;//设置 tree 的高度。
-				*Laya.stage.addChild(tree);//将 tree 添加到显示列表。
-				*}
-			*}
-		*}
-	*import laya.ui.Box;
-	*import laya.ui.Clip;
-	*import laya.ui.Label;
-	*class Item extends Box
-	*{
-		*public function Item()
-		*{
-			*this.name="render";
-			*this.right=0;
-			*this.left=0;
-			*var selectBox:Clip=new Clip("resource/ui/clip_selectBox.png",1,2);
-			*selectBox.name="selectBox";
-			*selectBox.height=24;
-			*selectBox.x=13;
-			*selectBox.y=0;
-			*selectBox.left=12;
-			*addChild(selectBox);
-			*var folder:Clip=new Clip("resource/ui/clip_tree_folder.png",1,3);
-			*folder.name="folder";
-			*folder.x=14;
-			*folder.y=4;
-			*addChild(folder);
-			*var label:Label=new Label("treeItem");
-			*label.name="label";
-			*label.color="#ffff00";
-			*label.width=150;
-			*label.height=22;
-			*label.x=33;
-			*label.y=1;
-			*label.left=33;
-			*label.right=0;
-			*addChild(label);
-			*var arrow:Clip=new Clip("resource/ui/clip_tree_arrow.png",1,2);
-			*arrow.name="arrow";
-			*arrow.x=0;
-			*arrow.y=5;
-			*addChild(arrow);
-			*}
-		*}
-	*@example
-	*Laya.init(640,800);//设置游戏画布宽高、渲染模式
-	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色
-	*var res=["resource/ui/vscroll.png","resource/ui/vscroll$bar.png","resource/ui/vscroll$down.png","resource/ui/vscroll$up.png","resource/ui/clip_selectBox.png","resource/ui/clip_tree_folder.png","resource/ui/clip_tree_arrow.png"];
-	*Laya.loader.load(res,new laya.utils.Handler(this,onLoadComplete));
-	*function onLoadComplete(){
-		*var xmlString;//创建一个xml字符串，用于存储树结构数据。
-		*xmlString="&lt;root&gt;&lt;item label='box1'&gt;&lt;abc label='child1'/&gt;&lt;abc label='child2'/&gt;&lt;abc label='child3'/&gt;&lt;abc label='child4'/&gt;&lt;abc label='child5'/&gt;&lt;/item&gt;&lt;item label='box2'&gt;&lt;abc label='child1'/&gt;&lt;abc label='child2'/&gt;&lt;abc label='child3'/&gt;&lt;abc label='child4'/&gt;&lt;/item&gt;&lt;/root&gt;";
-		*var domParser=new laya.utils.Browser.window.DOMParser();//创建一个DOMParser实例domParser。
-		*var xml=domParser.parseFromString(xmlString,"text/xml");//解析xml字符。
-		*var tree=new laya.ui.Tree();//创建一个 Tree 类的实例对象 tree 。
-		*tree.scrollBarSkin="resource/ui/vscroll.png";//设置 tree 的皮肤。
-		*tree.itemRender=mypackage.treeExample.Item;//设置 tree 的项渲染器。
-		*tree.xml=xml;//设置 tree 的树结构数据。
-		*tree.x=100;//设置 tree 对象的属性 x 的值，用于控制 tree 对象的显示位置。
-		*tree.y=100;//设置 tree 对象的属性 y 的值，用于控制 tree 对象的显示位置。
-		*tree.width=200;//设置 tree 的宽度。
-		*tree.height=100;//设置 tree 的高度。
-		*Laya.stage.addChild(tree);//将 tree 添加到显示列表。
-		*}
-	*(function (_super){
-		*function Item(){
-			*Item.__super.call(this);//初始化父类。
-			*this.right=0;
-			*this.left=0;
-			*var selectBox=new laya.ui.Clip("resource/ui/clip_selectBox.png",1,2);
-			*selectBox.name="selectBox";//设置 selectBox 的name 为“selectBox”时，将被识别为树结构的项的背景。2帧：悬停时背景、选中时背景。
-			*selectBox.height=24;
-			*selectBox.x=13;
-			*selectBox.y=0;
-			*selectBox.left=12;
-			*this.addChild(selectBox);//需要使用this.访问父类的属性或方法。
-			*var folder=new laya.ui.Clip("resource/ui/clip_tree_folder.png",1,3);
-			*folder.name="folder";//设置 folder 的name 为“folder”时，将被识别为树结构的文件夹开启状态图表。2帧：折叠状态、打开状态。
-			*folder.x=14;
-			*folder.y=4;
-			*this.addChild(folder);
-			*var label=new laya.ui.Label("treeItem");
-			*label.name="label";//设置 label 的name 为“label”时，此值将用于树结构数据赋值。
-			*label.color="#ffff00";
-			*label.width=150;
-			*label.height=22;
-			*label.x=33;
-			*label.y=1;
-			*label.left=33;
-			*label.right=0;
-			*this.addChild(label);
-			*var arrow=new laya.ui.Clip("resource/ui/clip_tree_arrow.png",1,2);
-			*arrow.name="arrow";//设置 arrow 的name 为“arrow”时，将被识别为树结构的文件夹开启状态图表。2帧：折叠状态、打开状态。
-			*arrow.x=0;
-			*arrow.y=5;
-			*this.addChild(arrow);
-			*};
-		*Laya.class(Item,"mypackage.treeExample.Item",_super);//注册类 Item 。
-		*})(laya.ui.Box);
-	*@example
-	*import Tree=laya.ui.Tree;
-	*import Browser=laya.utils.Browser;
-	*import Handler=laya.utils.Handler;
-	*class Tree_Example {
-		*constructor(){
-			*Laya.init(640,800);
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*Laya.loader.load(["resource/ui/vscroll.png","resource/ui/vscroll$bar.png","resource/ui/vscroll$down.png","resource/ui/vscroll$up.png","resource/ui/vscroll$up.png","resource/ui/clip_selectBox.png","resource/ui/clip_tree_folder * . * png","resource/ui/clip_tree_arrow.png"],Handler.create(this,this.onLoadComplete));
-			*}
-		*private onLoadComplete():void {
-			*var xmlString:String;//创建一个xml字符串，用于存储树结构数据。
-			*xmlString="&lt;root&gt;&lt;item label='box1'&gt;&lt;abc label='child1'/&gt;&lt;abc label='child2'/&gt;&lt;abc label='child3'/&gt;&lt;abc label='child4'/&gt;&lt;abc label='child5'/&gt;&lt;/item&gt;&lt;item label='box2'&gt;&lt;abc  * label='child1'/&gt;&lt;abc label='child2'/&gt;&lt;abc label='child3'/&gt;&lt;abc label='child4'/&gt;&lt;/item&gt;&lt;/root&gt;";
-			*var domParser:any=new Browser.window.DOMParser();//创建一个DOMParser实例domParser。
-			*var xml:any=domParser.parseFromString(xmlString,"text/xml");//解析xml字符。
-			*var tree:Tree=new Tree();//创建一个 Tree 类的实例对象 tree 。
-			*tree.scrollBarSkin="resource/ui/vscroll.png";//设置 tree 的皮肤。
-			*tree.itemRender=Item;//设置 tree 的项渲染器。
-			*tree.xml=xml;//设置 tree 的树结构数据。
-			*tree.x=100;//设置 tree 对象的属性 x 的值，用于控制 tree 对象的显示位置。
-			*tree.y=100;//设置 tree 对象的属性 y 的值，用于控制 tree 对象的显示位置。
-			*tree.width=200;//设置 tree 的宽度。
-			*tree.height=100;//设置 tree 的高度。
-			*Laya.stage.addChild(tree);//将 tree 添加到显示列表。
-			*}
-		*}
-	*import Box=laya.ui.Box;
-	*import Clip=laya.ui.Clip;
-	*import Label=laya.ui.Label;
-	*class Item extends Box {
-		*constructor(){
-			*super();
-			*this.name="render";
-			*this.right=0;
-			*this.left=0;
-			*var selectBox:Clip=new Clip("resource/ui/clip_selectBox.png",1,2);
-			*selectBox.name="selectBox";
-			*selectBox.height=24;
-			*selectBox.x=13;
-			*selectBox.y=0;
-			*selectBox.left=12;
-			*this.addChild(selectBox);
-			*var folder:Clip=new Clip("resource/ui/clip_tree_folder.png",1,3);
-			*folder.name="folder";
-			*folder.x=14;
-			*folder.y=4;
-			*this.addChild(folder);
-			*var label:Label=new Label("treeItem");
-			*label.name="label";
-			*label.color="#ffff00";
-			*label.width=150;
-			*label.height=22;
-			*label.x=33;
-			*label.y=1;
-			*label.left=33;
-			*label.right=0;
-			*this.addChild(label);
-			*var arrow:Clip=new Clip("resource/ui/clip_tree_arrow.png",1,2);
-			*arrow.name="arrow";
-			*arrow.x=0;
-			*arrow.y=5;
-			*this.addChild(arrow);
-			*}
-		*}
-	*/
 	//class laya.ui.Tree extends laya.ui.Box
 	var Tree=(function(_super){
 		function Tree(){
@@ -35281,9 +33471,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Box)
 
 
-	/**
-	*<code>LayoutBox</code> 是一个布局容器类。
-	*/
 	//class laya.ui.LayoutBox extends laya.ui.Box
 	var LayoutBox=(function(_super){
 		function LayoutBox(){
@@ -35374,9 +33561,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Box)
 
 
-	/**
-	*<code>Panel</code> 是一个面板容器类。
-	*/
 	//class laya.ui.Panel extends laya.ui.Box
 	var Panel=(function(_super){
 		function Panel(){
@@ -35691,11 +33875,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Box)
 
 
-	/**
-	*<code>Group</code> 是一个可以自动布局的项集合控件。
-	*<p> <code>Group</code> 的默认项对象为 <code>Button</code> 类实例。
-	*<code>Group</code> 是 <code>Tab</code> 和 <code>RadioGroup</code> 的基类。</p>
-	*/
 	//class laya.ui.UIGroup extends laya.ui.Box
 	var UIGroup=(function(_super){
 		function UIGroup(labels,skin){
@@ -36111,9 +34290,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Box)
 
 
-	/**
-	*<code>ViewStack</code> 类用于视图堆栈类，用于视图的显示等设置处理。
-	*/
 	//class laya.ui.ViewStack extends laya.ui.Box
 	var ViewStack=(function(_super){
 		function ViewStack(){
@@ -36248,1016 +34424,6 @@ var Laya=window.Laya=(function(window,document){
 	})(Box)
 
 
-	/**
-	*<code>CheckBox</code> 组件显示一个小方框，该方框内可以有选中标记。
-	*<code>CheckBox</code> 组件还可以显示可选的文本标签，默认该标签位于 CheckBox 右侧。
-	*<p><code>CheckBox</code> 使用 <code>dataSource</code>赋值时的的默认属性是：<code>selected</code>。</p>
-	*
-	*@example <caption>以下示例代码，创建了一个 <code>CheckBox</code> 实例。</caption>
-	*package
-	*{
-		*import laya.ui.CheckBox;
-		*import laya.utils.Handler;
-		*public class CheckBox_Example
-		*{
-			*public function CheckBox_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*Laya.loader.load("resource/ui/check.png",Handler.create(this,onLoadComplete));//加载资源。
-				*}
-			*private function onLoadComplete():void
-			*{
-				*trace("资源加载完成！");
-				*var checkBox:CheckBox=new CheckBox("resource/ui/check.png","这个是一个CheckBox组件。");//创建一个 CheckBox 类的实例对象 checkBox ,传入它的皮肤skin和标签label。
-				*checkBox.x=100;//设置 checkBox 对象的属性 x 的值，用于控制 checkBox 对象的显示位置。
-				*checkBox.y=100;//设置 checkBox 对象的属性 y 的值，用于控制 checkBox 对象的显示位置。
-				*checkBox.clickHandler=new Handler(this,onClick,[checkBox]);//设置 checkBox 的点击事件处理器。
-				*Laya.stage.addChild(checkBox);//将此 checkBox 对象添加到显示列表。
-				*}
-			*private function onClick(checkBox:CheckBox):void
-			*{
-				*trace("输出选中状态: checkBox.selected = "+checkBox.selected);
-				*}
-			*}
-		*}
-	*@example
-	*Laya.init(640,800);//设置游戏画布宽高
-	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色
-	*Laya.loader.load("resource/ui/check.png",laya.utils.Handler.create(this,loadComplete));//加载资源
-	*function loadComplete()
-	*{
-		*console.log("资源加载完成！");
-		*var checkBox:laya.ui.CheckBox=new laya.ui.CheckBox("resource/ui/check.png","这个是一个CheckBox组件。");//创建一个 CheckBox 类的类的实例对象 checkBox ,传入它的皮肤skin和标签label。
-		*checkBox.x=100;//设置 checkBox 对象的属性 x 的值，用于控制 checkBox 对象的显示位置。
-		*checkBox.y=100;//设置 checkBox 对象的属性 y 的值，用于控制 checkBox 对象的显示位置。
-		*checkBox.clickHandler=new laya.utils.Handler(this,this.onClick,[checkBox],false);//设置 checkBox 的点击事件处理器。
-		*Laya.stage.addChild(checkBox);//将此 checkBox 对象添加到显示列表。
-		*}
-	*function onClick(checkBox)
-	*{
-		*console.log("checkBox.selected = ",checkBox.selected);
-		*}
-	*@example
-	*import CheckBox=laya.ui.CheckBox;
-	*import Handler=laya.utils.Handler;
-	*class CheckBox_Example{
-		*constructor()
-		*{
-			*Laya.init(640,800);
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*Laya.loader.load("resource/ui/check.png",Handler.create(this,this.onLoadComplete));//加载资源。
-			*}
-		*private onLoadComplete()
-		*{
-			*var checkBox:CheckBox=new CheckBox("resource/ui/check.png","这个是一个CheckBox组件。");//创建一个 CheckBox 类的实例对象 checkBox ,传入它的皮肤skin和标签label。
-			*checkBox.x=100;//设置 checkBox 对象的属性 x 的值，用于控制 checkBox 对象的显示位置。
-			*checkBox.y=100;//设置 checkBox 对象的属性 y 的值，用于控制 checkBox 对象的显示位置。
-			*checkBox.clickHandler=new Handler(this,this.onClick,[checkBox]);//设置 checkBox 的点击事件处理器。
-			*Laya.stage.addChild(checkBox);//将此 checkBox 对象添加到显示列表。
-			*}
-		*private onClick(checkBox:CheckBox):void
-		*{
-			*console.log("输出选中状态: checkBox.selected = "+checkBox.selected);
-			*}
-		*}
-	*/
-	//class laya.ui.CheckBox extends laya.ui.Button
-	var CheckBox=(function(_super){
-		/**
-		*创建一个新的 <code>CheckBox</code> 组件实例。
-		*@param skin 皮肤资源地址。
-		*@param label 文本标签的内容。
-		*/
-		function CheckBox(skin,label){
-			(label===void 0)&& (label="");
-			CheckBox.__super.call(this,skin,label);
-		}
-
-		__class(CheckBox,'laya.ui.CheckBox',_super);
-		var __proto=CheckBox.prototype;
-		/**@inheritDoc */
-		__proto.preinitialize=function(){
-			laya.ui.Component.prototype.preinitialize.call(this);
-			this.toggle=true;
-			this._autoSize=false;
-		}
-
-		/**@inheritDoc */
-		__proto.initialize=function(){
-			_super.prototype.initialize.call(this);
-			this.createText();
-			this._text.align="left";
-			this._text.valign="top";
-			this._text.width=0;
-		}
-
-		/**@inheritDoc */
-		__getset(0,__proto,'dataSource',_super.prototype._$get_dataSource,function(value){
-			this._dataSource=value;
-			if ((typeof value=='boolean'))this.selected=value;
-			else if ((typeof value=='string'))this.selected=value==="true";
-			else _super.prototype._$set_dataSource.call(this,value);
-		});
-
-		return CheckBox;
-	})(Button)
-
-
-	/**
-	*<code>Radio</code> 控件使用户可在一组互相排斥的选择中做出一种选择。
-	*用户一次只能选择 <code>Radio</code> 组中的一个成员。选择未选中的组成员将取消选择该组中当前所选的 <code>Radio</code> 控件。
-	*@see laya.ui.RadioGroup
-	*/
-	//class laya.ui.Radio extends laya.ui.Button
-	var Radio=(function(_super){
-		function Radio(skin,label){
-			this._value=null;
-			(label===void 0)&& (label="");
-			Radio.__super.call(this,skin,label);
-		}
-
-		__class(Radio,'laya.ui.Radio',_super);
-		var __proto=Radio.prototype;
-		/**@inheritDoc */
-		__proto.destroy=function(destroyChild){
-			(destroyChild===void 0)&& (destroyChild=true);
-			_super.prototype.destroy.call(this,destroyChild);
-			this._value=null;
-		}
-
-		/**@inheritDoc */
-		__proto.preinitialize=function(){
-			laya.ui.Component.prototype.preinitialize.call(this);
-			this.toggle=false;
-			this._autoSize=false;
-		}
-
-		/**@inheritDoc */
-		__proto.initialize=function(){
-			_super.prototype.initialize.call(this);
-			this.createText();
-			this._text.align="left";
-			this._text.valign="top";
-			this._text.width=0;
-			this.on("click",this,this.onClick);
-		}
-
-		/**
-		*@private
-		*对象的<code>Event.CLICK</code>事件侦听处理函数。
-		*/
-		__proto.onClick=function(e){
-			this.selected=true;
-		}
-
-		/**
-		*获取或设置 <code>Radio</code> 关联的可选用户定义值。
-		*/
-		__getset(0,__proto,'value',function(){
-			return this._value !=null ? this._value :this.label;
-			},function(obj){
-			this._value=obj;
-		});
-
-		return Radio;
-	})(Button)
-
-
-	/**
-	*字体切片，简化版的位图字体，只需设置一个切片图片和文字内容即可使用，效果同位图字体
-	*使用方式：设置位图字体皮肤skin，设置皮肤对应的字体内容sheet（如果多行，可以使用空格换行），示例：
-	*fontClip.skin="font1.png";//设置皮肤
-	*fontClip.sheet="abc123 456";//设置皮肤对应的内容，空格换行。此皮肤为2行5列（显示时skin会被等分为2行5列），第一行对应的文字为"abc123"，第二行为"456"
-	*fontClip.value="a1326";//显示"a1326"文字
-	*/
-	//class laya.ui.FontClip extends laya.ui.Clip
-	var FontClip=(function(_super){
-		function FontClip(skin,sheet){
-			this._valueArr=null;
-			this._indexMap=null;
-			this._sheet=null;
-			this._direction="horizontal";
-			this._spaceX=0;
-			this._spaceY=0;
-			FontClip.__super.call(this);
-			if (skin)this.skin=skin;
-			if (sheet)this.sheet=sheet;
-		}
-
-		__class(FontClip,'laya.ui.FontClip',_super);
-		var __proto=FontClip.prototype;
-		__proto.createChildren=function(){
-			this._bitmap=new AutoBitmap();
-			this.on("loaded",this,this._onClipLoaded);
-		}
-
-		/**
-		*资源加载完毕
-		*/
-		__proto._onClipLoaded=function(){
-			this.callLater(this.changeValue);
-		}
-
-		/**渲染数值*/
-		__proto.changeValue=function(){
-			if (!this._sources)return;
-			if (!this._valueArr)return;
-			this.graphics.clear();
-			var texture;
-			var isHorizontal=(this._direction==="horizontal");
-			for (var i=0,sz=this._valueArr.length;i < sz;i++){
-				var index=this._indexMap[this._valueArr[i]];
-				if (!this.sources[index])continue ;
-				texture=this.sources[index];
-				if (isHorizontal)this.graphics.drawTexture(texture,i *(texture.width+this.spaceX),0,texture.width,texture.height);
-				else this.graphics.drawTexture(texture,0,i *(texture.height+this.spaceY),texture.width,texture.height);
-			}
-			if (!texture)return;
-			if (isHorizontal)this.size(this._valueArr.length *(texture.width+this.spaceX),texture.height);
-			else this.size(texture.width,(texture.height+this.spaceY)*this._valueArr.length);
-		}
-
-		__proto.destroy=function(destroyChild){
-			(destroyChild===void 0)&& (destroyChild=true);
-			this._valueArr=null;
-			this._indexMap=null;
-			this._indexMap=null;
-			this.graphics.clear();
-			this.removeSelf();
-			this.off("loaded",this,this._onClipLoaded);
-			_super.prototype.destroy.call(this,destroyChild);
-		}
-
-		/**
-		*设置位图字体内容，空格代表换行。比如"abc123 456"，代表第一行对应的文字为"abc123"，第二行为"456"
-		*/
-		__getset(0,__proto,'sheet',function(){
-			return this._sheet;
-			},function(value){
-			value+="";
-			this._sheet=value;
-			var arr=value.split(" ");
-			this._clipX=String(arr[0]).length;
-			this.clipY=arr.length;
-			this._indexMap={};
-			for (var i=0;i < this._clipY;i++){
-				var line=arr[i].split("");
-				for (var j=0,n=line.length;j < n;j++){
-					this._indexMap[line[j]]=i *this._clipX+j;
-				}
-			}
-		});
-
-		/**
-		*布局方向。
-		*<p>默认值为"horizontal"。</p>
-		*<p><b>取值：</b>
-		*<li>"horizontal"：表示水平布局。</li>
-		*<li>"vertical"：表示垂直布局。</li>
-		*</p>
-		*/
-		__getset(0,__proto,'direction',function(){
-			return this._direction;
-			},function(value){
-			this._direction=value;
-			this.callLater(this.changeValue);
-		});
-
-		/**
-		*设置位图字体的显示内容
-		*/
-		__getset(0,__proto,'value',function(){
-			if (!this._valueArr)return "";
-			return this._valueArr.join("");
-			},function(value){
-			value+="";
-			this._valueArr=value.split("");
-			this.callLater(this.changeValue);
-		});
-
-		/**X方向文字间隙*/
-		__getset(0,__proto,'spaceX',function(){
-			return this._spaceX;
-			},function(value){
-			this._spaceX=value;
-			if (this._direction==="horizontal")this.callLater(this.changeValue);
-		});
-
-		/**Y方向文字间隙*/
-		__getset(0,__proto,'spaceY',function(){
-			return this._spaceY;
-			},function(value){
-			this._spaceY=value;
-			if (!(this._direction==="horizontal"))this.callLater(this.changeValue);
-		});
-
-		return FontClip;
-	})(Clip)
-
-
-	/**
-	*使用 <code>HScrollBar</code> （水平 <code>ScrollBar</code> ）控件，可以在因数据太多而不能在显示区域完全显示时控制显示的数据部分。
-	*@example <caption>以下示例代码，创建了一个 <code>HScrollBar</code> 实例。</caption>
-	*package
-	*{
-		*import laya.ui.HScrollBar;
-		*import laya.utils.Handler;
-		*public class HScrollBar_Example
-		*{
-			*private var hScrollBar:HScrollBar;
-			*public function HScrollBar_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*Laya.loader.load(["resource/ui/hscroll.png","resource/ui/hscroll$bar.png","resource/ui/hscroll$down.png","resource/ui/hscroll$up.png"],Handler.create(this,onLoadComplete));//加载资源。
-				*}
-			*private function onLoadComplete():void
-			*{
-				*hScrollBar=new HScrollBar();//创建一个 HScrollBar 类的实例对象 hScrollBar 。
-				*hScrollBar.skin="resource/ui/hscroll.png";//设置 hScrollBar 的皮肤。
-				*hScrollBar.x=100;//设置 hScrollBar 对象的属性 x 的值，用于控制 hScrollBar 对象的显示位置。
-				*hScrollBar.y=100;//设置 hScrollBar 对象的属性 y 的值，用于控制 hScrollBar 对象的显示位置。
-				*hScrollBar.changeHandler=new Handler(this,onChange);//设置 hScrollBar 的滚动变化处理器。
-				*Laya.stage.addChild(hScrollBar);//将此 hScrollBar 对象添加到显示列表。
-				*}
-			*private function onChange(value:Number):void
-			*{
-				*trace("滚动条的位置： value="+value);
-				*}
-			*}
-		*}
-	*@example
-	*Laya.init(640,800);//设置游戏画布宽高
-	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色
-	*var hScrollBar;
-	*var res=["resource/ui/hscroll.png","resource/ui/hscroll$bar.png","resource/ui/hscroll$down.png","resource/ui/hscroll$up.png"];
-	*Laya.loader.load(res,laya.utils.Handler.create(this,onLoadComplete));//加载资源。
-	*function onLoadComplete(){
-		*console.log("资源加载完成！");
-		*hScrollBar=new laya.ui.HScrollBar();//创建一个 HScrollBar 类的实例对象 hScrollBar 。
-		*hScrollBar.skin="resource/ui/hscroll.png";//设置 hScrollBar 的皮肤。
-		*hScrollBar.x=100;//设置 hScrollBar 对象的属性 x 的值，用于控制 hScrollBar 对象的显示位置。
-		*hScrollBar.y=100;//设置 hScrollBar 对象的属性 y 的值，用于控制 hScrollBar 对象的显示位置。
-		*hScrollBar.changeHandler=new laya.utils.Handler(this,onChange);//设置 hScrollBar 的滚动变化处理器。
-		*Laya.stage.addChild(hScrollBar);//将此 hScrollBar 对象添加到显示列表。
-		*}
-	*function onChange(value)
-	*{
-		*console.log("滚动条的位置： value="+value);
-		*}
-	*@example
-	*import HScrollBar=laya.ui.HScrollBar;
-	*import Handler=laya.utils.Handler;
-	*class HScrollBar_Example {
-		*private hScrollBar:HScrollBar;
-		*constructor(){
-			*Laya.init(640,800);//设置游戏画布宽高。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*Laya.loader.load(["resource/ui/hscroll.png","resource/ui/hscroll$bar.png","resource/ui/hscroll$down.png","resource/ui/hscroll$up.png"],Handler.create(this,this.onLoadComplete));//加载资源。
-			*}
-		*private onLoadComplete():void {
-			*this.hScrollBar=new HScrollBar();//创建一个 HScrollBar 类的实例对象 hScrollBar 。
-			*this.hScrollBar.skin="resource/ui/hscroll.png";//设置 hScrollBar 的皮肤。
-			*this.hScrollBar.x=100;//设置 hScrollBar 对象的属性 x 的值，用于控制 hScrollBar 对象的显示位置。
-			*this.hScrollBar.y=100;//设置 hScrollBar 对象的属性 y 的值，用于控制 hScrollBar 对象的显示位置。
-			*this.hScrollBar.changeHandler=new Handler(this,this.onChange);//设置 hScrollBar 的滚动变化处理器。
-			*Laya.stage.addChild(this.hScrollBar);//将此 hScrollBar 对象添加到显示列表。
-			*}
-		*private onChange(value:number):void {
-			*console.log("滚动条的位置： value="+value);
-			*}
-		*}
-	*/
-	//class laya.ui.HScrollBar extends laya.ui.ScrollBar
-	var HScrollBar=(function(_super){
-		function HScrollBar(){HScrollBar.__super.call(this);;
-		};
-
-		__class(HScrollBar,'laya.ui.HScrollBar',_super);
-		var __proto=HScrollBar.prototype;
-		/**@inheritDoc */
-		__proto.initialize=function(){
-			_super.prototype.initialize.call(this);
-			this.slider.isVertical=false;
-		}
-
-		return HScrollBar;
-	})(ScrollBar)
-
-
-	/**
-	*使用 <code>HSlider</code> 控件，用户可以通过在滑块轨道的终点之间移动滑块来选择值。
-	*<p> <code>HSlider</code> 控件采用水平方向。滑块轨道从左向右扩展，而标签位于轨道的顶部或底部。</p>
-	*
-	*@example <caption>以下示例代码，创建了一个 <code>HSlider</code> 实例。</caption>
-	*package
-	*{
-		*import laya.ui.HSlider;
-		*import laya.utils.Handler;
-		*public class HSlider_Example
-		*{
-			*private var hSlider:HSlider;
-			*public function HSlider_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*Laya.loader.load(["resource/ui/hslider.png","resource/ui/hslider$bar.png"],Handler.create(this,onLoadComplete));//加载资源。
-				*}
-			*private function onLoadComplete():void
-			*{
-				*hSlider=new HSlider();//创建一个 HSlider 类的实例对象 hSlider 。
-				*hSlider.skin="resource/ui/hslider.png";//设置 hSlider 的皮肤。
-				*hSlider.min=0;//设置 hSlider 最低位置值。
-				*hSlider.max=10;//设置 hSlider 最高位置值。
-				*hSlider.value=2;//设置 hSlider 当前位置值。
-				*hSlider.tick=1;//设置 hSlider 刻度值。
-				*hSlider.x=100;//设置 hSlider 对象的属性 x 的值，用于控制 hSlider 对象的显示位置。
-				*hSlider.y=100;//设置 hSlider 对象的属性 y 的值，用于控制 hSlider 对象的显示位置。
-				*hSlider.changeHandler=new Handler(this,onChange);//设置 hSlider 位置变化处理器。
-				*Laya.stage.addChild(hSlider);//把 hSlider 添加到显示列表。
-				*}
-			*private function onChange(value:Number):void
-			*{
-				*trace("滑块的位置： value="+value);
-				*}
-			*}
-		*}
-	*@example
-	*Laya.init(640,800,"canvas");//设置游戏画布宽高、渲染模式
-	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色
-	*var hSlider;
-	*var res=["resource/ui/hslider.png","resource/ui/hslider$bar.png"];
-	*Laya.loader.load(res,laya.utils.Handler.create(this,onLoadComplete));
-	*function onLoadComplete(){
-		*console.log("资源加载完成！");
-		*hSlider=new laya.ui.HSlider();//创建一个 HSlider 类的实例对象 hSlider 。
-		*hSlider.skin="resource/ui/hslider.png";//设置 hSlider 的皮肤。
-		*hSlider.min=0;//设置 hSlider 最低位置值。
-		*hSlider.max=10;//设置 hSlider 最高位置值。
-		*hSlider.value=2;//设置 hSlider 当前位置值。
-		*hSlider.tick=1;//设置 hSlider 刻度值。
-		*hSlider.x=100;//设置 hSlider 对象的属性 x 的值，用于控制 hSlider 对象的显示位置。
-		*hSlider.y=100;//设置 hSlider 对象的属性 y 的值，用于控制 hSlider 对象的显示位置。
-		*hSlider.changeHandler=new laya.utils.Handler(this,onChange);//设置 hSlider 位置变化处理器。
-		*Laya.stage.addChild(hSlider);//把 hSlider 添加到显示列表。
-		*}
-	*function onChange(value)
-	*{
-		*console.log("滑块的位置： value="+value);
-		*}
-	*@example
-	*import Handler=laya.utils.Handler;
-	*import HSlider=laya.ui.HSlider;
-	*class HSlider_Example {
-		*private hSlider:HSlider;
-		*constructor(){
-			*Laya.init(640,800);//设置游戏画布宽高。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*Laya.loader.load(["resource/ui/hslider.png","resource/ui/hslider$bar.png"],Handler.create(this,this.onLoadComplete));//加载资源。
-			*}
-		*private onLoadComplete():void {
-			*this.hSlider=new HSlider();//创建一个 HSlider 类的实例对象 hSlider 。
-			*this.hSlider.skin="resource/ui/hslider.png";//设置 hSlider 的皮肤。
-			*this.hSlider.min=0;//设置 hSlider 最低位置值。
-			*this.hSlider.max=10;//设置 hSlider 最高位置值。
-			*this.hSlider.value=2;//设置 hSlider 当前位置值。
-			*this.hSlider.tick=1;//设置 hSlider 刻度值。
-			*this.hSlider.x=100;//设置 hSlider 对象的属性 x 的值，用于控制 hSlider 对象的显示位置。
-			*this.hSlider.y=100;//设置 hSlider 对象的属性 y 的值，用于控制 hSlider 对象的显示位置。
-			*this.hSlider.changeHandler=new Handler(this,this.onChange);//设置 hSlider 位置变化处理器。
-			*Laya.stage.addChild(this.hSlider);//把 hSlider 添加到显示列表。
-			*}
-		*private onChange(value:number):void {
-			*console.log("滑块的位置： value="+value);
-			*}
-		*}
-	*
-	*@see laya.ui.Slider
-	*/
-	//class laya.ui.HSlider extends laya.ui.Slider
-	var HSlider=(function(_super){
-		/**
-		*创建一个 <code>HSlider</code> 类实例。
-		*@param skin 皮肤。
-		*/
-		function HSlider(skin){
-			HSlider.__super.call(this,skin);
-			this.isVertical=false;
-		}
-
-		__class(HSlider,'laya.ui.HSlider',_super);
-		return HSlider;
-	})(Slider)
-
-
-	/**
-	*
-	*使用 <code>VScrollBar</code> （垂直 <code>ScrollBar</code> ）控件，可以在因数据太多而不能在显示区域完全显示时控制显示的数据部分。
-	*
-	*@example <caption>以下示例代码，创建了一个 <code>VScrollBar</code> 实例。</caption>
-	*package
-	*{
-		*import laya.ui.vScrollBar;
-		*import laya.ui.VScrollBar;
-		*import laya.utils.Handler;
-		*public class VScrollBar_Example
-		*{
-			*private var vScrollBar:VScrollBar;
-			*public function VScrollBar_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高、渲染模式。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*Laya.loader.load(["resource/ui/vscroll.png","resource/ui/vscroll$bar.png","resource/ui/vscroll$down.png","resource/ui/vscroll$up.png"],Handler.create(this,onLoadComplete));
-				*}
-			*private function onLoadComplete():void
-			*{
-				*vScrollBar=new VScrollBar();//创建一个 vScrollBar 类的实例对象 hScrollBar 。
-				*vScrollBar.skin="resource/ui/vscroll.png";//设置 vScrollBar 的皮肤。
-				*vScrollBar.x=100;//设置 vScrollBar 对象的属性 x 的值，用于控制 vScrollBar 对象的显示位置。
-				*vScrollBar.y=100;//设置 vScrollBar 对象的属性 y 的值，用于控制 vScrollBar 对象的显示位置。
-				*vScrollBar.changeHandler=new Handler(this,onChange);//设置 vScrollBar 的滚动变化处理器。
-				*Laya.stage.addChild(vScrollBar);//将此 vScrollBar 对象添加到显示列表。
-				*}
-			*private function onChange(value:Number):void
-			*{
-				*trace("滚动条的位置： value="+value);
-				*}
-			*}
-		*}
-	*@example
-	*Laya.init(640,800);//设置游戏画布宽高
-	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色
-	*var vScrollBar;
-	*var res=["resource/ui/vscroll.png","resource/ui/vscroll$bar.png","resource/ui/vscroll$down.png","resource/ui/vscroll$up.png"];
-	*Laya.loader.load(res,laya.utils.Handler.create(this,onLoadComplete));//加载资源。
-	*function onLoadComplete(){
-		*vScrollBar=new laya.ui.VScrollBar();//创建一个 vScrollBar 类的实例对象 hScrollBar 。
-		*vScrollBar.skin="resource/ui/vscroll.png";//设置 vScrollBar 的皮肤。
-		*vScrollBar.x=100;//设置 vScrollBar 对象的属性 x 的值，用于控制 vScrollBar 对象的显示位置。
-		*vScrollBar.y=100;//设置 vScrollBar 对象的属性 y 的值，用于控制 vScrollBar 对象的显示位置。
-		*vScrollBar.changeHandler=new laya.utils.Handler(this,onChange);//设置 vScrollBar 的滚动变化处理器。
-		*Laya.stage.addChild(vScrollBar);//将此 vScrollBar 对象添加到显示列表。
-		*}
-	*function onChange(value){
-		*console.log("滚动条的位置： value="+value);
-		*}
-	*@example
-	*import VScrollBar=laya.ui.VScrollBar;
-	*import Handler=laya.utils.Handler;
-	*class VScrollBar_Example {
-		*private vScrollBar:VScrollBar;
-		*constructor(){
-			*Laya.init(640,800);//设置游戏画布宽高、渲染模式。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*Laya.loader.load(["resource/ui/vscroll.png","resource/ui/vscroll$bar.png","resource/ui/vscroll$down.png","resource/ui/vscroll$up.png"],Handler.create(this,this.onLoadComplete));
-			*}
-		*private onLoadComplete():void {
-			*this.vScrollBar=new VScrollBar();//创建一个 vScrollBar 类的实例对象 hScrollBar 。
-			*this.vScrollBar.skin="resource/ui/vscroll.png";//设置 vScrollBar 的皮肤。
-			*this.vScrollBar.x=100;//设置 vScrollBar 对象的属性 x 的值，用于控制 vScrollBar 对象的显示位置。
-			*this.vScrollBar.y=100;//设置 vScrollBar 对象的属性 y 的值，用于控制 vScrollBar 对象的显示位置。
-			*this.vScrollBar.changeHandler=new Handler(this,this.onChange);//设置 vScrollBar 的滚动变化处理器。
-			*Laya.stage.addChild(this.vScrollBar);//将此 vScrollBar 对象添加到显示列表。
-			*}
-		*private onChange(value:number):void {
-			*console.log("滚动条的位置： value="+value);
-			*}
-		*}
-	*/
-	//class laya.ui.VScrollBar extends laya.ui.ScrollBar
-	var VScrollBar=(function(_super){
-		function VScrollBar(){VScrollBar.__super.call(this);;
-		};
-
-		__class(VScrollBar,'laya.ui.VScrollBar',_super);
-		return VScrollBar;
-	})(ScrollBar)
-
-
-	/**
-	*使用 <code>VSlider</code> 控件，用户可以通过在滑块轨道的终点之间移动滑块来选择值。
-	*<p> <code>VSlider</code> 控件采用垂直方向。滑块轨道从下往上扩展，而标签位于轨道的左右两侧。</p>
-	*
-	*@example <caption>以下示例代码，创建了一个 <code>VSlider</code> 实例。</caption>
-	*package
-	*{
-		*import laya.ui.HSlider;
-		*import laya.ui.VSlider;
-		*import laya.utils.Handler;
-		*public class VSlider_Example
-		*{
-			*private var vSlider:VSlider;
-			*public function VSlider_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*Laya.loader.load(["resource/ui/vslider.png","resource/ui/vslider$bar.png"],Handler.create(this,onLoadComplete));//加载资源。
-				*}
-			*private function onLoadComplete():void
-			*{
-				*vSlider=new VSlider();//创建一个 VSlider 类的实例对象 vSlider 。
-				*vSlider.skin="resource/ui/vslider.png";//设置 vSlider 的皮肤。
-				*vSlider.min=0;//设置 vSlider 最低位置值。
-				*vSlider.max=10;//设置 vSlider 最高位置值。
-				*vSlider.value=2;//设置 vSlider 当前位置值。
-				*vSlider.tick=1;//设置 vSlider 刻度值。
-				*vSlider.x=100;//设置 vSlider 对象的属性 x 的值，用于控制 vSlider 对象的显示位置。
-				*vSlider.y=100;//设置 vSlider 对象的属性 y 的值，用于控制 vSlider 对象的显示位置。
-				*vSlider.changeHandler=new Handler(this,onChange);//设置 vSlider 位置变化处理器。
-				*Laya.stage.addChild(vSlider);//把 vSlider 添加到显示列表。
-				*}
-			*private function onChange(value:Number):void
-			*{
-				*trace("滑块的位置： value="+value);
-				*}
-			*}
-		*}
-	*@example
-	*Laya.init(640,800);//设置游戏画布宽高
-	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色
-	*var vSlider;
-	*Laya.loader.load(["resource/ui/vslider.png","resource/ui/vslider$bar.png"],laya.utils.Handler.create(this,onLoadComplete));//加载资源。
-	*function onLoadComplete(){
-		*vSlider=new laya.ui.VSlider();//创建一个 VSlider 类的实例对象 vSlider 。
-		*vSlider.skin="resource/ui/vslider.png";//设置 vSlider 的皮肤。
-		*vSlider.min=0;//设置 vSlider 最低位置值。
-		*vSlider.max=10;//设置 vSlider 最高位置值。
-		*vSlider.value=2;//设置 vSlider 当前位置值。
-		*vSlider.tick=1;//设置 vSlider 刻度值。
-		*vSlider.x=100;//设置 vSlider 对象的属性 x 的值，用于控制 vSlider 对象的显示位置。
-		*vSlider.y=100;//设置 vSlider 对象的属性 y 的值，用于控制 vSlider 对象的显示位置。
-		*vSlider.changeHandler=new laya.utils.Handler(this,onChange);//设置 vSlider 位置变化处理器。
-		*Laya.stage.addChild(vSlider);//把 vSlider 添加到显示列表。
-		*}
-	*function onChange(value){
-		*console.log("滑块的位置： value="+value);
-		*}
-	*@example
-	*import HSlider=laya.ui.HSlider;
-	*import VSlider=laya.ui.VSlider;
-	*import Handler=laya.utils.Handler;
-	*class VSlider_Example {
-		*private vSlider:VSlider;
-		*constructor(){
-			*Laya.init(640,800);//设置游戏画布宽高。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*Laya.loader.load(["resource/ui/vslider.png","resource/ui/vslider$bar.png"],Handler.create(this,this.onLoadComplete));//加载资源。
-			*}
-		*private onLoadComplete():void {
-			*this.vSlider=new VSlider();//创建一个 VSlider 类的实例对象 vSlider 。
-			*this.vSlider.skin="resource/ui/vslider.png";//设置 vSlider 的皮肤。
-			*this.vSlider.min=0;//设置 vSlider 最低位置值。
-			*this.vSlider.max=10;//设置 vSlider 最高位置值。
-			*this.vSlider.value=2;//设置 vSlider 当前位置值。
-			*this.vSlider.tick=1;//设置 vSlider 刻度值。
-			*this.vSlider.x=100;//设置 vSlider 对象的属性 x 的值，用于控制 vSlider 对象的显示位置。
-			*this.vSlider.y=100;//设置 vSlider 对象的属性 y 的值，用于控制 vSlider 对象的显示位置。
-			*this.vSlider.changeHandler=new Handler(this,this.onChange);//设置 vSlider 位置变化处理器。
-			*Laya.stage.addChild(this.vSlider);//把 vSlider 添加到显示列表。
-			*}
-		*private onChange(value:number):void {
-			*console.log("滑块的位置： value="+value);
-			*}
-		*}
-	*@see laya.ui.Slider
-	*/
-	//class laya.ui.VSlider extends laya.ui.Slider
-	var VSlider=(function(_super){
-		function VSlider(){VSlider.__super.call(this);;
-		};
-
-		__class(VSlider,'laya.ui.VSlider',_super);
-		return VSlider;
-	})(Slider)
-
-
-	/**
-	*<code>TextInput</code> 类用于创建显示对象以显示和输入文本。
-	*
-	*@example <caption>以下示例代码，创建了一个 <code>TextInput</code> 实例。</caption>
-	*package
-	*{
-		*import laya.display.Stage;
-		*import laya.ui.TextInput;
-		*import laya.utils.Handler;
-		*public class TextInput_Example
-		*{
-			*public function TextInput_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高、渲染模式。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*Laya.loader.load(["resource/ui/input.png"],Handler.create(this,onLoadComplete));//加载资源。
-				*}
-			*private function onLoadComplete():void
-			*{
-				*var textInput:TextInput=new TextInput("这是一个TextInput实例。");//创建一个 TextInput 类的实例对象 textInput 。
-				*textInput.skin="resource/ui/input.png";//设置 textInput 的皮肤。
-				*textInput.sizeGrid="4,4,4,4";//设置 textInput 的网格信息。
-				*textInput.color="#008fff";//设置 textInput 的文本颜色。
-				*textInput.font="Arial";//设置 textInput 的文本字体。
-				*textInput.bold=true;//设置 textInput 的文本显示为粗体。
-				*textInput.fontSize=30;//设置 textInput 的字体大小。
-				*textInput.wordWrap=true;//设置 textInput 的文本自动换行。
-				*textInput.x=100;//设置 textInput 对象的属性 x 的值，用于控制 textInput 对象的显示位置。
-				*textInput.y=100;//设置 textInput 对象的属性 y 的值，用于控制 textInput 对象的显示位置。
-				*textInput.width=300;//设置 textInput 的宽度。
-				*textInput.height=200;//设置 textInput 的高度。
-				*Laya.stage.addChild(textInput);//将 textInput 添加到显示列表。
-				*}
-			*}
-		*}
-	*@example
-	*Laya.init(640,800);//设置游戏画布宽高
-	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色
-	*Laya.loader.load(["resource/ui/input.png"],laya.utils.Handler.create(this,onLoadComplete));//加载资源。
-	*function onLoadComplete(){
-		*var textInput=new laya.ui.TextInput("这是一个TextInput实例。");//创建一个 TextInput 类的实例对象 textInput 。
-		*textInput.skin="resource/ui/input.png";//设置 textInput 的皮肤。
-		*textInput.sizeGrid="4,4,4,4";//设置 textInput 的网格信息。
-		*textInput.color="#008fff";//设置 textInput 的文本颜色。
-		*textInput.font="Arial";//设置 textInput 的文本字体。
-		*textInput.bold=true;//设置 textInput 的文本显示为粗体。
-		*textInput.fontSize=30;//设置 textInput 的字体大小。
-		*textInput.wordWrap=true;//设置 textInput 的文本自动换行。
-		*textInput.x=100;//设置 textInput 对象的属性 x 的值，用于控制 textInput 对象的显示位置。
-		*textInput.y=100;//设置 textInput 对象的属性 y 的值，用于控制 textInput 对象的显示位置。
-		*textInput.width=300;//设置 textInput 的宽度。
-		*textInput.height=200;//设置 textInput 的高度。
-		*Laya.stage.addChild(textInput);//将 textInput 添加到显示列表。
-		*}
-	*@example
-	*import Stage=laya.display.Stage;
-	*import TextInput=laya.ui.TextInput;
-	*import Handler=laya.utils.Handler;
-	*class TextInput_Example {
-		*constructor(){
-			*Laya.init(640,800);//设置游戏画布宽高、渲染模式。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*Laya.loader.load(["resource/ui/input.png"],Handler.create(this,this.onLoadComplete));//加载资源。
-			*}
-		*private onLoadComplete():void {
-			*var textInput:TextInput=new TextInput("这是一个TextInput实例。");//创建一个 TextInput 类的实例对象 textInput 。
-			*textInput.skin="resource/ui/input.png";//设置 textInput 的皮肤。
-			*textInput.sizeGrid="4,4,4,4";//设置 textInput 的网格信息。
-			*textInput.color="#008fff";//设置 textInput 的文本颜色。
-			*textInput.font="Arial";//设置 textInput 的文本字体。
-			*textInput.bold=true;//设置 textInput 的文本显示为粗体。
-			*textInput.fontSize=30;//设置 textInput 的字体大小。
-			*textInput.wordWrap=true;//设置 textInput 的文本自动换行。
-			*textInput.x=100;//设置 textInput 对象的属性 x 的值，用于控制 textInput 对象的显示位置。
-			*textInput.y=100;//设置 textInput 对象的属性 y 的值，用于控制 textInput 对象的显示位置。
-			*textInput.width=300;//设置 textInput 的宽度。
-			*textInput.height=200;//设置 textInput 的高度。
-			*Laya.stage.addChild(textInput);//将 textInput 添加到显示列表。
-			*}
-		*}
-	*/
-	//class laya.ui.TextInput extends laya.ui.Label
-	var TextInput=(function(_super){
-		function TextInput(text){
-			this._bg=null;
-			this._skin=null;
-			TextInput.__super.call(this);
-			(text===void 0)&& (text="");
-			this.text=text;
-			this.skin=this.skin;
-		}
-
-		__class(TextInput,'laya.ui.TextInput',_super);
-		var __proto=TextInput.prototype;
-		/**@inheritDoc */
-		__proto.preinitialize=function(){
-			this.mouseEnabled=true;
-		}
-
-		/**@inheritDoc */
-		__proto.destroy=function(destroyChild){
-			(destroyChild===void 0)&& (destroyChild=true);
-			_super.prototype.destroy.call(this,destroyChild);
-			this._bg && this._bg.destroy();
-			this._bg=null;
-		}
-
-		/**@inheritDoc */
-		__proto.createChildren=function(){
-			this.addChild(this._tf=new Input());
-			this._tf.padding=Styles.inputLabelPadding;
-			this._tf.on("input",this,this._onInput);
-			this._tf.on("enter",this,this._onEnter);
-			this._tf.on("blur",this,this._onBlur);
-			this._tf.on("focus",this,this._onFocus);
-		}
-
-		/**
-		*@private
-		*/
-		__proto._onFocus=function(){
-			this.event("focus",this);
-		}
-
-		/**
-		*@private
-		*/
-		__proto._onBlur=function(){
-			this.event("blur",this);
-		}
-
-		/**
-		*@private
-		*/
-		__proto._onInput=function(){
-			this.event("input",this);
-		}
-
-		/**
-		*@private
-		*/
-		__proto._onEnter=function(){
-			this.event("enter",this);
-		}
-
-		/**@inheritDoc */
-		__proto.initialize=function(){
-			this.width=128;
-			this.height=22;
-		}
-
-		/**选中输入框内的文本。*/
-		__proto.select=function(){
-			(this._tf).select();
-		}
-
-		__proto.setSelection=function(startIndex,endIndex){
-			(this._tf).setSelection(startIndex,endIndex);
-		}
-
-		/**
-		*当前文本内容字符串。
-		*@see laya.display.Text.text
-		*/
-		__getset(0,__proto,'text',_super.prototype._$get_text,function(value){
-			if (this._tf.text !=value){
-				value=value+"";
-				this._tf.text=value;
-				this.event("change");
-			}
-		});
-
-		/**
-		*表示此对象包含的文本背景 <code>AutoBitmap</code> 组件实例。
-		*/
-		__getset(0,__proto,'bg',function(){
-			return this._bg;
-			},function(value){
-			this.graphics=this._bg=value;
-		});
-
-		/**
-		*设置原生input输入框的y坐标偏移。
-		*/
-		__getset(0,__proto,'inputElementYAdjuster',function(){
-			return (this._tf).inputElementYAdjuster;
-			},function(value){
-			(this._tf).inputElementYAdjuster=value;
-		});
-
-		/**
-		*<p>指示当前是否是文本域。</p>
-		*值为true表示当前是文本域，否则不是文本域。
-		*/
-		__getset(0,__proto,'multiline',function(){
-			return (this._tf).multiline;
-			},function(value){
-			(this._tf).multiline=value;
-		});
-
-		/**
-		*@copy laya.ui.Image#skin
-		*/
-		__getset(0,__proto,'skin',function(){
-			return this._skin;
-			},function(value){
-			if (this._skin !=value){
-				this._skin=value;
-				this._bg || (this.graphics=this._bg=new AutoBitmap());
-				this._bg.source=Loader.getRes(this._skin);
-				this._width && (this._bg.width=this._width);
-				this._height && (this._bg.height=this._height);
-			}
-		});
-
-		/**
-		*<p>当前实例的背景图（ <code>AutoBitmap</code> ）实例的有效缩放网格数据。</p>
-		*<p>数据格式："上边距,右边距,下边距,左边距,是否重复填充(值为0：不重复填充，1：重复填充)"，以逗号分隔。
-		*<ul><li>例如："4,4,4,4,1"</li></ul></p>
-		*@see laya.ui.AutoBitmap.sizeGrid
-		*/
-		__getset(0,__proto,'sizeGrid',function(){
-			return this._bg && this._bg.sizeGrid ? this._bg.sizeGrid.join(","):null;
-			},function(value){
-			this._bg || (this.graphics=this._bg=new AutoBitmap());
-			this._bg.sizeGrid=UIUtils.fillArray(Styles.defaultSizeGrid,value,Number);
-		});
-
-		/**
-		*设置原生input输入框的x坐标偏移。
-		*/
-		__getset(0,__proto,'inputElementXAdjuster',function(){
-			return (this._tf).inputElementXAdjuster;
-			},function(value){
-			(this._tf).inputElementXAdjuster=value;
-		});
-
-		/**@inheritDoc */
-		__getset(0,__proto,'width',_super.prototype._$get_width,function(value){
-			_super.prototype._$set_width.call(this,value);
-			this._bg && (this._bg.width=value);
-		});
-
-		/**@inheritDoc */
-		__getset(0,__proto,'height',_super.prototype._$get_height,function(value){
-			_super.prototype._$set_height.call(this,value);
-			this._bg && (this._bg.height=value);
-		});
-
-		/**
-		*设置可编辑状态。
-		*/
-		__getset(0,__proto,'editable',function(){
-			return (this._tf).editable;
-			},function(value){
-			(this._tf).editable=value;
-		});
-
-		/**限制输入的字符。*/
-		__getset(0,__proto,'restrict',function(){
-			return (this._tf).restrict;
-			},function(pattern){
-			(this._tf).restrict=pattern;
-		});
-
-		/**
-		*@copy laya.display.Input#prompt
-		*/
-		__getset(0,__proto,'prompt',function(){
-			return (this._tf).prompt;
-			},function(value){
-			(this._tf).prompt=value;
-		});
-
-		/**
-		*@copy laya.display.Input#promptColor
-		*/
-		__getset(0,__proto,'promptColor',function(){
-			return (this._tf).promptColor;
-			},function(value){
-			(this._tf).promptColor=value;
-		});
-
-		/**
-		*@copy laya.display.Input#maxChars
-		*/
-		__getset(0,__proto,'maxChars',function(){
-			return (this._tf).maxChars;
-			},function(value){
-			(this._tf).maxChars=value;
-		});
-
-		/**
-		*@copy laya.display.Input#focus
-		*/
-		__getset(0,__proto,'focus',function(){
-			return (this._tf).focus;
-			},function(value){
-			(this._tf).focus=value;
-		});
-
-		/**
-		*@copy laya.display.Input#type
-		*/
-		__getset(0,__proto,'type',function(){
-			return (this._tf).type;
-			},function(value){
-			(this._tf).type=value;
-		});
-
-		/**
-		*@copy laya.display.Input#asPassword
-		*/
-		__getset(0,__proto,'asPassword',function(){
-			return (this._tf).asPassword;
-			},function(value){
-			(this._tf).asPassword=value;
-		});
-
-		return TextInput;
-	})(Label)
-
-
-	/**
-	*@private
-	*/
 	//class laya.utils.GraphicAnimation extends laya.display.FrameAnimation
 	var GraphicAnimation=(function(_super){
 		var GraphicNode;
@@ -37713,6 +34879,523 @@ var Laya=window.Laya=(function(window,document){
 	})(FrameAnimation)
 
 
+	//class laya.ui.CheckBox extends laya.ui.Button
+	var CheckBox=(function(_super){
+		/**
+		*创建一个新的 <code>CheckBox</code> 组件实例。
+		*@param skin 皮肤资源地址。
+		*@param label 文本标签的内容。
+		*/
+		function CheckBox(skin,label){
+			(label===void 0)&& (label="");
+			CheckBox.__super.call(this,skin,label);
+		}
+
+		__class(CheckBox,'laya.ui.CheckBox',_super);
+		var __proto=CheckBox.prototype;
+		/**@inheritDoc */
+		__proto.preinitialize=function(){
+			laya.ui.Component.prototype.preinitialize.call(this);
+			this.toggle=true;
+			this._autoSize=false;
+		}
+
+		/**@inheritDoc */
+		__proto.initialize=function(){
+			_super.prototype.initialize.call(this);
+			this.createText();
+			this._text.align="left";
+			this._text.valign="top";
+			this._text.width=0;
+		}
+
+		/**@inheritDoc */
+		__getset(0,__proto,'dataSource',_super.prototype._$get_dataSource,function(value){
+			this._dataSource=value;
+			if ((typeof value=='boolean'))this.selected=value;
+			else if ((typeof value=='string'))this.selected=value==="true";
+			else _super.prototype._$set_dataSource.call(this,value);
+		});
+
+		return CheckBox;
+	})(Button)
+
+
+	//class laya.ui.Radio extends laya.ui.Button
+	var Radio=(function(_super){
+		function Radio(skin,label){
+			this._value=null;
+			(label===void 0)&& (label="");
+			Radio.__super.call(this,skin,label);
+		}
+
+		__class(Radio,'laya.ui.Radio',_super);
+		var __proto=Radio.prototype;
+		/**@inheritDoc */
+		__proto.destroy=function(destroyChild){
+			(destroyChild===void 0)&& (destroyChild=true);
+			_super.prototype.destroy.call(this,destroyChild);
+			this._value=null;
+		}
+
+		/**@inheritDoc */
+		__proto.preinitialize=function(){
+			laya.ui.Component.prototype.preinitialize.call(this);
+			this.toggle=false;
+			this._autoSize=false;
+		}
+
+		/**@inheritDoc */
+		__proto.initialize=function(){
+			_super.prototype.initialize.call(this);
+			this.createText();
+			this._text.align="left";
+			this._text.valign="top";
+			this._text.width=0;
+			this.on("click",this,this.onClick);
+		}
+
+		/**
+		*@private
+		*对象的<code>Event.CLICK</code>事件侦听处理函数。
+		*/
+		__proto.onClick=function(e){
+			this.selected=true;
+		}
+
+		/**
+		*获取或设置 <code>Radio</code> 关联的可选用户定义值。
+		*/
+		__getset(0,__proto,'value',function(){
+			return this._value !=null ? this._value :this.label;
+			},function(obj){
+			this._value=obj;
+		});
+
+		return Radio;
+	})(Button)
+
+
+	//class laya.ui.FontClip extends laya.ui.Clip
+	var FontClip=(function(_super){
+		function FontClip(skin,sheet){
+			this._valueArr=null;
+			this._indexMap=null;
+			this._sheet=null;
+			this._direction="horizontal";
+			this._spaceX=0;
+			this._spaceY=0;
+			FontClip.__super.call(this);
+			if (skin)this.skin=skin;
+			if (sheet)this.sheet=sheet;
+		}
+
+		__class(FontClip,'laya.ui.FontClip',_super);
+		var __proto=FontClip.prototype;
+		__proto.createChildren=function(){
+			this._bitmap=new AutoBitmap();
+			this.on("loaded",this,this._onClipLoaded);
+		}
+
+		/**
+		*资源加载完毕
+		*/
+		__proto._onClipLoaded=function(){
+			this.callLater(this.changeValue);
+		}
+
+		/**渲染数值*/
+		__proto.changeValue=function(){
+			if (!this._sources)return;
+			if (!this._valueArr)return;
+			this.graphics.clear();
+			var texture;
+			var isHorizontal=(this._direction==="horizontal");
+			for (var i=0,sz=this._valueArr.length;i < sz;i++){
+				var index=this._indexMap[this._valueArr[i]];
+				if (!this.sources[index])continue ;
+				texture=this.sources[index];
+				if (isHorizontal)this.graphics.drawTexture(texture,i *(texture.width+this.spaceX),0,texture.width,texture.height);
+				else this.graphics.drawTexture(texture,0,i *(texture.height+this.spaceY),texture.width,texture.height);
+			}
+			if (!texture)return;
+			if (isHorizontal)this.size(this._valueArr.length *(texture.width+this.spaceX),texture.height);
+			else this.size(texture.width,(texture.height+this.spaceY)*this._valueArr.length);
+		}
+
+		__proto.destroy=function(destroyChild){
+			(destroyChild===void 0)&& (destroyChild=true);
+			this._valueArr=null;
+			this._indexMap=null;
+			this._indexMap=null;
+			this.graphics.clear();
+			this.removeSelf();
+			this.off("loaded",this,this._onClipLoaded);
+			_super.prototype.destroy.call(this,destroyChild);
+		}
+
+		/**
+		*设置位图字体内容，空格代表换行。比如"abc123 456"，代表第一行对应的文字为"abc123"，第二行为"456"
+		*/
+		__getset(0,__proto,'sheet',function(){
+			return this._sheet;
+			},function(value){
+			value+="";
+			this._sheet=value;
+			var arr=value.split(" ");
+			this._clipX=String(arr[0]).length;
+			this.clipY=arr.length;
+			this._indexMap={};
+			for (var i=0;i < this._clipY;i++){
+				var line=arr[i].split("");
+				for (var j=0,n=line.length;j < n;j++){
+					this._indexMap[line[j]]=i *this._clipX+j;
+				}
+			}
+		});
+
+		/**
+		*布局方向。
+		*<p>默认值为"horizontal"。</p>
+		*<p><b>取值：</b>
+		*<li>"horizontal"：表示水平布局。</li>
+		*<li>"vertical"：表示垂直布局。</li>
+		*</p>
+		*/
+		__getset(0,__proto,'direction',function(){
+			return this._direction;
+			},function(value){
+			this._direction=value;
+			this.callLater(this.changeValue);
+		});
+
+		/**
+		*设置位图字体的显示内容
+		*/
+		__getset(0,__proto,'value',function(){
+			if (!this._valueArr)return "";
+			return this._valueArr.join("");
+			},function(value){
+			value+="";
+			this._valueArr=value.split("");
+			this.callLater(this.changeValue);
+		});
+
+		/**X方向文字间隙*/
+		__getset(0,__proto,'spaceX',function(){
+			return this._spaceX;
+			},function(value){
+			this._spaceX=value;
+			if (this._direction==="horizontal")this.callLater(this.changeValue);
+		});
+
+		/**Y方向文字间隙*/
+		__getset(0,__proto,'spaceY',function(){
+			return this._spaceY;
+			},function(value){
+			this._spaceY=value;
+			if (!(this._direction==="horizontal"))this.callLater(this.changeValue);
+		});
+
+		return FontClip;
+	})(Clip)
+
+
+	//class laya.ui.HScrollBar extends laya.ui.ScrollBar
+	var HScrollBar=(function(_super){
+		function HScrollBar(){HScrollBar.__super.call(this);;
+		};
+
+		__class(HScrollBar,'laya.ui.HScrollBar',_super);
+		var __proto=HScrollBar.prototype;
+		/**@inheritDoc */
+		__proto.initialize=function(){
+			_super.prototype.initialize.call(this);
+			this.slider.isVertical=false;
+		}
+
+		return HScrollBar;
+	})(ScrollBar)
+
+
+	//class laya.ui.HSlider extends laya.ui.Slider
+	var HSlider=(function(_super){
+		/**
+		*创建一个 <code>HSlider</code> 类实例。
+		*@param skin 皮肤。
+		*/
+		function HSlider(skin){
+			HSlider.__super.call(this,skin);
+			this.isVertical=false;
+		}
+
+		__class(HSlider,'laya.ui.HSlider',_super);
+		return HSlider;
+	})(Slider)
+
+
+	//class laya.ui.VScrollBar extends laya.ui.ScrollBar
+	var VScrollBar=(function(_super){
+		function VScrollBar(){VScrollBar.__super.call(this);;
+		};
+
+		__class(VScrollBar,'laya.ui.VScrollBar',_super);
+		return VScrollBar;
+	})(ScrollBar)
+
+
+	//class laya.ui.TextInput extends laya.ui.Label
+	var TextInput=(function(_super){
+		function TextInput(text){
+			this._bg=null;
+			this._skin=null;
+			TextInput.__super.call(this);
+			(text===void 0)&& (text="");
+			this.text=text;
+			this.skin=this.skin;
+		}
+
+		__class(TextInput,'laya.ui.TextInput',_super);
+		var __proto=TextInput.prototype;
+		/**@inheritDoc */
+		__proto.preinitialize=function(){
+			this.mouseEnabled=true;
+		}
+
+		/**@inheritDoc */
+		__proto.destroy=function(destroyChild){
+			(destroyChild===void 0)&& (destroyChild=true);
+			_super.prototype.destroy.call(this,destroyChild);
+			this._bg && this._bg.destroy();
+			this._bg=null;
+		}
+
+		/**@inheritDoc */
+		__proto.createChildren=function(){
+			this.addChild(this._tf=new Input());
+			this._tf.padding=Styles.inputLabelPadding;
+			this._tf.on("input",this,this._onInput);
+			this._tf.on("enter",this,this._onEnter);
+			this._tf.on("blur",this,this._onBlur);
+			this._tf.on("focus",this,this._onFocus);
+		}
+
+		/**
+		*@private
+		*/
+		__proto._onFocus=function(){
+			this.event("focus",this);
+		}
+
+		/**
+		*@private
+		*/
+		__proto._onBlur=function(){
+			this.event("blur",this);
+		}
+
+		/**
+		*@private
+		*/
+		__proto._onInput=function(){
+			this.event("input",this);
+		}
+
+		/**
+		*@private
+		*/
+		__proto._onEnter=function(){
+			this.event("enter",this);
+		}
+
+		/**@inheritDoc */
+		__proto.initialize=function(){
+			this.width=128;
+			this.height=22;
+		}
+
+		/**选中输入框内的文本。*/
+		__proto.select=function(){
+			(this._tf).select();
+		}
+
+		__proto.setSelection=function(startIndex,endIndex){
+			(this._tf).setSelection(startIndex,endIndex);
+		}
+
+		/**
+		*当前文本内容字符串。
+		*@see laya.display.Text.text
+		*/
+		__getset(0,__proto,'text',_super.prototype._$get_text,function(value){
+			if (this._tf.text !=value){
+				value=value+"";
+				this._tf.text=value;
+				this.event("change");
+			}
+		});
+
+		/**
+		*表示此对象包含的文本背景 <code>AutoBitmap</code> 组件实例。
+		*/
+		__getset(0,__proto,'bg',function(){
+			return this._bg;
+			},function(value){
+			this.graphics=this._bg=value;
+		});
+
+		/**
+		*设置原生input输入框的y坐标偏移。
+		*/
+		__getset(0,__proto,'inputElementYAdjuster',function(){
+			return (this._tf).inputElementYAdjuster;
+			},function(value){
+			(this._tf).inputElementYAdjuster=value;
+		});
+
+		/**
+		*<p>指示当前是否是文本域。</p>
+		*值为true表示当前是文本域，否则不是文本域。
+		*/
+		__getset(0,__proto,'multiline',function(){
+			return (this._tf).multiline;
+			},function(value){
+			(this._tf).multiline=value;
+		});
+
+		/**
+		*@copy laya.ui.Image#skin
+		*/
+		__getset(0,__proto,'skin',function(){
+			return this._skin;
+			},function(value){
+			if (this._skin !=value){
+				this._skin=value;
+				this._bg || (this.graphics=this._bg=new AutoBitmap());
+				this._bg.source=Loader.getRes(this._skin);
+				this._width && (this._bg.width=this._width);
+				this._height && (this._bg.height=this._height);
+			}
+		});
+
+		/**
+		*<p>当前实例的背景图（ <code>AutoBitmap</code> ）实例的有效缩放网格数据。</p>
+		*<p>数据格式："上边距,右边距,下边距,左边距,是否重复填充(值为0：不重复填充，1：重复填充)"，以逗号分隔。
+		*<ul><li>例如："4,4,4,4,1"</li></ul></p>
+		*@see laya.ui.AutoBitmap.sizeGrid
+		*/
+		__getset(0,__proto,'sizeGrid',function(){
+			return this._bg && this._bg.sizeGrid ? this._bg.sizeGrid.join(","):null;
+			},function(value){
+			this._bg || (this.graphics=this._bg=new AutoBitmap());
+			this._bg.sizeGrid=UIUtils.fillArray(Styles.defaultSizeGrid,value,Number);
+		});
+
+		/**
+		*设置原生input输入框的x坐标偏移。
+		*/
+		__getset(0,__proto,'inputElementXAdjuster',function(){
+			return (this._tf).inputElementXAdjuster;
+			},function(value){
+			(this._tf).inputElementXAdjuster=value;
+		});
+
+		/**@inheritDoc */
+		__getset(0,__proto,'width',_super.prototype._$get_width,function(value){
+			_super.prototype._$set_width.call(this,value);
+			this._bg && (this._bg.width=value);
+		});
+
+		/**@inheritDoc */
+		__getset(0,__proto,'height',_super.prototype._$get_height,function(value){
+			_super.prototype._$set_height.call(this,value);
+			this._bg && (this._bg.height=value);
+		});
+
+		/**
+		*设置可编辑状态。
+		*/
+		__getset(0,__proto,'editable',function(){
+			return (this._tf).editable;
+			},function(value){
+			(this._tf).editable=value;
+		});
+
+		/**限制输入的字符。*/
+		__getset(0,__proto,'restrict',function(){
+			return (this._tf).restrict;
+			},function(pattern){
+			(this._tf).restrict=pattern;
+		});
+
+		/**
+		*@copy laya.display.Input#prompt
+		*/
+		__getset(0,__proto,'prompt',function(){
+			return (this._tf).prompt;
+			},function(value){
+			(this._tf).prompt=value;
+		});
+
+		/**
+		*@copy laya.display.Input#promptColor
+		*/
+		__getset(0,__proto,'promptColor',function(){
+			return (this._tf).promptColor;
+			},function(value){
+			(this._tf).promptColor=value;
+		});
+
+		/**
+		*@copy laya.display.Input#maxChars
+		*/
+		__getset(0,__proto,'maxChars',function(){
+			return (this._tf).maxChars;
+			},function(value){
+			(this._tf).maxChars=value;
+		});
+
+		/**
+		*@copy laya.display.Input#focus
+		*/
+		__getset(0,__proto,'focus',function(){
+			return (this._tf).focus;
+			},function(value){
+			(this._tf).focus=value;
+		});
+
+		/**
+		*@copy laya.display.Input#type
+		*/
+		__getset(0,__proto,'type',function(){
+			return (this._tf).type;
+			},function(value){
+			(this._tf).type=value;
+		});
+
+		/**
+		*@copy laya.display.Input#asPassword
+		*/
+		__getset(0,__proto,'asPassword',function(){
+			return (this._tf).asPassword;
+			},function(value){
+			(this._tf).asPassword=value;
+		});
+
+		return TextInput;
+	})(Label)
+
+
+	//class laya.ui.VSlider extends laya.ui.Slider
+	var VSlider=(function(_super){
+		function VSlider(){VSlider.__super.call(this);;
+		};
+
+		__class(VSlider,'laya.ui.VSlider',_super);
+		return VSlider;
+	})(Slider)
+
+
 	//class laya.webgl.resource.WebGLImage extends laya.resource.HTMLImage
 	var WebGLImage=(function(_super){
 		function WebGLImage(src,def){
@@ -37913,527 +35596,98 @@ var Laya=window.Laya=(function(window,document){
 	})(HTMLImage)
 
 
-	//class STG.Bullet.PlayerBullet extends STG.GameObject.GameObjectCollision
-	var PlayerBullet=(function(_super){
-		function PlayerBullet(){
-			this.mAtackPower=0;
-			this.mInvincible=false;
-			PlayerBullet.__super.call(this);
+	//class STG.Bullet.GuidedBullet extends STG.Bullet.PlayerBullet
+	var GuidedBullet=(function(_super){
+		function GuidedBullet(){
+			this.mTarget=null;
+			this.mWorking=true;
+			GuidedBullet.__super.call(this);
 		}
 
-		__class(PlayerBullet,'STG.Bullet.PlayerBullet',_super);
-		return PlayerBullet;
-	})(GameObjectCollision)
-
-
-	//class STG.GameObject.Drop extends STG.GameObject.GameObjectCollision
-	var Drop=(function(_super){
-		function Drop(type,xx,yy){
-			this.mType=null;
-			Drop.__super.call(this);
-			this.mType=type;
-			this.mRebound=true;
-			this.mASpeed=500;
-			this.mDirection=-Math.PI / 3;
-			this.mCollisionBody=new ColliCircle();
-			this.mCollisionBody.r=50;
-			this.x=xx;
-			this.y=yy;
-			this.drawTexture(Laya.loader.getRes(this.type2TexturePath(this.mType)));
-		}
-
-		__class(Drop,'STG.GameObject.Drop',_super);
-		var __proto=Drop.prototype;
-		/*protected */
+		__class(GuidedBullet,'STG.Bullet.GuidedBullet',_super);
+		var __proto=GuidedBullet.prototype;
 		__proto.updateSelf=function(delta){
-			_super.prototype.updateSelf.call(this,delta);
-			if (this.mAge > 10){
-				this.destroy();
-			}
-		}
-
-		/*private */
-		__proto.type2TexturePath=function(type){
-			switch(type){
-				case "EDropType_LevelUp" :
-					return "my_res/img/drop_level.png";
-				case "EDropType_BombUp":
-					return "my_res/img/drop_bomb.png";
-				case "EDropType_PlayerUp":
-					return "my_res/img/drop_player.png";
-				default :
-					return "this is a invalid path for drop";
-				}
-		}
-
-		return Drop;
-	})(GameObjectCollision)
-
-
-	//class STG.GameObject.Enemy extends STG.GameObject.GameObjectCollision
-	var Enemy=(function(_super){
-		function Enemy(){
-			this.mBullets=[];
-			this.mScore=0;
-			this.mHealth=1;
-			this.mNowIndexBullet=0;
-			Enemy.__super.call(this);
-		}
-
-		__class(Enemy,'STG.GameObject.Enemy',_super);
-		var __proto=Enemy.prototype;
-		__proto.attacked=function(dmg){
-			this.mHealth-=dmg;
-			if (this.mHealth <=0){
-				Manager.getManager().getGameScene().enemyDie(this);
-			}
-		}
-
-		__proto.evalTaskAction=function(tsk){
-			if (tsk.mAction.mActionOp=="shoot"){
-				this.shoot();
-			}
-			else{
-				_super.prototype.evalTaskAction.call(this,tsk);
-			}
-		}
-
-		__proto.shoot=function(){
-			if (! Manager.getManager().getGameScene().inField(this)){
+			STG.GameObject.GameObjectCollision.prototype.updateSelf.call(this,delta);
+			if (! this.mWorking){
 				return;
-			};
-			var newBullet=Manager.getManager().getGameScene().shootBullet(
-			this.mBullets[this.mNowIndexBullet]);
-			newBullet.x=this.getGlobalX(0)+this.mBound.width / 2;
-			newBullet.y=this.getGlobalY(0)+this.mBound.height / 2;
-			Manager.getManager().getGameScene().addEnemyBullet(newBullet);
-			this.mNowIndexBullet=(this.mNowIndexBullet+1)% this.mBullets.length;
-		}
-
-		return Enemy;
-	})(GameObjectCollision)
-
-
-	//class STG.Player.PlayerTangMen extends STG.Player.Player
-	var PlayerTangMen=(function(_super){
-		function PlayerTangMen(){
-			this.mGenerators=[];
-			this.mBombGenerator=null;
-			this.mSub=null;
-			this.mBombBulletTexture=null;
-			PlayerTangMen.__super.call(this);
-			this.drawTexture(Laya.loader.getRes("my_res/img/player_4.png"));
-			this.mSub=new SubTangMen();
-			this.mBombBulletTexture=Laya.loader.getRes("my_res/img/sub_bullet_4.png");
-			this.addNewGenerator();
-			this.addChild(this.mSub.mRootNode);
-		}
-
-		__class(PlayerTangMen,'STG.Player.PlayerTangMen',_super);
-		var __proto=PlayerTangMen.prototype;
-		__proto.changeToShiftMode=function(shift){
-			_super.prototype.changeToShiftMode.call(this,shift);
-			this.mSub.changeToShiftMode(shift);
-			this.rePosGenerators();
-		}
-
-		__proto.bomb=function(){
-			if (! _super.prototype.bomb.call(this)){
-				return false;
-			};
-			var bomb=new GameObject();
-			bomb.drawTexture(Laya.loader.getRes("my_res/img/sub_4.png"));
-			bomb.x=this.x;
-			bomb.y=this.y;
-			Manager.getManager().getGameScene().addOther(bomb);
-			Tween.to(bomb,{
-				x :1080 / 2,
-				y :1920 / 2,
-			},
-			500,
-			null,
-			Handler.create(this,this.afterBombTween,[bomb]));
-			return true;
-		}
-
-		__proto.upgrade=function(){
-			if (! _super.prototype.upgrade.call(this)){
-				return false;
 			}
-			this.addNewGenerator();
-			this.mSub.upgrade();
-		}
-
-		__proto.updateSelf=function(delta){
-			if (_super.prototype.updateSelf.call(this,delta)){
-				for (var i=0;i < this.mGenerators.length;i++){
-					this.mGenerators[i].setGenerating(this.mFiring);
-					this.mSub.setGenerating(this.mFiring);
-				}
-				if (! this.mShiftMode){
-					this.mSub.refreshSubsPos(false);
-				}
-				return true;
+			this.mTarget=Manager.getManager().getTargetForGB();
+			if (this.mTarget){
+				this.setDirectionToTarget();
 			}
 			else{
-				return false;
+				this.mWorking=false;
 			}
 		}
 
-		/*private */
-		__proto.afterBombTween=function(bomb){
-			this.destroyRange(bomb);
-			this.genBullet(bomb);
+		__proto.setDirectionToTarget=function(){
+			MyMath.aimA2B(this,this.mTarget);
 		}
 
-		__proto.destroyRange=function(bomb){
-			var bombRange=new ColliCircle(bomb.x,-bomb.y,600);
-			Manager.getManager().getGameScene().destroyRange(bombRange,200);
+		return GuidedBullet;
+	})(PlayerBullet)
+
+
+	//class ui.GameUIUI extends laya.ui.View
+	var GameUIUI=(function(_super){
+		function GameUIUI(){
+			this.txtScore=null;
+			this.txtPlayer=null;
+			this.txtBomb=null;
+			GameUIUI.__super.call(this);
 		}
 
-		__proto.genBullet=function(bomb){
-			var gen=new BulletGenerator("player",this.genOfBomb,0.1,20,
-			Handler.create(this,this.complete,[bomb]));
-			bomb.addChild(gen);
-			gen.setGenerating(true);
+		__class(GameUIUI,'ui.GameUIUI',_super);
+		var __proto=GameUIUI.prototype;
+		__proto.createChildren=function(){
+			View.regComponent("Text",Text);
+			laya.ui.Component.prototype.createChildren.call(this);
+			this.createView(GameUIUI.uiView);
 		}
 
-		__proto.complete=function(bomb){
-			Laya.timer.frameOnce(1,bomb,this.destroy);
-			this.mBombGenerator=null;
+		GameUIUI.uiView={"type":"View","props":{"width":1080,"height":1920},"child":[{"type":"Sprite","props":{"y":10,"x":10},"child":[{"type":"Text","props":{"y":25,"x":35,"text":"Score :","fontSize":50,"color":"#ffffff"}},{"type":"Text","props":{"y":28,"x":233,"var":"txtScore","text":"0","fontSize":50,"color":"#ffffff"}}]},{"type":"Sprite","props":{"y":10,"x":10},"child":[{"type":"Text","props":{"y":1800,"x":35,"text":"Player :","fontSize":50,"color":"#ffffff"}},{"type":"Text","props":{"y":1800,"x":233,"var":"txtPlayer","text":"0","fontSize":50,"color":"#ffffff"}}]},{"type":"Sprite","props":{"y":10,"x":10},"child":[{"type":"Text","props":{"y":1800,"x":733,"text":"Bomb :","fontSize":50,"color":"#ffffff"}},{"type":"Text","props":{"y":1800,"x":929,"var":"txtBomb","text":"0","fontSize":50,"color":"#ffffff"}}]}]};
+		return GameUIUI;
+	})(View)
+
+
+	//class ui.MainMenuUI extends laya.ui.View
+	var MainMenuUI=(function(_super){
+		function MainMenuUI(){
+			this.imgBG=null;
+			this.btnOther=null;
+			this.btnStart=null;
+			this.imgTitle=null;
+			this.subBtns=null;
+			this.btnRightChoice=null;
+			this.btnLeftChoice=null;
+			this.parentChoices=null;
+			this.imgChoice0=null;
+			this.imgChoice1=null;
+			this.imgChoice2=null;
+			this.imgChoice3=null;
+			this.imgChoice4=null;
+			this.imgChoice5=null;
+			this.imgChoice6=null;
+			this.imgChoice7=null;
+			this.imgChoiceName=null;
+			this.imgSubTitle=null;
+			this.btnBack=null;
+			this.btnSubStart=null;
+			MainMenuUI.__super.call(this);
 		}
 
-		__proto.rePosGenerators=function(){
-			var xs=this.levelToGenXs();
-			for (var i=0;i < Math.min(xs.length,this.mGenerators.length);i++){
-				this.mGenerators[i].x=xs[i];
-				this.mGenerators[i].x+=this.mBound.width / 2;
-			}
+		__class(MainMenuUI,'ui.MainMenuUI',_super);
+		var __proto=MainMenuUI.prototype;
+		__proto.createChildren=function(){
+			laya.ui.Component.prototype.createChildren.call(this);
+			this.createView(MainMenuUI.uiView);
 		}
 
-		__proto.addNewGenerator=function(){
-			var newG=new BulletGenerator("player",this.generator,0.1,-1);
-			newG.y=-60;
-			newG.setGenerating(false);
-			this.addChild(newG);
-			this.mGenerators.push(newG);
-			this.rePosGenerators();
-			return newG;
-		}
-
-		__proto.genOfBomb=function(){
-			var bRoot=PoolWrapper.getGameObject(PlayerBullet,"sign_bomb_tang_root");
-			bRoot.mIsEmpty=true;
-			var numLine=50;
-			for (var i=0;i < numLine;i++){
-				if (Math.random()< 0.5){
-					continue ;
-				};
-				var b=PoolWrapper.getGameObject(PlayerBullet,"sign_bomb_tang");
-				b.x=0;
-				b.y=0;
-				b.mASpeed=800;
-				var dDir=0.06 *(Math.random()-0.5);
-				b.mDirection=i *Math.PI *2 / numLine+dDir;
-				b.drawTexture(Laya.loader.getRes("my_res/img/sub_bullet_4.png"));
-				b.mIsRotbyDir=true;
-				b.mCollisionBody=new ColliEllipse();
-				b.mAutoSize=true;
-				b.mAtackPower=120;
-				bRoot.addChild(b);
-			}
-			return bRoot;
-		}
-
-		__proto.generator=function(){
-			var b=PoolWrapper.getGameObject(GameObjectCollision,"sign_tang_bullet");
-			b.mASpeed=2000;
-			b.mDirection=Math.PI / 2;
-			b.drawTexture(Laya.loader.getRes("my_res/img/player_bullet_4.png"));
-			b.mIsRotbyDir=true;
-			b.mCollisionBody=new ColliEllipse();
-			b.mAutoSize=true;
-			b.mAtackPower=50;
-			return b;
-		}
-
-		__proto.levelToGenXs=function(){
-			var spacing=this.mShiftMode ? 20 :40;
-			var minX=-this.mLevel *spacing / 2;
-			var xs=[];
-			for (var i=0;i < this.mLevel+1;i++){
-				xs.push(minX);
-				minX+=spacing;
-			}
-			return xs;
-		}
-
-		PlayerTangMen.GENERATOR_Y=60;
-		PlayerTangMen.GENERATOR_SPACING_X_NORMAL=40;
-		PlayerTangMen.GENERATOR_SPACING_X_SHIFT=20;
-		return PlayerTangMen;
-	})(Player)
+		MainMenuUI.uiView={"type":"View","props":{"width":1080,"height":1920},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"imgBG","skin":"ui_res/main_bg.png"},"child":[{"type":"Image","props":{"skin":"ui_res/main_bg.png"}}]},{"type":"Button","props":{"y":1041,"x":540,"var":"btnOther","skin":"ui_res/btn_3st.png","labelSize":40,"labelFont":"Arial","anchorY":0.5,"anchorX":0.5},"child":[{"type":"Image","props":{"skin":"ui_res/btn_lable_other.png"}}]},{"type":"Button","props":{"y":882,"x":540,"var":"btnStart","skin":"ui_res/btn_3st.png","labelSize":40,"labelFont":"Arial","anchorY":0.5,"anchorX":0.5},"child":[{"type":"Image","props":{"skin":"ui_res/btn_lable_start.png"}}]},{"type":"Image","props":{"y":142,"x":176,"var":"imgTitle","skin":"ui_res/title.png"}},{"type":"Sprite","props":{"y":10,"x":10,"visible":false,"var":"subBtns","alpha":0},"child":[{"type":"Button","props":{"y":1008,"x":961,"visible":true,"var":"btnRightChoice","skin":"ui_res/btn_choice.png","scaleY":0.7,"scaleX":0.7,"anchorY":0.5,"anchorX":0.5,"alpha":1}},{"type":"Button","props":{"y":1004,"x":94,"visible":true,"var":"btnLeftChoice","skin":"ui_res/btn_choice.png","scaleY":0.7,"scaleX":-0.7,"anchorY":0.5,"anchorX":0.5,"alpha":1}},{"type":"Sprite","props":{"y":0,"x":0,"var":"parentChoices"},"child":[{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice0","skin":"ui_res/ui_player_choise_0.png","scaleY":1,"scaleX":1,"anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice1","skin":"ui_res/ui_player_choise_1.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice2","skin":"ui_res/ui_player_choise_2.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice3","skin":"ui_res/ui_player_choise_3.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice4","skin":"ui_res/ui_player_choise_4.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice5","skin":"ui_res/ui_player_choise_5.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice6","skin":"ui_res/ui_player_choise_6.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice7","skin":"ui_res/ui_player_choise_7.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":1540,"x":540,"width":611,"var":"imgChoiceName","skin":"ui_res/choice_name_0.png","height":217,"anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":213,"x":540,"var":"imgSubTitle","skin":"ui_res/sub_title.png","anchorY":0.5,"anchorX":0.5}}]},{"type":"Button","props":{"y":1823,"x":195,"var":"btnBack","skin":"ui_res/btn_3st.png","labelSize":40,"labelFont":"Arial","anchorY":0.5,"anchorX":0.5},"child":[{"type":"Image","props":{"skin":"ui_res/btn_lable_back.png"}}]},{"type":"Button","props":{"y":1819,"x":845,"var":"btnSubStart","skin":"ui_res/btn_3st.png","labelSize":40,"labelFont":"Arial","anchorY":0.5,"anchorX":0.5},"child":[{"type":"Image","props":{"skin":"ui_res/btn_lable_start.png"}}]}]}]};
+		return MainMenuUI;
+	})(View)
 
 
-	//class STG.Player.PlayerTianXiang extends STG.Player.Player
-	var PlayerTianXiang=(function(_super){
-		function PlayerTianXiang(){
-			this.mGenerators=[];
-			this.mSubBullet=null;
-			this.mClawCount=0;
-			PlayerTianXiang.__super.call(this);
-			this.drawTexture(Laya.loader.getRes("my_res/img/player_5.png"));
-			this.addNewMainGenerator();
-		}
-
-		__class(PlayerTianXiang,'STG.Player.PlayerTianXiang',_super);
-		var __proto=PlayerTianXiang.prototype;
-		__proto.upgrade=function(){
-			if (! _super.prototype.upgrade.call(this)){
-				return false;
-			}
-			this.addNewMainGenerator();
-		}
-
-		__proto.bomb=function(){
-			if (! _super.prototype.bomb.call(this)){
-				return false;
-			}
-			this.mClawCount=320;
-			var genY=this.y;
-			Laya.timer.loop(12,this,this.genClaw,[this.y]);
-			var bombRange=new ColliCircle(this.x,-this.y,800);
-			Manager.getManager().getGameScene().destroyRange(bombRange,200);
-			return true;
-		}
-
-		__proto.updateSelf=function(delta){
-			if (_super.prototype.updateSelf.call(this,delta)){
-				for (var i=0;i < this.mGenerators.length;i++){
-					this.mGenerators[i].setGenerating(this.mFiring);
-				}
-				if (this.mFiring){
-					this.checkAndGenSubBullet();
-				}
-				this.checkCLearBomb();
-				return true;
-			}
-			else{
-				return false;
-			}
-		}
-
-		__proto.genClaw=function(yy){
-			this.mClawCount--;
-			var claw=PoolWrapper.getGameObject(PlayerBullet,"sign_tianxiang_bomb");
-			claw.drawTexture(Laya.loader.getRes("my_res/img/bomb_5.png"));
-			claw.mASpeed=3000;
-			claw.mDirection=MyMath.fluctuateZero(1.3);
-			claw.mIsRotbyDir=true;
-			claw.mCollisionBody=new ColliEllipse();
-			claw.mAutoSize=true;
-			claw.mAtackPower=120;
-			if (Math.random()< 0.5){
-				claw.mDirection=claw.mDirection+Math.PI;
-			}
-			if (MyMath.movingLeft(claw)){
-				claw.x=Const.PLAY_FILED_RIGHT;
-			}
-			else if (MyMath.movingRight(claw)){
-				claw.x=0;
-			}
-			claw.y=MyMath.fluctuate(yy *(this.mClawCount / 320),0.5);
-			Manager.getManager().getGameScene().addPlayerBullet(claw);
-		}
-
-		__proto.checkAndGenSubBullet=function(){
-			if ((!this.mSubBullet)|| (this.mSubBullet.destroyed)){
-				this.mSubBullet=new SubBulletTianXiang(this.mLevel+1);
-				this.mSubBullet.x=this.x;
-				this.mSubBullet.y=this.y;
-				Manager.getManager().getGameScene().addPlayerBullet(this.mSubBullet);
-			}
-		}
-
-		__proto.addNewMainGenerator=function(){
-			var newG=new BulletGenerator("player",this.generator,0.1,-1);
-			newG.setGenerating(false);
-			newG.x=0;
-			this.addChild(newG);
-			this.mGenerators.push(newG);
-			this.resetGenerators();
-			return newG;
-		}
-
-		__proto.resetGenerators=function(){
-			for (var i=0;i < this.mGenerators.length;i++){
-				var angle=MyMath.HALF_PI+(i-(this.mGenerators.length-1)/ 2)*0.523598775598299;
-				this.mGenerators[i].setBulletDir(angle);
-				this.mGenerators[i].setFluctuationBulletDir(0.25);
-				this.mGenerators[i].x=60 *Math.cos(angle)+this.mBound.width / 2;
-				this.mGenerators[i].y=-60 *Math.sin(angle);
-			}
-		}
-
-		__proto.generator=function(){
-			var b=PoolWrapper.getGameObject(GameObjectCollision,"sign_tianxiang_bulelt");
-			b.mASpeed=800;
-			b.mDirection=1.57;
-			b.drawTexture(Laya.loader.getRes("my_res/img/player_bullet_5.png"));
-			b.mIsRotbyDir=false;
-			b.mRSpeed=MyMath.fluctuateZero(200);
-			b.mCollisionBody=new ColliCircle();
-			b.mCollisionBody.r=15;
-			b.mAtackPower=50;
-			return b;
-		}
-
-		__proto.checkCLearBomb=function(){
-			if (this.mClawCount < 0){
-				Laya.timer.clear(this,this.genClaw);
-			}
-		}
-
-		PlayerTianXiang.D_ANGLE=0.523598775598299;
-		PlayerTianXiang.R_GEN=60;
-		PlayerTianXiang.INTERVAL_CLAW=0.01;
-		PlayerTianXiang.MAX_CLAW=320;
-		return PlayerTianXiang;
-	})(Player)
-
-
-	/**
-	*<code>Dialog</code> 组件是一个弹出对话框，实现对话框弹出，拖动，模式窗口功能。
-	*可以通过UIConfig设置弹出框背景透明度，模式窗口点击边缘是否关闭等
-	*通过设置zOrder属性，可以更改弹出的层次
-	*通过设置popupEffect和closeEffect可以设置弹出效果和关闭效果，如果不想有任何弹出关闭效果，可以设置前述属性为空
-	*
-	*@example <caption>以下示例代码，创建了一个 <code>Dialog</code> 实例。</caption>
-	*package
-	*{
-		*import laya.ui.Dialog;
-		*import laya.utils.Handler;
-		*public class Dialog_Example
-		*{
-			*private var dialog:Dialog_Instance;
-			*public function Dialog_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高、渲染模式。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*Laya.loader.load("resource/ui/btn_close.png",Handler.create(this,onLoadComplete));//加载资源。
-				*}
-			*private function onLoadComplete():void
-			*{
-				*dialog=new Dialog_Instance();//创建一个 Dialog_Instance 类的实例对象 dialog。
-				*dialog.dragArea="0,0,150,50";//设置 dialog 的拖拽区域。
-				*dialog.show();//显示 dialog。
-				*dialog.closeHandler=new Handler(this,onClose);//设置 dialog 的关闭函数处理器。
-				*}
-			*private function onClose(name:String):void
-			*{
-				*if (name==Dialog.CLOSE)
-				*{
-					*trace("通过点击 name 为"+name+"的组件，关闭了dialog。");
-					*}
-				*}
-			*}
-		*}
-	*import laya.ui.Button;
-	*import laya.ui.Dialog;
-	*import laya.ui.Image;
-	*class Dialog_Instance extends Dialog
-	*{
-		*function Dialog_Instance():void
-		*{
-			*var bg:Image=new Image("resource/ui/bg.png");
-			*bg.sizeGrid="40,10,5,10";
-			*bg.width=150;
-			*bg.height=250;
-			*addChild(bg);
-			*var image:Image=new Image("resource/ui/image.png");
-			*addChild(image);
-			*var button:Button=new Button("resource/ui/btn_close.png");
-			*button.name=Dialog.CLOSE;//设置button的name属性值。
-			*button.x=0;
-			*button.y=0;
-			*addChild(button);
-			*}
-		*}
-	*@example
-	*Laya.init(640,800);//设置游戏画布宽高、渲染模式
-	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色
-	*var dialog;
-	*Laya.loader.load("resource/ui/btn_close.png",laya.utils.Handler.create(this,loadComplete));//加载资源
-	*(function (_super){//新建一个类Dialog_Instance继承自laya.ui.Dialog。
-		*function Dialog_Instance(){
-			*Dialog_Instance.__super.call(this);//初始化父类
-			*var bg=new laya.ui.Image("resource/ui/bg.png");//新建一个 Image 类的实例 bg 。
-			*bg.sizeGrid="10,40,10,5";//设置 bg 的网格信息。
-			*bg.width=150;//设置 bg 的宽度。
-			*bg.height=250;//设置 bg 的高度。
-			*this.addChild(bg);//将 bg 添加到显示列表。
-			*var image=new laya.ui.Image("resource/ui/image.png");//新建一个 Image 类的实例 image 。
-			*this.addChild(image);//将 image 添加到显示列表。
-			*var button=new laya.ui.Button("resource/ui/btn_close.png");//新建一个 Button 类的实例 bg 。
-			*button.name=laya.ui.Dialog.CLOSE;//设置 button 的 name 属性值。
-			*button.x=0;//设置 button 对象的属性 x 的值，用于控制 button 对象的显示位置。
-			*button.y=0;//设置 button 对象的属性 y 的值，用于控制 button 对象的显示位置。
-			*this.addChild(button);//将 button 添加到显示列表。
-			*};
-		*Laya.class(Dialog_Instance,"mypackage.dialogExample.Dialog_Instance",_super);//注册类Dialog_Instance。
-		*})(laya.ui.Dialog);
-	*function loadComplete(){
-		*console.log("资源加载完成！");
-		*dialog=new mypackage.dialogExample.Dialog_Instance();//创建一个 Dialog_Instance 类的实例对象 dialog。
-		*dialog.dragArea="0,0,150,50";//设置 dialog 的拖拽区域。
-		*dialog.show();//显示 dialog。
-		*dialog.closeHandler=new laya.utils.Handler(this,onClose);//设置 dialog 的关闭函数处理器。
-		*}
-	*function onClose(name){
-		*if (name==laya.ui.Dialog.CLOSE){
-			*console.log("通过点击 name 为"+name+"的组件，关闭了dialog。");
-			*}
-		*}
-	*@example
-	*import Dialog=laya.ui.Dialog;
-	*import Handler=laya.utils.Handler;
-	*class Dialog_Example {
-		*private dialog:Dialog_Instance;
-		*constructor(){
-			*Laya.init(640,800);//设置游戏画布宽高。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*Laya.loader.load("resource/ui/btn_close.png",Handler.create(this,this.onLoadComplete));//加载资源。
-			*}
-		*private onLoadComplete():void {
-			*this.dialog=new Dialog_Instance();//创建一个 Dialog_Instance 类的实例对象 dialog。
-			*this.dialog.dragArea="0,0,150,50";//设置 dialog 的拖拽区域。
-			*this.dialog.show();//显示 dialog。
-			*this.dialog.closeHandler=new Handler(this,this.onClose);//设置 dialog 的关闭函数处理器。
-			*}
-		*private onClose(name:string):void {
-			*if (name==Dialog.CLOSE){
-				*console.log("通过点击 name 为"+name+"的组件，关闭了dialog。");
-				*}
-			*}
-		*}
-	*import Button=laya.ui.Button;
-	*class Dialog_Instance extends Dialog {
-		*Dialog_Instance():void {
-			*var bg:laya.ui.Image=new laya.ui.Image("resource/ui/bg.png");
-			*bg.sizeGrid="40,10,5,10";
-			*bg.width=150;
-			*bg.height=250;
-			*this.addChild(bg);
-			*var image:laya.ui.Image=new laya.ui.Image("resource/ui/image.png");
-			*this.addChild(image);
-			*var button:Button=new Button("resource/ui/btn_close.png");
-			*button.name=Dialog.CLOSE;//设置button的name属性值。
-			*button.x=0;
-			*button.y=0;
-			*this.addChild(button);
-			*}
-		*}
-	*/
 	//class laya.ui.Dialog extends laya.ui.View
 	var Dialog=(function(_super){
 		function Dialog(){
@@ -38605,75 +35859,6 @@ var Laya=window.Laya=(function(window,document){
 	})(View)
 
 
-	//class ui.GameUIUI extends laya.ui.View
-	var GameUIUI=(function(_super){
-		function GameUIUI(){
-			this.txtScore=null;
-			this.txtPlayer=null;
-			this.txtBomb=null;
-			this.btnBomb=null;
-			GameUIUI.__super.call(this);
-		}
-
-		__class(GameUIUI,'ui.GameUIUI',_super);
-		var __proto=GameUIUI.prototype;
-		__proto.createChildren=function(){
-			View.regComponent("Text",Text);
-			laya.ui.Component.prototype.createChildren.call(this);
-			this.createView(GameUIUI.uiView);
-		}
-
-		__static(GameUIUI,
-		['uiView',function(){return this.uiView={"type":"View","props":{"width":1080,"height":1920},"child":[{"type":"Sprite","props":{"y":10,"x":10},"child":[{"type":"Text","props":{"y":25,"x":35,"text":"Score :","fontSize":50,"color":"#ffffff"}},{"type":"Text","props":{"y":28,"x":233,"var":"txtScore","text":"0","fontSize":50,"color":"#ffffff"}}]},{"type":"Sprite","props":{"y":10,"x":10},"child":[{"type":"Text","props":{"y":1800,"x":35,"text":"Player :","fontSize":50,"color":"#ffffff"}},{"type":"Text","props":{"y":1800,"x":233,"var":"txtPlayer","text":"0","fontSize":50,"color":"#ffffff"}}]},{"type":"Sprite","props":{"y":10,"x":10},"child":[{"type":"Text","props":{"y":1800,"x":733,"text":"Bomb :","fontSize":50,"color":"#ffffff"}},{"type":"Text","props":{"y":1800,"x":929,"var":"txtBomb","text":"0","fontSize":50,"color":"#ffffff"}}]},{"type":"Button","props":{"y":1420,"x":868,"width":188,"var":"btnBomb","stateNum":1,"skin":"ui_res/btn_bomb.png","height":188}}]};}
-		]);
-		return GameUIUI;
-	})(View)
-
-
-	//class ui.MainMenuUI extends laya.ui.View
-	var MainMenuUI=(function(_super){
-		function MainMenuUI(){
-			this.imgBG=null;
-			this.imgTitle=null;
-			this.btnStart=null;
-			this.btnAbout=null;
-			this.subBtns=null;
-			this.btnRightChoice=null;
-			this.btnLeftChoice=null;
-			this.parentChoices=null;
-			this.imgChoice0=null;
-			this.imgChoice1=null;
-			this.imgChoice2=null;
-			this.imgChoice3=null;
-			this.imgChoice4=null;
-			this.imgChoice5=null;
-			this.imgChoice6=null;
-			this.imgChoice7=null;
-			this.imgChoiceName=null;
-			this.imgSubTitle=null;
-			this.btnBack=null;
-			this.btnSubStart=null;
-			MainMenuUI.__super.call(this);
-		}
-
-		__class(MainMenuUI,'ui.MainMenuUI',_super);
-		var __proto=MainMenuUI.prototype;
-		__proto.createChildren=function(){
-			View.regComponent("Text",Text);
-			laya.ui.Component.prototype.createChildren.call(this);
-			this.createView(MainMenuUI.uiView);
-		}
-
-		__static(MainMenuUI,
-		['uiView',function(){return this.uiView={"type":"View","props":{"width":1080,"height":1920},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"imgBG","skin":"ui_res/main_bg.png"},"child":[{"type":"Image","props":{"skin":"ui_res/main_bg.png"}}]},{"type":"Image","props":{"y":142,"x":176,"var":"imgTitle","skin":"ui_res/title.png"}},{"type":"Button","props":{"y":882,"x":540,"width":498,"var":"btnStart","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"开始","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Button","props":{"y":1140,"x":540,"width":498,"var":"btnAbout","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"关于","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Sprite","props":{"y":10,"x":10,"visible":false,"var":"subBtns","alpha":0},"child":[{"type":"Button","props":{"y":978.25,"x":961,"visible":true,"var":"btnRightChoice","skin":"ui_res/btn_choice.png","scaleY":0.7,"scaleX":0.7,"anchorY":0.5,"anchorX":0.5,"alpha":1}},{"type":"Button","props":{"y":974.25,"x":94,"visible":true,"var":"btnLeftChoice","skin":"ui_res/btn_choice.png","scaleY":0.7,"scaleX":-0.7,"anchorY":0.5,"anchorX":0.5,"alpha":1}},{"type":"Sprite","props":{"y":0,"x":0,"var":"parentChoices"},"child":[{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice0","skin":"ui_res/choice_new_0_black.png","scaleY":1,"scaleX":1,"anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice1","skin":"ui_res/choice_new_1_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice2","skin":"ui_res/choice_new_2_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice3","skin":"ui_res/choice_new_3_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice4","skin":"ui_res/choice_new_4.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice5","skin":"ui_res/choice_new_5.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice6","skin":"ui_res/choice_new_6_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice7","skin":"ui_res/choice_new_7_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":1540,"x":540,"var":"imgChoiceName","skin":"ui_res/choice_name_0.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":213,"x":540,"var":"imgSubTitle","skin":"ui_res/sub_title.png","anchorY":0.5,"anchorX":0.5}}]},{"type":"Button","props":{"y":1800,"x":255,"width":498,"var":"btnBack","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"返回","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Button","props":{"y":1800,"x":801,"width":498,"var":"btnSubStart","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"开始","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]}]},{"type":"Text","props":{"y":1833,"x":30,"text":"ver  timer","fontSize":70}}]};}
-		]);
-		return MainMenuUI;
-	})(View)
-
-
-	/**
-	*<code>VBox</code> 是一个垂直布局容器类。
-	*/
 	//class laya.ui.HBox extends laya.ui.LayoutBox
 	var HBox=(function(_super){
 		function HBox(){HBox.__super.call(this);;
@@ -38730,9 +35915,6 @@ var Laya=window.Laya=(function(window,document){
 	})(LayoutBox)
 
 
-	/**
-	*<code>VBox</code> 是一个垂直布局容器类。
-	*/
 	//class laya.ui.VBox extends laya.ui.LayoutBox
 	var VBox=(function(_super){
 		function VBox(){VBox.__super.call(this);;
@@ -38784,80 +35966,6 @@ var Laya=window.Laya=(function(window,document){
 	})(LayoutBox)
 
 
-	/**
-	*<code>RadioGroup</code> 控件定义一组 <code>Radio</code> 控件，这些控件相互排斥；
-	*因此，用户每次只能选择一个 <code>Radio</code> 控件。
-	*
-	*@example <caption>以下示例代码，创建了一个 <code>RadioGroup</code> 实例。</caption>
-	*package
-	*{
-		*import laya.ui.Radio;
-		*import laya.ui.RadioGroup;
-		*import laya.utils.Handler;
-		*public class RadioGroup_Example
-		*{
-			*public function RadioGroup_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*Laya.loader.load(["resource/ui/radio.png"],Handler.create(this,onLoadComplete));//加载资源。
-				*}
-			*private function onLoadComplete():void
-			*{
-				*var radioGroup:RadioGroup=new RadioGroup();//创建一个 RadioGroup 类的实例对象 radioGroup 。
-				*radioGroup.pos(100,100);//设置 radioGroup 的位置信息。
-				*radioGroup.labels="item0,item1,item2";//设置 radioGroup 的标签集。
-				*radioGroup.skin="resource/ui/radio.png";//设置 radioGroup 的皮肤。
-				*radioGroup.space=10;//设置 radioGroup 的项间隔距离。
-				*radioGroup.selectHandler=new Handler(this,onSelect);//设置 radioGroup 的选择项发生改变时执行的处理器。
-				*Laya.stage.addChild(radioGroup);//将 radioGroup 添加到显示列表。
-				*}
-			*private function onSelect(index:int):void
-			*{
-				*trace("当前选择的单选按钮索引: index= ",index);
-				*}
-			*}
-		*}
-	*@example
-	*Laya.init(640,800);//设置游戏画布宽高、渲染模式
-	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色
-	*Laya.loader.load(["resource/ui/radio.png"],laya.utils.Handler.create(this,onLoadComplete));
-	*function onLoadComplete(){
-		*var radioGroup=new laya.ui.RadioGroup();//创建一个 RadioGroup 类的实例对象 radioGroup 。
-		*radioGroup.pos(100,100);//设置 radioGroup 的位置信息。
-		*radioGroup.labels="item0,item1,item2";//设置 radioGroup 的标签集。
-		*radioGroup.skin="resource/ui/radio.png";//设置 radioGroup 的皮肤。
-		*radioGroup.space=10;//设置 radioGroup 的项间隔距离。
-		*radioGroup.selectHandler=new laya.utils.Handler(this,onSelect);//设置 radioGroup 的选择项发生改变时执行的处理器。
-		*Laya.stage.addChild(radioGroup);//将 radioGroup 添加到显示列表。
-		*}
-	*function onSelect(index){
-		*console.log("当前选择的单选按钮索引: index= ",index);
-		*}
-	*@example
-	*import Radio=laya.ui.Radio;
-	*import RadioGroup=laya.ui.RadioGroup;
-	*import Handler=laya.utils.Handler;
-	*class RadioGroup_Example {
-		*constructor(){
-			*Laya.init(640,800);//设置游戏画布宽高。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*Laya.loader.load(["resource/ui/radio.png"],Handler.create(this,this.onLoadComplete));//加载资源。
-			*}
-		*private onLoadComplete():void {
-			*var radioGroup:RadioGroup=new RadioGroup();//创建一个 RadioGroup 类的实例对象 radioGroup 。
-			*radioGroup.pos(100,100);//设置 radioGroup 的位置信息。
-			*radioGroup.labels="item0,item1,item2";//设置 radioGroup 的标签集。
-			*radioGroup.skin="resource/ui/radio.png";//设置 radioGroup 的皮肤。
-			*radioGroup.space=10;//设置 radioGroup 的项间隔距离。
-			*radioGroup.selectHandler=new Handler(this,this.onSelect);//设置 radioGroup 的选择项发生改变时执行的处理器。
-			*Laya.stage.addChild(radioGroup);//将 radioGroup 添加到显示列表。
-			*}
-		*private onSelect(index:number):void {
-			*console.log("当前选择的单选按钮索引: index= ",index);
-			*}
-		*}
-	*/
 	//class laya.ui.RadioGroup extends laya.ui.UIGroup
 	var RadioGroup=(function(_super){
 		function RadioGroup(){RadioGroup.__super.call(this);;
@@ -38874,78 +35982,6 @@ var Laya=window.Laya=(function(window,document){
 	})(UIGroup)
 
 
-	/**
-	*<code>Tab</code> 组件用来定义选项卡按钮组。 *
-	*@internal <p>属性：<code>selectedIndex</code> 的默认值为-1。</p>
-	*
-	*@example <caption>以下示例代码，创建了一个 <code>Tab</code> 实例。</caption>
-	*package
-	*{
-		*import laya.ui.Tab;
-		*import laya.utils.Handler;
-		*public class Tab_Example
-		*{
-			*public function Tab_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*Laya.loader.load(["resource/ui/tab.png"],Handler.create(this,onLoadComplete));//加载资源。
-				*}
-			*private function onLoadComplete():void
-			*{
-				*var tab:Tab=new Tab();//创建一个 Tab 类的实例对象 tab 。
-				*tab.skin="resource/ui/tab.png";//设置 tab 的皮肤。
-				*tab.labels="item0,item1,item2";//设置 tab 的标签集。
-				*tab.x=100;//设置 tab 对象的属性 x 的值，用于控制 tab 对象的显示位置。
-				*tab.y=100;//设置 tab 对象的属性 y 的值，用于控制 tab 对象的显示位置。
-				*tab.selectHandler=new Handler(this,onSelect);//设置 tab 的选择项发生改变时执行的处理器。
-				*Laya.stage.addChild(tab);//将 tab 添到显示列表。
-				*}
-			*private function onSelect(index:int):void
-			*{
-				*trace("当前选择的表情页索引: index= ",index);
-				*}
-			*}
-		*}
-	*@example
-	*Laya.init(640,800);//设置游戏画布宽高
-	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色
-	*Laya.loader.load(["resource/ui/tab.png"],laya.utils.Handler.create(this,onLoadComplete));
-	*function onLoadComplete(){
-		*var tab=new laya.ui.Tab();//创建一个 Tab 类的实例对象 tab 。
-		*tab.skin="resource/ui/tab.png";//设置 tab 的皮肤。
-		*tab.labels="item0,item1,item2";//设置 tab 的标签集。
-		*tab.x=100;//设置 tab 对象的属性 x 的值，用于控制 tab 对象的显示位置。
-		*tab.y=100;//设置 tab 对象的属性 y 的值，用于控制 tab 对象的显示位置。
-		*tab.selectHandler=new laya.utils.Handler(this,onSelect);//设置 tab 的选择项发生改变时执行的处理器。
-		*Laya.stage.addChild(tab);//将 tab 添到显示列表。
-		*}
-	*function onSelect(index){
-		*console.log("当前选择的标签页索引: index= ",index);
-		*}
-	*@example
-	*import Tab=laya.ui.Tab;
-	*import Handler=laya.utils.Handler;
-	*class Tab_Example {
-		*constructor(){
-			*Laya.init(640,800);//设置游戏画布宽高。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*Laya.loader.load(["resource/ui/tab.png"],Handler.create(this,this.onLoadComplete));//加载资源。
-			*}
-		*private onLoadComplete():void {
-			*var tab:Tab=new Tab();//创建一个 Tab 类的实例对象 tab 。
-			*tab.skin="resource/ui/tab.png";//设置 tab 的皮肤。
-			*tab.labels="item0,item1,item2";//设置 tab 的标签集。
-			*tab.x=100;//设置 tab 对象的属性 x 的值，用于控制 tab 对象的显示位置。
-			*tab.y=100;//设置 tab 对象的属性 y 的值，用于控制 tab 对象的显示位置。
-			*tab.selectHandler=new Handler(this,this.onSelect);//设置 tab 的选择项发生改变时执行的处理器。
-			*Laya.stage.addChild(tab);//将 tab 添到显示列表。
-			*}
-		*private onSelect(index:number):void {
-			*console.log("当前选择的表情页索引: index= ",index);
-			*}
-		*}
-	*/
 	//class laya.ui.Tab extends laya.ui.UIGroup
 	var Tab=(function(_super){
 		function Tab(){Tab.__super.call(this);;
@@ -38965,84 +36001,6 @@ var Laya=window.Laya=(function(window,document){
 	})(UIGroup)
 
 
-	/**
-	*<code>TextArea</code> 类用于创建显示对象以显示和输入文本。
-	*@example <caption>以下示例代码，创建了一个 <code>TextArea</code> 实例。</caption>
-	*package
-	*{
-		*import laya.ui.TextArea;
-		*import laya.utils.Handler;
-		*public class TextArea_Example
-		*{
-			*public function TextArea_Example()
-			*{
-				*Laya.init(640,800);//设置游戏画布宽高。
-				*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-				*Laya.loader.load(["resource/ui/input.png"],Handler.create(this,onLoadComplete));//加载资源。
-				*}
-			*private function onLoadComplete():void
-			*{
-				*var textArea:TextArea=new TextArea("这个一个TextArea实例。");//创建一个 TextArea 类的实例对象 textArea 。
-				*textArea.skin="resource/ui/input.png";//设置 textArea 的皮肤。
-				*textArea.sizeGrid="4,4,4,4";//设置 textArea 的网格信息。
-				*textArea.color="#008fff";//设置 textArea 的文本颜色。
-				*textArea.font="Arial";//设置 textArea 的字体。
-				*textArea.bold=true;//设置 textArea 的文本显示为粗体。
-				*textArea.fontSize=20;//设置 textArea 的文本字体大小。
-				*textArea.wordWrap=true;//设置 textArea 的文本自动换行。
-				*textArea.x=100;//设置 textArea 对象的属性 x 的值，用于控制 textArea 对象的显示位置。
-				*textArea.y=100;//设置 textArea 对象的属性 y 的值，用于控制 textArea 对象的显示位置。
-				*textArea.width=300;//设置 textArea 的宽度。
-				*textArea.height=200;//设置 textArea 的高度。
-				*Laya.stage.addChild(textArea);//将 textArea 添加到显示列表。
-				*}
-			*}
-		*}
-	*@example
-	*Laya.init(640,800);//设置游戏画布宽高、渲染模式
-	*Laya.stage.bgColor="#efefef";//设置画布的背景颜色
-	*Laya.loader.load(["resource/ui/input.png"],laya.utils.Handler.create(this,onLoadComplete));//加载资源。
-	*function onLoadComplete(){
-		*var textArea=new laya.ui.TextArea("这个一个TextArea实例。");//创建一个 TextArea 类的实例对象 textArea 。
-		*textArea.skin="resource/ui/input.png";//设置 textArea 的皮肤。
-		*textArea.sizeGrid="4,4,4,4";//设置 textArea 的网格信息。
-		*textArea.color="#008fff";//设置 textArea 的文本颜色。
-		*textArea.font="Arial";//设置 textArea 的字体。
-		*textArea.bold=true;//设置 textArea 的文本显示为粗体。
-		*textArea.fontSize=20;//设置 textArea 的文本字体大小。
-		*textArea.wordWrap=true;//设置 textArea 的文本自动换行。
-		*textArea.x=100;//设置 textArea 对象的属性 x 的值，用于控制 textArea 对象的显示位置。
-		*textArea.y=100;//设置 textArea 对象的属性 y 的值，用于控制 textArea 对象的显示位置。
-		*textArea.width=300;//设置 textArea 的宽度。
-		*textArea.height=200;//设置 textArea 的高度。
-		*Laya.stage.addChild(textArea);//将 textArea 添加到显示列表。
-		*}
-	*@example
-	*import TextArea=laya.ui.TextArea;
-	*import Handler=laya.utils.Handler;
-	*class TextArea_Example {
-		*constructor(){
-			*Laya.init(640,800);//设置游戏画布宽高、渲染模式。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*Laya.loader.load(["resource/ui/input.png"],Handler.create(this,this.onLoadComplete));//加载资源。
-			*}
-		*private onLoadComplete():void {
-			*var textArea:TextArea=new TextArea("这个一个TextArea实例。");//创建一个 TextArea 类的实例对象 textArea 。
-			*textArea.skin="resource/ui/input.png";//设置 textArea 的皮肤。
-			*textArea.sizeGrid="4,4,4,4";//设置 textArea 的网格信息。
-			*textArea.color="#008fff";//设置 textArea 的文本颜色。
-			*textArea.font="Arial";//设置 textArea 的字体。
-			*textArea.bold=true;//设置 textArea 的文本显示为粗体。
-			*textArea.fontSize=20;//设置 textArea 的文本字体大小。
-			*textArea.wordWrap=true;//设置 textArea 的文本自动换行。
-			*textArea.x=100;//设置 textArea 对象的属性 x 的值，用于控制 textArea 对象的显示位置。
-			*textArea.y=100;//设置 textArea 对象的属性 y 的值，用于控制 textArea 对象的显示位置。
-			*textArea.width=300;//设置 textArea 的宽度。
-			*textArea.height=200;//设置 textArea 的高度。
-			*Laya.stage.addChild(textArea);//将 textArea 添加到显示列表。
-			*}
-		*}
-	*/
 	//class laya.ui.TextArea extends laya.ui.TextInput
 	var TextArea=(function(_super){
 		function TextArea(text){
@@ -39187,115 +36145,10 @@ var Laya=window.Laya=(function(window,document){
 	})(TextInput)
 
 
-	//class STG.Bullet.GuidedBullet extends STG.Bullet.PlayerBullet
-	var GuidedBullet=(function(_super){
-		function GuidedBullet(){
-			this.mTarget=null;
-			GuidedBullet.__super.call(this);
-			this.mTarget=Manager.getManager().getGameScene().getTargetForGB();
-		}
-
-		__class(GuidedBullet,'STG.Bullet.GuidedBullet',_super);
-		var __proto=GuidedBullet.prototype;
-		__proto.updateSelf=function(delta){
-			STG.GameObject.GameObjectCollision.prototype.updateSelf.call(this,delta);
-			if (this.mTarget && (!this.mTarget.destroyed)){
-				this.setDirectionToTarget();
-			}
-		}
-
-		__proto.setDirectionToTarget=function(){
-			MyMath.aimA2B(this,this.mTarget);
-		}
-
-		return GuidedBullet;
-	})(PlayerBullet)
-
-
-	//class STG.Player.SubBulletTianXiang extends STG.Bullet.PlayerBullet
-	var SubBulletTianXiang=(function(_super){
-		function SubBulletTianXiang(times,power,forceFactor){
-			this.mTarget=null;
-			this.mLeftTimes=null;
-			this.mForceFactor=NaN;
-			SubBulletTianXiang.__super.call(this);
-			(power===void 0)&& (power=20);
-			(forceFactor===void 0)&& (forceFactor=0.2);
-			this.mInvincible=true;
-			this.mLeftTimes=times;
-			this.mAtackPower=power;
-			this.mForceFactor=forceFactor;
-			this.mASpeed=800;
-			this.drawTexture(Laya.loader.getRes("my_res/img/sub_bullet_5.png"));
-			this.mCollisionBody=new ColliCircle();
-			this.mAutoSize=true;
-			this.mRSpeed=MyMath.fluctuateZero(100);
-			this.mTarget=Manager.getManager().getGameScene().getTargetForGB();
-			this.name="sub_bullet_tianxiang";
-		}
-
-		__class(SubBulletTianXiang,'STG.Player.SubBulletTianXiang',_super);
-		var __proto=SubBulletTianXiang.prototype;
-		__proto.updateSelf=function(delta){
-			STG.GameObject.GameObjectCollision.prototype.updateSelf.call(this,delta);
-			if (this.mTarget && (!this.mTarget.destroyed)&& this.mTarget.visible){
-				var newDir=MyMath.getDirection(this,this.mTarget);
-				var dDir=MyMath.deltaAngle(newDir,this.mDirection);
-				if (Math.abs(dDir)> 0.7){
-					this.mASpeed-=50;
-				}
-				else if (this.mASpeed < 800){
-					this.mASpeed+=50;
-				}
-				this.mDirection=this.mDirection+(newDir-this.mDirection)*this.mForceFactor;
-			}
-			else{
-				this.mLeftTimes--;
-				if (this.mLeftTimes > 0){
-					this.mTarget=Manager.getManager().getGameScene().getTargetForGB();
-					this.mASpeed=800;
-				}
-				else{
-					this.destroy();
-				}
-			}
-		}
-
-		SubBulletTianXiang.SPEED=800;
-		SubBulletTianXiang.DELTA_SPEED=50;
-		return SubBulletTianXiang;
-	})(PlayerBullet)
-
-
-	//class ui.DieDialogUI extends laya.ui.Dialog
-	var DieDialogUI=(function(_super){
-		function DieDialogUI(){
-			this.btnBack=null;
-			this.textScore=null;
-			DieDialogUI.__super.call(this);
-		}
-
-		__class(DieDialogUI,'ui.DieDialogUI',_super);
-		var __proto=DieDialogUI.prototype;
-		__proto.createChildren=function(){
-			View.regComponent("Text",Text);
-			laya.ui.Component.prototype.createChildren.call(this);
-			this.createView(DieDialogUI.uiView);
-		}
-
-		__static(DieDialogUI,
-		['uiView',function(){return this.uiView={"type":"Dialog","props":{"y":240,"x":270,"width":540,"height":480,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui_res/bg_die_dialog.png"}},{"type":"Text","props":{"y":40,"x":93,"text":"游戏结束","fontSize":90}},{"type":"Button","props":{"y":366,"x":275,"width":376,"var":"btnBack","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":149,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":77,"x":189,"width":180,"text":"返回","pivotY":47,"pivotX":90,"height":94,"fontSize":80,"color":"#ffffff","bold":false}}]},{"type":"Text","props":{"y":188,"x":53,"text":"分数：","fontSize":50}},{"type":"Text","props":{"y":188,"x":193,"var":"textScore","text":"-1","fontSize":50}}]};}
-		]);
-		return DieDialogUI;
-	})(Dialog)
-
-
 	//class STG.MyUI.GameUI extends ui.GameUIUI
 	var GameUI=(function(_super){
 		function GameUI(){
-			this.mBtnBombWorking=true;
 			GameUI.__super.call(this);
-			this.btnBomb.on("mousedown",this,this.onBtnBombDown);
 		}
 
 		__class(GameUI,'STG.MyUI.GameUI',_super);
@@ -39312,28 +36165,8 @@ var Laya=window.Laya=(function(window,document){
 			this.txtBomb.text=n.toString();
 		}
 
-		__proto.enableBomb=function(){
-			this.mBtnBombWorking=true;
-		}
-
-		__proto.disableBomb=function(){
-			this.mBtnBombWorking=false;
-		}
-
-		/*
-		private function onBtnShootUp(){
-			mBtnShootDown=false;
-		}
-
-		private function onBtnShootDown(){
-			mBtnShootDown=true;
-		}
-
-		*/
-		__proto.onBtnBombDown=function(){
-			if (this.mBtnBombWorking){
-				Manager.getManager().getGameScene().onBtnBombDown();
-			}
+		__proto.setPower=function(n){
+			this.txtPower.text=n.toString();
 		}
 
 		return GameUI;
@@ -39356,8 +36189,10 @@ var Laya=window.Laya=(function(window,document){
 			this.btnRightChoice.on("click",this,this.onRightClicked);
 			this.btnBack.on("click",this,this.backToMain);
 			this.btnSubStart.on("click",this,this.enterGame);
+			Laya.stage.on("keyup",this,this.onKeyUp);
 			this.initChoicesArray();
 			this.initBtnsArray();
+			this.mMainBtns[0].selected=true;
 			this.placeChoiceImgs(0);
 			this.CENTER_X=1080 / 2;
 		}
@@ -39386,7 +36221,7 @@ var Laya=window.Laya=(function(window,document){
 		__proto.initBtnsArray=function(){
 			this.mMainBtns=[
 			this.btnStart,
-			this.btnAbout];
+			this.btnOther];
 		}
 
 		__proto.placeChoiceImgs=function(nowChoice){
@@ -39396,10 +36231,10 @@ var Laya=window.Laya=(function(window,document){
 					this.placeChoiceCenter(this.mChoices[i]);
 				}
 				else if (i==(nowChoice+len-1)% this.mChoices.length){
-					this.placeChoiceLR(this.mChoices[i],-350);
+					this.placeChoiceLR(this.mChoices[i],-500);
 				}
 				else if (i==(nowChoice+len+1)% this.mChoices.length){
-					this.placeChoiceLR(this.mChoices[i],350);
+					this.placeChoiceLR(this.mChoices[i],500);
 				}
 				else{
 					this.mChoices[i].visible=false;
@@ -39407,8 +36242,7 @@ var Laya=window.Laya=(function(window,document){
 			}
 		}
 
-		__proto.placeChoiceLR=function(ch,dx){
-			ch.zOrder=-1;this.CENTER_X=this.CENTER_X|| 1080 / 2;
+		__proto.placeChoiceLR=function(ch,dx){this.CENTER_X=this.CENTER_X|| 1080 / 2;
 			ch.y=960;
 			ch.x=this.CENTER_X+dx;
 			ch.scaleX=0.5;
@@ -39416,15 +36250,15 @@ var Laya=window.Laya=(function(window,document){
 			ch.alpha=0.3;
 		}
 
-		__proto.placeChoiceCenter=function(ch){
-			ch.zOrder=1;this.CENTER_X=this.CENTER_X|| 1080 / 2;
+		__proto.placeChoiceCenter=function(ch){this.CENTER_X=this.CENTER_X|| 1080 / 2;
 			ch.y=960;
 			ch.x=this.CENTER_X;
-			ch.scaleX=1.5;
-			ch.scaleY=1.5;
+			ch.scaleX=1;
+			ch.scaleY=1;
 		}
 
 		__proto.enterGame=function(){
+			Laya.stage.off("keyup",this,this.onKeyUp);
 			Manager.getManager().enterGameWithIndex(this.mIndexNowChoice);
 		}
 
@@ -39470,7 +36304,6 @@ var Laya=window.Laya=(function(window,document){
 				x :this.CENTER_X-dx,
 				scaleX :0.5,
 				scaleY :0.5,
-				zOrder :-1,
 			},
 			300);
 		}
@@ -39480,9 +36313,8 @@ var Laya=window.Laya=(function(window,document){
 			nd,{
 				alpha :1,
 				x :this.CENTER_X,
-				scaleX :1.5,
-				scaleY :1.5,
-				zOrder :1,
+				scaleX :1,
+				scaleY :1,
 			},
 			300);
 		}
@@ -39508,11 +36340,11 @@ var Laya=window.Laya=(function(window,document){
 			var iR=(this.mIndexNowChoice+1)% len;
 			var iRR=(this.mIndexNowChoice+2)% len;
 			var iL=(this.mIndexNowChoice-1+len)% len;
-			this.placeChoiceLR(this.mChoices[iR],350);
-			this.placeChoiceLR(this.mChoices[iRR],350);
+			this.placeChoiceLR(this.mChoices[iR],500);
+			this.placeChoiceLR(this.mChoices[iRR],500);
 			this.mChoices[iRR].alpha=0;
 			this.mChoices[iRR].visible=true;
-			this.moveToLR(this.mChoices[this.mIndexNowChoice],350);
+			this.moveToLR(this.mChoices[this.mIndexNowChoice],500);
 			this.moveToCenter(this.mChoices[iR]);
 			this.fadeOut(this.mChoices[iL]);
 			this.fadeIn(this.mChoices[iRR]);
@@ -39525,11 +36357,11 @@ var Laya=window.Laya=(function(window,document){
 			var iL=(this.mIndexNowChoice-1+len)% len;
 			var iLL=(this.mIndexNowChoice-2+len)% len;
 			var iR=(this.mIndexNowChoice+1)% len;
-			this.placeChoiceLR(this.mChoices[iL],-350);
-			this.placeChoiceLR(this.mChoices[iLL],-350);
+			this.placeChoiceLR(this.mChoices[iL],-500);
+			this.placeChoiceLR(this.mChoices[iLL],-500);
 			this.mChoices[iLL].alpha=0;
 			this.mChoices[iLL].visible=true;
-			this.moveToLR(this.mChoices[this.mIndexNowChoice],-350);
+			this.moveToLR(this.mChoices[this.mIndexNowChoice],-500);
 			this.moveToCenter(this.mChoices[iL]);
 			this.fadeOut(this.mChoices[iR]);
 			this.fadeIn(this.mChoices[iLL]);
@@ -39537,61 +36369,124 @@ var Laya=window.Laya=(function(window,document){
 			this.imgChoiceName.skin="ui_res/choice_name_"+this.mIndexNowChoice+".png";
 		}
 
+		__proto.onKeyUp=function(e){
+			console.log("menu key up");
+			var key=e["keyCode"];
+			if (this.mNowState=="MAIN"){
+				if (key==38){
+					this.mMainBtns[this.mIndexNowBtn].selected=false;
+					this.mIndexNowBtn=(this.mIndexNowBtn+1)% this.mMainBtns.length;
+					this.mMainBtns[this.mIndexNowBtn].selected=true;
+				}
+				else if (key==40){
+					this.mMainBtns[this.mIndexNowBtn].selected=false;
+					this.mIndexNowBtn=(this.mIndexNowBtn-1+this.mMainBtns.length)% this.mMainBtns.length;
+					this.mMainBtns[this.mIndexNowBtn].selected=true;
+				}
+				else if (key==13 || key==90){
+					if (this.mIndexNowBtn==0){
+						this.enterSubMenu();
+					}
+				}
+			}
+			else if (this.mNowState=="SUB"){
+				if (key==37){
+					this.onLeftClicked();
+				}
+				else if (key==39){
+					this.onRightClicked();
+				}
+				else if (key==27 || key==88){
+					this.backToMain();
+				}
+				else if (key==13 || key==90){
+					this.enterGame();
+				}
+			}
+		}
+
 		MainMenu.DURATION=300;
 		MainMenu.MAIN_BUTTON_MOVE_Y=500;
 		MainMenu.TITLE_MOVE_Y=-500;
 		MainMenu.CHOICE_Y=960;
-		MainMenu.CHOICE_MOVE_X=350;
-		MainMenu.CHOICE_SCALE_DEFAULT=1.5;
+		MainMenu.CHOICE_MOVE_X=500;
 		MainMenu.CHOICE_SCALE=0.5;
 		MainMenu.CHOICE_ALPHA=0.3;
 		return MainMenu;
 	})(MainMenuUI)
 
 
-	//class STG.MyUI.DieDialog extends ui.DieDialogUI
-	var DieDialog=(function(_super){
-		function DieDialog(s){
-			DieDialog.__super.call(this);
-			this.textScore.text=s.toString();
-			this.btnBack.on("mouseup",this,this.onBtnBackUp);
+	//class laya.ui.AsynDialog extends laya.ui.Dialog
+	var AsynDialog=(function(_super){
+		function AsynDialog(){
+			this._uiView=null;
+			this.isCloseOther=false;
+			AsynDialog.__super.call(this);
 		}
 
-		__class(DieDialog,'STG.MyUI.DieDialog',_super);
-		var __proto=DieDialog.prototype;
-		__proto.onBtnBackUp=function(){
-			Manager.getManager().backToMain();
+		__class(AsynDialog,'laya.ui.AsynDialog',_super);
+		var __proto=AsynDialog.prototype;
+		/**@private */
+		__proto.createView=function(uiView){
+			this._uiView=uiView;
 		}
 
-		return DieDialog;
-	})(DieDialogUI)
-
-
-	//class STG.Bullet.GuidedBullet extends STG.Bullet.PlayerBullet
-	var GuidedBullet=(function(_super){
-		function GuidedBullet(forceFactor){
-			this.mTarget=null;
-			this.mForceFactor=1;
-			GuidedBullet.__super.call(this);
-			this.mForceFactor=forceFactor;
-			this.mTarget=Manager.getManager().getGameScene().getTargetForGB();
+		__proto._open=function(modal,closeOther){
+			this.isModal=modal;
+			this.isCloseOther=closeOther;
+			Dialog.manager.lock(true);
+			if (this._uiView)this.onCreated();
+			else this.onOpen();
 		}
 
-		__class(GuidedBullet,'STG.Bullet.GuidedBullet',_super);
-		var __proto=GuidedBullet.prototype;
-		__proto.updateSelf=function(delta){
-			STG.GameObject.GameObjectCollision.prototype.updateSelf.call(this,delta);
-			if (this.mTarget && (!this.mTarget.destroyed)){
-				var newDir=MyMath.getDirection(this,this.mTarget);
-				this.mDirection=this.mDirection+(newDir-this.mDirection)*this.mForceFactor;
-			}
+		/**
+		*在页面未创建时执行一次，再次打开页面不会再执行，适合写一些只执行一次的逻辑，比如资源加载，节点事件监听
+		*/
+		__proto.onCreated=function(){
+			this.createUI();
+			this.onOpen();
 		}
 
-		return GuidedBullet;
-	})(PlayerBullet)
+		/**根据节点数据创建UI*/
+		__proto.createUI=function(){
+			laya.ui.View.prototype.createView.call(this,this._uiView);
+			this._uiView=null;
+			this._dealDragArea();
+		}
+
+		/**
+		*在页面每次打开都会执行，适合做一些每次都需要处理的事情，比如消息请求，根据数据初始化页面
+		*/
+		__proto.onOpen=function(){
+			Dialog.manager.open(this,this.isCloseOther);
+			Dialog.manager.lock(false);
+		}
+
+		__proto.close=function(type){
+			Dialog.manager.close(this);
+			this.onClose();
+		}
+
+		/**
+		*在每次关闭的时候调用，适合关闭时停止动画，网络消息监听等逻辑
+		*/
+		__proto.onClose=function(){}
+		__proto.destroy=function(destroyChild){
+			(destroyChild===void 0)&& (destroyChild=true);
+			laya.ui.View.prototype.destroy.call(this,destroyChild);
+			this._uiView=null;
+			this.onDestroy();
+		}
+
+		/**
+		*在页面被销毁的时候调用，适合置空引用对象
+		*/
+		__proto.onDestroy=function(){}
+		return AsynDialog;
+	})(Dialog)
 
 
-	Laya.__init([EventDispatcher,LoaderManager,Timer,View,Render,Browser,WebGLContext2D,ShaderCompile,GraphicAnimation,LocalStorage,WebGLFilter,AtlasGrid,DrawText]);
-	new Main();
+	Laya.__init([Timer,LoaderManager,View,LocalStorage,Browser,EventDispatcher,Render,WebGLContext2D,ShaderCompile,GraphicAnimation,AtlasGrid,DrawText]);
+	new LayaSample();
 
 })(window,document,Laya);
