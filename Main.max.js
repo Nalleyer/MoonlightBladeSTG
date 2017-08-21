@@ -492,7 +492,7 @@ var Laya=window.Laya=(function(window,document){
 		}
 
 		__proto.initStage=function(){
-			Laya.init(1080,1920);
+			Laya.init(1080,1920,WebGL);
 			Laya.stage.bgColor="#b0dcfe";
 			Laya.stage.scaleMode="showall";
 			Laya.stage.alignH="center";
