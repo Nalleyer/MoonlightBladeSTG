@@ -106,7 +106,7 @@
                 <action>
                     <op>shoot</op>
                 </action>
-            </task>
+            </task-->
             <task>
                 <condition>
                     <left>age</left>
@@ -118,7 +118,7 @@
                     <op>set</op>
                     <right>500</right>
                 </action>
-            </task-->
+            </task>
         </tasks>
         <bullets>
             <!-- 6 circle -->
@@ -126,14 +126,16 @@
                 <!--250 bullet in a circle-->
                 <name>circle</name>
                 <empty>true</empty>
-                <as>100</as>
+                <!--as>100</as-->
+                <as>0</as>
                 <children>
                     <!--a bullet in circle-->
                     <bullet>
                         <name>simple</name>
                         <texture>my_res/img/bullet_circle.png</texture>
                         <dir>-1.57</dir>
-                        <as>250</as>
+                        <!--as>250</as-->
+                        <as>0</as>
                         <colli>
                             <circle>auto</circle>
                         </colli>

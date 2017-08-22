@@ -402,12 +402,18 @@ var Laya=window.Laya=(function(window,document){
 	})()
 
 
+	/*
+	import laya.utils.Pool;
+	import STG.*;
+	*/
 	//class Main
 	var Main=(function(){
 		function Main(){
 			this.mTouchText=null;
 			this.mDebugText=null;
 			this.mTouches=[];
+			this.mE=null;
+			this.b=null;
 			this.mLoadingImg=null;
 			console.log("000");
 			this.initStage();
@@ -459,14 +465,17 @@ var Laya=window.Laya=(function(window,document){
 			this.mDebugText.fontSize=100;
 			this.mDebugText.zOrder=9;
 			Laya.stage.addChild(this.mDebugText);
-			Laya.timer.frameLoop(1,this,this.mainLoop);
 		}
 
-		__proto.mainLoop=function(){
-			var deltaInt=Laya.timer.delta;
+		/*
+		private function log(){
+			var gPosE=mE.getGlobalPoint(mE.pivotX,mE.pivotY);
+			trace(gPosE.x+", "+gPosE.y );
+			var gPosB=b.getGlobalPoint(b.pivotX,b.pivotY);
+			trace(gPosB.x+", "+gPosB.y );
 		}
 
-		//Manager.getManager().update(deltaInt / 1000);
+		*/
 		__proto.refreshText=function(){
 			var str="[";
 			for (var i=0;i < this.mTouches.length;i++){
@@ -478,7 +487,6 @@ var Laya=window.Laya=(function(window,document){
 		}
 
 		__proto.debug=function(str){
-			return;
 			if (str){
 				this.mDebugText.text=str;
 			}
@@ -507,11 +515,10 @@ var Laya=window.Laya=(function(window,document){
 		}
 
 		__proto.onMouseMove=function(e){
-			this.refreshText();
-			var str="moving events : ";
-			this.debug(str+e.touchId);
+			this.debug(e.touchId+"("+e.stageX+", "+e.stageY+")");
 		}
 
+		//debug(str+e.touchId);
 		__proto.onMouseUp=function(e){
 			for (var i=0;i < this.mTouches.length;i++){
 				if (e.touchId==this.mTouches[i]){
@@ -1864,11 +1871,10 @@ var Laya=window.Laya=(function(window,document){
 		__proto.isOut=function(nd){
 			var offsetX=nd.mBound.width *nd.scaleX / 2+200;
 			var offsetY=nd.mBound.height *nd.scaleY / 2+200;
-			var globalX=nd.getGlobalX(0);
-			var globalY=nd.getGlobalY(0);
+			var gPos=nd.getGlobalPoint(0,0);
 			return (
-			(globalX < this.mMinX-offsetX)|| (globalX > this.mMaxX+offsetX)||
-			(globalY < this.mMinY-offsetY)|| (globalY > this.mMaxY+offsetY));
+			(gPos.x < this.mMinX-offsetX)|| (gPos.x > this.mMaxX+offsetX)||
+			(gPos.y < this.mMinY-offsetY)|| (gPos.y > this.mMaxY+offsetY));
 		}
 
 		return OutMyNodeDeletor;
@@ -1904,14 +1910,13 @@ var Laya=window.Laya=(function(window,document){
 				};
 				var hw=obc.mBound.width / 2;
 				var hh=obc.mBound.height / 2;
-				var globalX=obc.getGlobalX(0);
-				var globalY=obc.getGlobalY(0);
-				if ((globalX <=this.LEFT+hw && MyMath.movingLeft(obc))
-					|| (globalX >=this.RIGHT-hw && MyMath.movingRight(obc))){
+				var gPos=obc.getGlobalPoint(0,0);
+				if ((gPos.x <=this.LEFT+hw && MyMath.movingLeft(obc))
+					|| (gPos.x >=this.RIGHT-hw && MyMath.movingRight(obc))){
 					MyMath.rebounceLR(obc);
 				}
-				if ((globalY <=this.UP+hh && MyMath.movingUp(obc))
-					|| (globalY >=this.DOWN-hh && MyMath.movingDown(obc))){
+				if ((gPos.y <=this.UP+hh && MyMath.movingUp(obc))
+					|| (gPos.y >=this.DOWN-hh && MyMath.movingDown(obc))){
 					MyMath.rebounceUD(obc);
 				}
 			}
@@ -2117,12 +2122,10 @@ var Laya=window.Laya=(function(window,document){
 		}
 
 		MyMath.getDirection=function(ob,tgt){
-			var obPosX=ob.getGlobalX(ob.pivotX);
-			var obPosY=ob.getGlobalY(ob.pivotY);
-			var tgtPosX=tgt.getGlobalX(tgt.pivotX);
-			var tgtPosY=tgt.getGlobalY(tgt.pivotY);
-			return (Math.atan2(-(tgtPosY-obPosY),
-			(tgtPosX-obPosX)));
+			var gPosOb=ob.getGlobalPoint(ob.pivotX,ob.pivotY);
+			var gPosTgt=tgt.getGlobalPoint(tgt.pivotX,tgt.pivotY);
+			return (Math.atan2(-(gPosTgt.y-gPosOb.y),
+			(gPosTgt.x-gPosOb.x)));
 		}
 
 		MyMath.rebounceLR=function(obc){
@@ -23579,9 +23582,10 @@ var Laya=window.Laya=(function(window,document){
 	//class STG.GameObject.MyNode extends laya.display.Sprite
 	var MyNode=(function(_super){
 		function MyNode(){
-			this.mChildren=[];
+			this.mGlobalPointTmp=null;
 			MyNode.__super.call(this);
 			this.name="delete";
+			this.mGlobalPointTmp=new Point(0,0);
 			Laya.timer.frameLoop(1,this,this.update);
 		}
 
@@ -23592,39 +23596,13 @@ var Laya=window.Laya=(function(window,document){
 		}
 
 		__proto.clearTimer=function(){
-			Laya.timer.clearAll(this);
+			Laya.timer.clear(this,this.update);
 		}
 
-		__proto.getNumChildren=function(){
-			return this.mChildren.length;
-		}
-
-		__proto.getGlobalX=function(x){
-			var nd=this;
-			while (nd){
-				if (nd !=Laya.stage){
-					x=x+nd.x-nd.pivotX;
-					nd=nd.parent;
-				}
-				else{
-					break ;
-				}
-			}
-			return x;
-		}
-
-		__proto.getGlobalY=function(y){
-			var nd=this;
-			while (nd){
-				if (nd !=Laya.stage){
-					y=y+nd.y-nd.pivotY;
-					nd=nd.parent;
-				}
-				else{
-					break ;
-				}
-			}
-			return y;
+		__proto.getGlobalPoint=function(x,y){
+			this.mGlobalPointTmp.x=x;
+			this.mGlobalPointTmp.y=y;
+			return this.localToGlobal(this.mGlobalPointTmp);
 		}
 
 		__proto.update=function(){
@@ -27794,11 +27772,12 @@ var Laya=window.Laya=(function(window,document){
 			};
 			var conditionFuncion=tsk.getConditionFuncion();
 			var value=tsk.mCondition.mConditionRight;
+			var gPos=this.getGlobalPoint(0,0);
 			switch(tsk.mCondition.mConditionLeft){
 				case "EConditionLeft_X" :
-					return conditionFuncion(this.getGlobalX(0),value);
+					return conditionFuncion(gPos.x,value);
 				case "EConditionLeft_Y" :
-					return conditionFuncion(this.getGlobalY(0),value);
+					return conditionFuncion(gPos.y,value);
 				case "EConditionLeft_ASpeed" :
 					return conditionFuncion(this.mASpeed,value);
 				case "EConditionLeft_NSpeed" :
@@ -32845,9 +32824,10 @@ var Laya=window.Laya=(function(window,document){
 				var bullet=this.mGeneratorFunction();
 				if (this.mBulletDir){
 					bullet.mDirection=MyMath.fluctuate(this.mBulletDir,this.mFluctuationBulletDir);
-				}
-				bullet.x=this.getGlobalX(0);
-				bullet.y=this.getGlobalY(0);
+				};
+				var gPos=this.getGlobalPoint(0,0);
+				bullet.x=gPos.x;
+				bullet.y=gPos.y;
 				if (this.mType=="player"){
 					Manager.getManager().getGameScene().addPlayerBullet(bullet);
 				}
@@ -32894,11 +32874,10 @@ var Laya=window.Laya=(function(window,document){
 			if (this.mIsEmpty){
 				return;
 			};
-			var globalX=this.getGlobalX(this.pivotX);
-			var globalY=this.getGlobalY(this.pivotY);
+			var gPos=this.getGlobalPoint(this.pivotX,this.pivotY);
 			var theta=-this.rotation / 180 *Math.PI;
-			this.mCollisionBody.x=globalX;
-			this.mCollisionBody.y=-globalY;
+			this.mCollisionBody.x=gPos.x;
+			this.mCollisionBody.y=-gPos.y;
 			if ((this.mCollisionBody instanceof STG.GameObject.Collision.ColliCircle )){
 				if (this.mAutoSize)
 				{this.mCollisionBody.r=this.mCollisionBody.r|| this.mBound.width / 2 *this.scaleX;
@@ -33317,7 +33296,7 @@ var Laya=window.Laya=(function(window,document){
 			1920);
 			this.mReboundManager=new RebounceManager();
 			this.mScore=0;
-			this.mEnemyGen=new EnemyGen(10,0.1,0);
+			this.mEnemyGen=new EnemyGen(1000,0.1,0);
 			this.mObjFactory=new ObjectFactory();
 			this.mConfigParser=new ConfigParser(this.mObjFactory);
 			this.parseEnemiesXml();
@@ -38004,8 +37983,9 @@ var Laya=window.Laya=(function(window,document){
 			};
 			var newBullet=Manager.getManager().getGameScene().shootBullet(
 			this.mBullets[this.mNowIndexBullet]);
-			newBullet.x=this.getGlobalX(0)+this.mBound.width / 2;
-			newBullet.y=this.getGlobalY(0)+this.mBound.height / 2;
+			var gPos=this.getGlobalPoint(0,0);
+			newBullet.x=gPos.x+this.mBound.width / 2;
+			newBullet.y=gPos.y+this.mBound.height / 2;
 			Manager.getManager().getGameScene().addEnemyBullet(newBullet);
 			this.mNowIndexBullet=(this.mNowIndexBullet+1)% this.mBullets.length;
 		}
@@ -38665,7 +38645,7 @@ var Laya=window.Laya=(function(window,document){
 		}
 
 		__static(MainMenuUI,
-		['uiView',function(){return this.uiView={"type":"View","props":{"width":1080,"height":1920},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"imgBG","skin":"ui_res/main_bg.png"},"child":[{"type":"Image","props":{"skin":"ui_res/main_bg.png"}}]},{"type":"Image","props":{"y":142,"x":176,"var":"imgTitle","skin":"ui_res/title.png"}},{"type":"Button","props":{"y":882,"x":540,"width":498,"var":"btnStart","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"开始","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Button","props":{"y":1140,"x":540,"width":498,"var":"btnAbout","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"关于","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Sprite","props":{"y":10,"x":10,"visible":false,"var":"subBtns","alpha":0},"child":[{"type":"Button","props":{"y":978.25,"x":961,"visible":true,"var":"btnRightChoice","skin":"ui_res/btn_choice.png","scaleY":0.7,"scaleX":0.7,"anchorY":0.5,"anchorX":0.5,"alpha":1}},{"type":"Button","props":{"y":974.25,"x":94,"visible":true,"var":"btnLeftChoice","skin":"ui_res/btn_choice.png","scaleY":0.7,"scaleX":-0.7,"anchorY":0.5,"anchorX":0.5,"alpha":1}},{"type":"Sprite","props":{"y":0,"x":0,"var":"parentChoices"},"child":[{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice0","skin":"ui_res/choice_new_0_black.png","scaleY":1,"scaleX":1,"anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice1","skin":"ui_res/choice_new_1_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice2","skin":"ui_res/choice_new_2_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice3","skin":"ui_res/choice_new_3_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice4","skin":"ui_res/choice_new_4.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice5","skin":"ui_res/choice_new_5.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice6","skin":"ui_res/choice_new_6_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice7","skin":"ui_res/choice_new_7_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":1540,"x":540,"var":"imgChoiceName","skin":"ui_res/choice_name_0.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":213,"x":540,"var":"imgSubTitle","skin":"ui_res/sub_title.png","anchorY":0.5,"anchorX":0.5}}]},{"type":"Button","props":{"y":1800,"x":255,"width":498,"var":"btnBack","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"返回","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Button","props":{"y":1800,"x":801,"width":498,"var":"btnSubStart","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"开始","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]}]},{"type":"Text","props":{"y":1833,"x":30,"text":"ver  timer","fontSize":70}}]};}
+		['uiView',function(){return this.uiView={"type":"View","props":{"width":1080,"height":1920},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"imgBG","skin":"ui_res/main_bg.png"},"child":[{"type":"Image","props":{"skin":"ui_res/main_bg.png"}}]},{"type":"Image","props":{"y":142,"x":176,"var":"imgTitle","skin":"ui_res/title.png"}},{"type":"Button","props":{"y":882,"x":540,"width":498,"var":"btnStart","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"开始","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Button","props":{"y":1140,"x":540,"width":498,"var":"btnAbout","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"关于","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Sprite","props":{"y":10,"x":10,"visible":false,"var":"subBtns","alpha":0},"child":[{"type":"Button","props":{"y":978.25,"x":961,"visible":true,"var":"btnRightChoice","skin":"ui_res/btn_choice.png","scaleY":0.7,"scaleX":0.7,"anchorY":0.5,"anchorX":0.5,"alpha":1}},{"type":"Button","props":{"y":974.25,"x":94,"visible":true,"var":"btnLeftChoice","skin":"ui_res/btn_choice.png","scaleY":0.7,"scaleX":-0.7,"anchorY":0.5,"anchorX":0.5,"alpha":1}},{"type":"Sprite","props":{"y":0,"x":0,"var":"parentChoices"},"child":[{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice0","skin":"ui_res/choice_new_0_black.png","scaleY":1,"scaleX":1,"anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice1","skin":"ui_res/choice_new_1_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice2","skin":"ui_res/choice_new_2_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice3","skin":"ui_res/choice_new_3_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice4","skin":"ui_res/choice_new_4.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice5","skin":"ui_res/choice_new_5.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice6","skin":"ui_res/choice_new_6_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":960,"x":540,"var":"imgChoice7","skin":"ui_res/choice_new_7_black.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":1540,"x":540,"var":"imgChoiceName","skin":"ui_res/choice_name_0.png","anchorY":0.5,"anchorX":0.5}},{"type":"Image","props":{"y":213,"x":540,"var":"imgSubTitle","skin":"ui_res/sub_title.png","anchorY":0.5,"anchorX":0.5}}]},{"type":"Button","props":{"y":1800,"x":255,"width":498,"var":"btnBack","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"返回","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]},{"type":"Button","props":{"y":1800,"x":801,"width":498,"var":"btnSubStart","skin":"ui_res/btn_3_new.png","labelSize":40,"labelFont":"Arial","height":197,"anchorY":0.5,"anchorX":0.5},"child":[{"type":"Text","props":{"y":98.5,"x":249,"width":213,"text":"开始","pivotY":47,"pivotX":106.5,"height":94,"fontSize":100,"color":"#ffffff","bold":false}}]}]},{"type":"Text","props":{"y":1833,"x":30,"text":"ver  不动","fontSize":70}}]};}
 		]);
 		return MainMenuUI;
 	})(View)
